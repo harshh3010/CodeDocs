@@ -3,6 +3,7 @@ package mainClasses;
 import requests.appRequests.*;
 import services.clientServices.AuthenticationService;
 import services.clientServices.CodeDocService;
+import services.clientServices.UserService;
 import utilities.RequestType;
 
 import java.io.IOException;
@@ -10,7 +11,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-public class ClientConnection extends Thread{
+public class ClientConnection extends Thread {
 
     private final String ipAddress;
     private final Socket client;
@@ -34,19 +35,23 @@ public class ClientConnection extends Thread{
             try {
                 AppRequest request = (AppRequest) inputStream.readObject();
 
-                if(request.getRequestType() == RequestType.SIGNUP_REQUEST) {
+                if (request.getRequestType() == RequestType.SIGNUP_REQUEST) {
                     System.out.println("Client wants to signup!");
                     outputStream.writeObject(AuthenticationService.registerUser((SignupRequest) request));
                     outputStream.flush();
-                }else if(request.getRequestType() == RequestType.LOGIN_REQUEST) {
+                } else if (request.getRequestType() == RequestType.LOGIN_REQUEST) {
                     System.out.println("Client wants to login!");
                     outputStream.writeObject(AuthenticationService.loginUser((LoginRequest) request));
                     outputStream.flush();
-                }else if(request.getRequestType() == RequestType.VERIFY_USER_REQUEST) {
+                } else if (request.getRequestType() == RequestType.VERIFY_USER_REQUEST) {
                     System.out.println("Client wants to verify his account!");
                     outputStream.writeObject(AuthenticationService.verifyUser((VerifyUserRequest) request));
                     outputStream.flush();
-                }else if(request.getRequestType() == RequestType.CREATE_CODEDOC_REQUEST) {
+                } else if (request.getRequestType() == RequestType.GET_ME_REQUEST) {
+                    System.out.println("Client wants to fetch his info!");
+                    outputStream.writeObject(UserService.getUserData((GetMeRequest) request));
+                    outputStream.flush();
+                } else if (request.getRequestType() == RequestType.CREATE_CODEDOC_REQUEST) {
                     System.out.println("Client wants to create a CodeDoc!");
                     outputStream.writeObject(CodeDocService.createCodeDoc((CreateCodeDocRequest) request));
                     outputStream.flush();
