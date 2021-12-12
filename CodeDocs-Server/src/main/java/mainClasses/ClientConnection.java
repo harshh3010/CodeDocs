@@ -1,10 +1,8 @@
 package mainClasses;
 
-import requests.appRequests.AppRequest;
-import requests.appRequests.LoginRequest;
-import requests.appRequests.SignupRequest;
-import requests.appRequests.VerifyUserRequest;
+import requests.appRequests.*;
 import services.clientServices.AuthenticationService;
+import services.clientServices.CodeDocService;
 import utilities.RequestType;
 
 import java.io.IOException;
@@ -47,6 +45,10 @@ public class ClientConnection extends Thread{
                 }else if(request.getRequestType() == RequestType.VERIFY_USER_REQUEST) {
                     System.out.println("Client wants to verify his account!");
                     outputStream.writeObject(AuthenticationService.verifyUser((VerifyUserRequest) request));
+                    outputStream.flush();
+                }else if(request.getRequestType() == RequestType.CREATE_CODEDOC_REQUEST) {
+                    System.out.println("Client wants to create a CodeDoc!");
+                    outputStream.writeObject(CodeDocService.createCodeDoc((CreateCodeDocRequest) request));
                     outputStream.flush();
                 }
 

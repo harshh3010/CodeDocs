@@ -5,16 +5,40 @@ import utilities.ResponseType;
 import utilities.Status;
 
 import java.io.Serializable;
+import java.util.Date;
 
 public class CreateCodeDocResponse extends AppResponse implements Serializable {
 
+    private Date createdAt;
+    private Date updatedAt;
+    private String codeDocId;
     private Status status;
 
     public CreateCodeDocResponse() {
     }
 
-    public CreateCodeDocResponse(Status status) {
-        this.status = status;
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public String getCodeDocId() {
+        return codeDocId;
+    }
+
+    public void setCodeDocId(String codeDocId) {
+        this.codeDocId = codeDocId;
     }
 
     public Status getStatus() {

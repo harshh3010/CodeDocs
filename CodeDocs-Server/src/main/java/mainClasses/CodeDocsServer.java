@@ -1,6 +1,7 @@
 package mainClasses;
 
 import services.DatabaseConnection;
+import utilities.LanguageType;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -18,7 +19,6 @@ public class CodeDocsServer {
     public static Connection databaseConnection;
 
     public static void main(String[] args) throws IOException {
-
         try {
             Properties properties = new Properties();
             FileReader fileReader = new FileReader("CodeDocs-Server/src/main/resources/configurations/server.properties");

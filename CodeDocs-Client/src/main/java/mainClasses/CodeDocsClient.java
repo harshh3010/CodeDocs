@@ -1,11 +1,15 @@
 package mainClasses;
 
+import models.CodeDoc;
 import models.User;
+import requests.appRequests.CreateCodeDocRequest;
 import requests.appRequests.LoginRequest;
 import requests.appRequests.SignupRequest;
 import requests.appRequests.VerifyUserRequest;
+import response.appResponse.CreateCodeDocResponse;
 import response.appResponse.LoginResponse;
 import response.appResponse.SignupResponse;
+import utilities.LanguageType;
 import utilities.SignupStatus;
 import utilities.Status;
 
@@ -44,7 +48,7 @@ public class CodeDocsClient {
             outputStream = new ObjectOutputStream(socket.getOutputStream());
             inputStream = new ObjectInputStream(socket.getInputStream());
 
-        } catch (IOException  e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
