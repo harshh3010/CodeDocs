@@ -50,6 +50,10 @@ public class ClientConnection extends Thread{
                     System.out.println("Client wants to create a CodeDoc!");
                     outputStream.writeObject(CodeDocService.createCodeDoc((CreateCodeDocRequest) request));
                     outputStream.flush();
+                }else if(request.getRequestType() == RequestType.FETCH_CODEDOC_REQUEST) {
+                    System.out.println("Client wants to fetch CodeDoc!");
+                    outputStream.writeObject(CodeDocService.fetchCodeDoc((FetchCodeDocRequest) request));
+                    outputStream.flush();
                 }
 
             } catch (IOException | ClassNotFoundException e) {

@@ -1,17 +1,21 @@
 package services.clientServices;
 
 import mainClasses.CodeDocsServer;
+import models.CodeDoc;
 import requests.appRequests.CreateCodeDocRequest;
+import requests.appRequests.FetchCodeDocRequest;
 import response.appResponse.CreateCodeDocResponse;
+import response.appResponse.FetchCodeDocResponse;
+import utilities.CodeDocRequestType;
 import utilities.DatabaseConstants;
+import utilities.LanguageType;
 import utilities.Status;
 
 import java.io.*;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Date;
-import java.util.Properties;
-import java.util.UUID;
+import java.util.*;
 
 public class CodeDocService {
 
@@ -98,5 +102,72 @@ public class CodeDocService {
         codedocResponse.setStatus(Status.FAILED);
         return codedocResponse;
     }
+
+
+    public static FetchCodeDocResponse fetchCodeDoc(FetchCodeDocRequest fetchCodeDocRequest) {
+
+        FetchCodeDocResponse fetchCodeDocResponse = new FetchCodeDocResponse();
+        //set this in order to know that it is response corr to which type of codeDoc fetch req
+        fetchCodeDocResponse.setCodeDocRequestType(fetchCodeDocRequest.getCodeDocRequestType());
+        String condition, qualifier;
+        if (fetchCodeDocRequest.getCodeDocRequestType() == CodeDocRequestType.FETCH_A_CODEDOC) {
+            condition = DatabaseConstants.CODEDOC_TABLE_COL_CODEDOCID + " = ? ";
+            qualifier = fetchCodeDocRequest.getCodeDocID();
+        } else if (fetchCodeDocRequest.getCodeDocRequestType() == CodeDocRequestType.PERSONAL_CODEDOCS) {
+            condition = DatabaseConstants.CODEDOC_TABLE_COL_OWNERID + " = ? ";
+            qualifier = fetchCodeDocRequest.getUserID();
+        } else {
+            condition = " " + DatabaseConstants.CODEDOC_TABLE_COL_CODEDOCID +
+                    " IN ( SELECT " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_CODEDOC_ID +
+                    " FROM " + DatabaseConstants.CODEDOC_ACCESS_TABLE_NAME +
+                    " WHERE " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_USER_ID + " = ?) ";
+            qualifier = fetchCodeDocRequest.getUserID();
+        }
+
+        String query = "SELECT " +
+                " " + DatabaseConstants.CODEDOC_TABLE_COL_CODEDOCID +
+                ", " + DatabaseConstants.CODEDOC_TABLE_COL_TITLE +
+                ", " + DatabaseConstants.CODEDOC_TABLE_COL_DESCRIPTION +
+                ", " + DatabaseConstants.CODEDOC_TABLE_COL_LANGUAGE +
+                ", " + DatabaseConstants.CODEDOC_TABLE_COL_UPDATED_AT +
+                ", " + DatabaseConstants.CODEDOC_TABLE_COL_CREATED_AT +
+                ", " + DatabaseConstants.CODEDOC_TABLE_COL_OWNERID +
+                " FROM " + DatabaseConstants.CODEDOC_TABLE_NAME
+                + " WHERE " + condition
+                + " ORDER BY " + DatabaseConstants.CODEDOC_TABLE_COL_UPDATED_AT + " DESC "
+                + " LIMIT " + fetchCodeDocRequest.getOffset() +
+                " , " + fetchCodeDocRequest.getRowcount()
+                + ";";
+
+
+        List<CodeDoc> codeDocList = new ArrayList<>();
+        try {
+            PreparedStatement preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(query);
+
+            preparedStatement.setString(1, qualifier);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            CodeDoc codeDoc = null;
+
+            while (resultSet.next()) {
+                codeDoc = new CodeDoc();
+                codeDoc.setCodeDocId(resultSet.getString(1));
+                codeDoc.setTitle(resultSet.getString(2));
+                codeDoc.setDescription(resultSet.getString(3));
+                codeDoc.setCreatedAt(resultSet.getDate(6));
+                codeDoc.setUpdatedAt(resultSet.getDate(5));
+                codeDoc.setOwnerID(resultSet.getString(7));
+                codeDoc.setLanguageType(LanguageType.valueOf(resultSet.getString(4)));
+                codeDocList.add(codeDoc);
+            }
+            fetchCodeDocResponse.setCodeDocs(codeDocList);
+            fetchCodeDocResponse.setStatus(Status.SUCCESS);
+            return fetchCodeDocResponse;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        fetchCodeDocResponse.setStatus(Status.FAILED);
+        return fetchCodeDocResponse;
+    }
+
 
 }
