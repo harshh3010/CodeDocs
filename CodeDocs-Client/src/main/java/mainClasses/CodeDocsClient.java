@@ -3,9 +3,11 @@ package mainClasses;
 import models.User;
 import requests.appRequests.LoginRequest;
 import requests.appRequests.SignupRequest;
+import requests.appRequests.VerifyUserRequest;
 import response.appResponse.LoginResponse;
 import response.appResponse.SignupResponse;
 import utilities.SignupStatus;
+import utilities.Status;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -41,9 +43,8 @@ public class CodeDocsClient {
             socket = new Socket(hostname, port);
             outputStream = new ObjectOutputStream(socket.getOutputStream());
             inputStream = new ObjectInputStream(socket.getInputStream());
-            
 
-        } catch (IOException e) {
+        } catch (IOException  e) {
             e.printStackTrace();
         }
     }

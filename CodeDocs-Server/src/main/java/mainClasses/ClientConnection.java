@@ -3,6 +3,7 @@ package mainClasses;
 import requests.appRequests.AppRequest;
 import requests.appRequests.LoginRequest;
 import requests.appRequests.SignupRequest;
+import requests.appRequests.VerifyUserRequest;
 import services.clientServices.AuthenticationService;
 import utilities.RequestType;
 
@@ -42,6 +43,10 @@ public class ClientConnection extends Thread{
                 }else if(request.getRequestType() == RequestType.LOGIN_REQUEST) {
                     System.out.println("Client wants to login!");
                     outputStream.writeObject(AuthenticationService.loginUser((LoginRequest) request));
+                    outputStream.flush();
+                }else if(request.getRequestType() == RequestType.VERIFY_USER_REQUEST) {
+                    System.out.println("Client wants to verify his account!");
+                    outputStream.writeObject(AuthenticationService.verifyUser((VerifyUserRequest) request));
                     outputStream.flush();
                 }
 
