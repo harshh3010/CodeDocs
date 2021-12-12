@@ -1,6 +1,7 @@
 package mainClasses;
 
 import requests.appRequests.AppRequest;
+import requests.appRequests.LoginRequest;
 import requests.appRequests.SignupRequest;
 import services.clientServices.AuthenticationService;
 import utilities.RequestType;
@@ -37,6 +38,10 @@ public class ClientConnection extends Thread{
                 if(request.getRequestType() == RequestType.SIGNUP_REQUEST) {
                     System.out.println("Client wants to signup!");
                     outputStream.writeObject(AuthenticationService.registerUser((SignupRequest) request));
+                    outputStream.flush();
+                }else if(request.getRequestType() == RequestType.LOGIN_REQUEST) {
+                    System.out.println("Client wants to login!");
+                    outputStream.writeObject(AuthenticationService.loginUser((LoginRequest) request));
                     outputStream.flush();
                 }
 
