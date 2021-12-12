@@ -1,0 +1,3 @@
+# Project exclude paths
+/CodeDocs-Client/target/
+/CodeDocs-Server/target/
