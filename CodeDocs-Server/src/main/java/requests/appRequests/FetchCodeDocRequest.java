@@ -16,30 +16,6 @@ public class FetchCodeDocRequest extends AppRequest implements Serializable {
     public FetchCodeDocRequest() {
     }
 
-    /**
-     * when user wants to fetch a particular codeDoc (using codeDocID)
-     * @param codeDocID
-     */
-    public FetchCodeDocRequest(String codeDocID) {
-        this.codeDocID = codeDocID;
-    }
-
-    /**
-     * when user wants to fetch his personal codeDocs
-     * offset will neglect that amount of top rows
-     * and return after that rows equal to rowCount
-     * @param userID
-     * @param codeDocRequestType
-     * @param offset
-     * @param rowcount
-     */
-    public FetchCodeDocRequest(String userID, CodeDocRequestType codeDocRequestType, int offset, int rowcount) {
-        this.userID = userID;
-        this.codeDocRequestType = codeDocRequestType;
-        this.offset = offset;
-        this.rowcount = rowcount;
-    }
-
     public String getCodeDocID() {
         return codeDocID;
     }
