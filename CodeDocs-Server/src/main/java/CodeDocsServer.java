@@ -1,7 +1,12 @@
+import services.AuthTokenService;
+import services.DatabaseConnection;
+
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Properties;
 
 public class CodeDocsServer {
@@ -9,6 +14,7 @@ public class CodeDocsServer {
     private static int port;
     private static ServerSocket serverSocket;
     private static Socket client;
+    public static Connection databaseConnection;
 
     public static void main(String[] args) throws IOException {
 
@@ -21,6 +27,16 @@ public class CodeDocsServer {
 
         } catch (IOException e) {
             System.out.println("Unable to load server config file!");
+            return;
+        }
+
+        // Establish connection with the database
+        try {
+            databaseConnection = DatabaseConnection.connect();
+            System.out.println("Database connection established.");
+        } catch (SQLException | IOException | ClassNotFoundException e) {
+            System.out.println("Unable to establish connection with the database!");
+            System.out.println("Error: " + e.getMessage());
             return;
         }
 
