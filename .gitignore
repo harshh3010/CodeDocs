@@ -1,5 +1,5 @@
 # Project exclude paths
 /CodeDocs-Client/target/
 /CodeDocs-Server/target/
-/CodeDocs-Server/src/main/resources/properties/
-/CodeDocs-Client/src/main/resources/properties/
+/CodeDocs-Server/src/main/resources/configurations/
+/CodeDocs-Client/src/main/resources/configurations/
