@@ -10,7 +10,7 @@ import java.util.List;
 public class FetchCodeDocResponse extends AppResponse implements Serializable {
 
     private List<CodeDoc> codeDocs;
-    private Status status;//to know if fetch was successul or not
+    private Status status;//to know if fetch was successful or not
     private CodeDocRequestType codeDocRequestType; // to know that it is a response corr to which type of fetch request
 
     public FetchCodeDocResponse() {
