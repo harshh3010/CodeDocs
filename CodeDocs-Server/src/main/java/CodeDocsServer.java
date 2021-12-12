@@ -1,4 +1,3 @@
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -11,7 +10,7 @@ public class CodeDocsServer {
     private static ServerSocket serverSocket;
     private static Socket client;
 
-    public static void main(String[] args) throws FileNotFoundException {
+    public static void main(String[] args) throws IOException {
 
         try {
             Properties properties = new Properties();
