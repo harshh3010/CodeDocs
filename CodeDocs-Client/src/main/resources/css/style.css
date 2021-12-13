@@ -1,0 +1,46 @@
+.background {
+    -fx-background-image: url("../images/background.jpg");
+    -fx-background-size: 100%;
+}
+
+.darkOverlay {
+    -fx-background-color:  rgba(0, 0, 0,0.3);
+}
+
+.roundedBorder {
+    -fx-background-radius: 30;
+    -fx-border-radius: 30;
+}
+
+.redOverlay {
+    -fx-background-color:  rgba(143, 1, 51,0.4);
+}
+
+.headingLabel1 {
+    -fx-font-size: 58px;
+    -fx-text-fill: #ffffff;
+}
+
+.headingLabel2 {
+    -fx-font-size: 36px;
+    -fx-text-fill: #ffffff;
+}
+
+.paragraph {
+    -fx-font-size: 16px;
+    -fx-text-fill: #ffffff;
+}
+
+.textField {
+    -fx-font-size: 16px;
+      -fx-border-color: white;
+      -fx-border-width: 1;
+      -fx-border-radius: 1;
+      -fx-background-color: transparent;
+      -fx-text-fill: white;
+}
+
+.textField:focussed {
+      -fx-border-width: 2;
+}
+

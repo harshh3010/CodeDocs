@@ -1,19 +1,9 @@
 package mainClasses;
 
-import models.CodeDoc;
-import models.User;
-import requests.appRequests.*;
-import response.appResponse.*;
-import requests.editorRequests.LoadEditorRequest;
-import response.appResponse.CreateCodeDocResponse;
-import response.appResponse.FetchCodeDocResponse;
-import response.appResponse.LoginResponse;
-import response.appResponse.SignupResponse;
-import response.editorResponse.LoadEditorResponse;
-import utilities.CodeDocRequestType;
-import utilities.LanguageType;
-import utilities.SignupStatus;
-import utilities.Status;
+import javafx.application.Application;
+import javafx.stage.Stage;
+import services.SceneService;
+import utilities.AppScreen;
 
 import java.io.FileReader;
 import java.io.IOException;
@@ -22,17 +12,19 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.Properties;
 
-public class CodeDocsClient {
+public class CodeDocsClient extends Application {
 
-    private static String hostname;
-    private static int port;
     public static Socket socket;
     public static ObjectInputStream inputStream;
     public static ObjectOutputStream outputStream;
+    public static Stage appStage;
 
     public static void main(String[] args) {
 
+        String hostname;
+        int port;
         try {
+
             Properties properties = new Properties();
             FileReader fileReader = new FileReader("CodeDocs-Client/src/main/resources/configurations/server.properties");
             properties.load(fileReader);
@@ -50,20 +42,24 @@ public class CodeDocsClient {
             outputStream = new ObjectOutputStream(socket.getOutputStream());
             inputStream = new ObjectInputStream(socket.getInputStream());
 
-            LoadEditorRequest loadEditorRequest = new LoadEditorRequest();
-            loadEditorRequest.setCodeDocId("2db6e816-dab8-4c9d-812f-660a30466f83");
-            loadEditorRequest.setUserId("7414f918-2624-4610-8c48-3988d433e385");
-            loadEditorRequest.setLanguageType(LanguageType.JAVA);
+            inputStream.close();
+            outputStream.close();
+            socket.close();
 
-            outputStream.writeObject(loadEditorRequest);
-            outputStream.flush();
-
-            LoadEditorResponse loadEditorResponse = (LoadEditorResponse) inputStream.readObject();
-            System.out.println(loadEditorResponse.getStatus());
-            System.out.println(loadEditorResponse.getContent());
-
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
+
+        launch(args);
+    }
+
+    @Override
+    public void start(Stage stage) throws Exception {
+
+        appStage = stage;
+        stage.setResizable(false);
+        stage.setTitle("CodeDocs");
+        SceneService.setScene(AppScreen.splashScreen);
+        stage.show();
     }
 }

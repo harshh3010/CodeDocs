@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane styleClass="background" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.SplashScreenController">
+    <children>
+        <AnchorPane prefHeight="720.0" prefWidth="1280.0" styleClass="darkOverlay">
+            <Text fill="WHITE" layoutX="515.0" layoutY="386.0" strokeType="OUTSIDE" strokeWidth="0.0" text="CodeDocs" AnchorPane.bottomAnchor="319.6943359375" AnchorPane.leftAnchor="515.0" AnchorPane.rightAnchor="509.056640625" AnchorPane.topAnchor="324.4912109375">
+                <font>
+                    <Font size="57.0" />
+                </font>
+            </Text>
+        </AnchorPane>
+    </children>
+</AnchorPane>
