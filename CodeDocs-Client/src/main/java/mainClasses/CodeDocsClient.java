@@ -4,6 +4,12 @@ import models.CodeDoc;
 import models.User;
 import requests.appRequests.*;
 import response.appResponse.*;
+import requests.editorRequests.LoadEditorRequest;
+import response.appResponse.CreateCodeDocResponse;
+import response.appResponse.FetchCodeDocResponse;
+import response.appResponse.LoginResponse;
+import response.appResponse.SignupResponse;
+import response.editorResponse.LoadEditorResponse;
 import utilities.CodeDocRequestType;
 import utilities.LanguageType;
 import utilities.SignupStatus;
@@ -44,8 +50,19 @@ public class CodeDocsClient {
             outputStream = new ObjectOutputStream(socket.getOutputStream());
             inputStream = new ObjectInputStream(socket.getInputStream());
 
+            LoadEditorRequest loadEditorRequest = new LoadEditorRequest();
+            loadEditorRequest.setCodeDocId("2db6e816-dab8-4c9d-812f-660a30466f83");
+            loadEditorRequest.setUserId("7414f918-2624-4610-8c48-3988d433e385");
+            loadEditorRequest.setLanguageType(LanguageType.JAVA);
 
-        } catch (IOException e) {
+            outputStream.writeObject(loadEditorRequest);
+            outputStream.flush();
+
+            LoadEditorResponse loadEditorResponse = (LoadEditorResponse) inputStream.readObject();
+            System.out.println(loadEditorResponse.getStatus());
+            System.out.println(loadEditorResponse.getContent());
+
+        } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
     }

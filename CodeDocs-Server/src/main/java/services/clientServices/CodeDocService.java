@@ -77,7 +77,7 @@ public class CodeDocService {
                 if (codeDocDirectory.mkdir()) {
 
                     filePath += "/";
-                    String fileName = "Solution." + createCodedocRequest.getCodeDoc().getLanguageType().getExtension();
+                    String fileName = "Solution" + createCodedocRequest.getCodeDoc().getLanguageType().getExtension();
 
                     BufferedWriter fileWriter = new BufferedWriter(new FileWriter(filePath + fileName));
                     fileWriter.write(createCodedocRequest.getCodeDoc().getFileContent());
