@@ -3,9 +3,13 @@ package services.clientServices;
 import mainClasses.CodeDocsServer;
 import models.CodeDoc;
 import requests.appRequests.CreateCodeDocRequest;
+import requests.appRequests.DeleteCodeDocRequest;
 import requests.appRequests.FetchCodeDocRequest;
+import requests.appRequests.UpdateCodeDocRequest;
 import response.appResponse.CreateCodeDocResponse;
+import response.appResponse.DeleteCodeDocResponse;
 import response.appResponse.FetchCodeDocResponse;
+import response.appResponse.UpdateCodeDocResponse;
 import utilities.CodeDocRequestType;
 import utilities.DatabaseConstants;
 import utilities.LanguageType;
@@ -168,6 +172,92 @@ public class CodeDocService {
         fetchCodeDocResponse.setStatus(Status.FAILED);
         return fetchCodeDocResponse;
     }
+
+
+    public static DeleteCodeDocResponse deleteCodeDoc(DeleteCodeDocRequest deleteCodeDocRequest){
+
+        DeleteCodeDocResponse deleteCodeDocResponse = new DeleteCodeDocResponse();
+        String deleteQuery = "DELETE " +
+                " FROM " + DatabaseConstants.CODEDOC_TABLE_NAME +
+                " where " +
+                DatabaseConstants.CODEDOC_TABLE_COL_CODEDOCID+ " =? AND " +
+                DatabaseConstants.CODEDOC_TABLE_COL_OWNERID + " =?;";
+        try{
+
+            CodeDocsServer.databaseConnection.setAutoCommit(false);
+            try {
+                PreparedStatement preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(deleteQuery);
+                preparedStatement.setString(1, deleteCodeDocRequest.getCodeDocID());
+                preparedStatement.setString(2, deleteCodeDocRequest.getUserID());
+                preparedStatement.executeUpdate();
+                deleteCodeDocResponse.setStatus(Status.SUCCESS);
+
+                Properties properties = new Properties();
+                FileReader fileReader = new FileReader("CodeDocs-Server/src/main/resources/configurations/db.properties");
+                properties.load(fileReader);
+                String filePath = properties.getProperty("FILEPATH");
+
+                filePath += deleteCodeDocRequest.getCodeDocID();
+                System.out.println(filePath+"****");
+
+                File file = new File(filePath);
+                for (File subFile : file.listFiles()) {
+                        subFile.delete();
+                }
+                file.delete();
+                CodeDocsServer.databaseConnection.commit();
+            } catch (SQLException | IOException e) {
+                deleteCodeDocResponse.setStatus(Status.FAILED);
+                CodeDocsServer.databaseConnection.rollback();
+                e.printStackTrace();
+            }
+        }catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return deleteCodeDocResponse;
+    }
+
+    public static UpdateCodeDocResponse updateCodeDoc(UpdateCodeDocRequest updateCodeDocRequest) {
+
+        UpdateCodeDocResponse updateCodeDocResponse = new UpdateCodeDocResponse();
+        String updateQuery = "UPDATE " + DatabaseConstants.CODEDOC_TABLE_NAME+
+                " SET " +DatabaseConstants.CODEDOC_TABLE_COL_TITLE+ " =? ," +
+                DatabaseConstants.CODEDOC_TABLE_COL_DESCRIPTION+ " =? " +
+                " WHERE " +DatabaseConstants.CODEDOC_TABLE_COL_CODEDOCID +
+                " IN ( SELECT " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_CODEDOC_ID +
+                " FROM " + DatabaseConstants.CODEDOC_ACCESS_TABLE_NAME +
+                " WHERE " +
+                DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_CODEDOC_ID + " =? AND " +
+                DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_USER_ID + " =? AND " +
+                " " +DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_HAS_WRITE_PERMISSIONS+ " = 1) ;";
+
+        try{
+
+            CodeDocsServer.databaseConnection.setAutoCommit(false);
+
+            try {
+                PreparedStatement preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(updateQuery);
+                preparedStatement.setString(1, updateCodeDocRequest.getTitle());
+                preparedStatement.setString(2, updateCodeDocRequest.getDescription());
+                preparedStatement.setString(3, updateCodeDocRequest.getCodeDocID());
+                preparedStatement.setString(4, updateCodeDocRequest.getUserID());
+
+                preparedStatement.executeUpdate();
+                updateCodeDocResponse.setStatus(Status.SUCCESS);
+                CodeDocsServer.databaseConnection.commit();
+            } catch (SQLException e) {
+                updateCodeDocResponse.setStatus(Status.FAILED);
+                CodeDocsServer.databaseConnection.rollback();
+                e.printStackTrace();
+            }
+        }catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return updateCodeDocResponse;
+    }
+
 
 
 }

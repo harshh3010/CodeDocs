@@ -59,6 +59,14 @@ public class ClientConnection extends Thread {
                     System.out.println("Client wants to fetch CodeDoc!");
                     outputStream.writeObject(CodeDocService.fetchCodeDoc((FetchCodeDocRequest) request));
                     outputStream.flush();
+                }else if(request.getRequestType() == RequestType.DELETE_CODEDOC_REQUEST) {
+                    System.out.println("Client wants to delete CodeDoc!");
+                    outputStream.writeObject(CodeDocService.deleteCodeDoc((DeleteCodeDocRequest) request));
+                    outputStream.flush();
+                }else if(request.getRequestType() == RequestType.UPDATE_CODEDOC_REQUEST) {
+                    System.out.println("Client wants to update CodeDoc details!");
+                    outputStream.writeObject(CodeDocService.updateCodeDoc((UpdateCodeDocRequest) request));
+                    outputStream.flush();
                 }
 
             } catch (IOException | ClassNotFoundException e) {
