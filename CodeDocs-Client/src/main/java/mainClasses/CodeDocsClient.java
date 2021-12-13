@@ -42,9 +42,9 @@ public class CodeDocsClient extends Application {
             outputStream = new ObjectOutputStream(socket.getOutputStream());
             inputStream = new ObjectInputStream(socket.getInputStream());
 
-            inputStream.close();
-            outputStream.close();
-            socket.close();
+            //inputStream.close();
+            //outputStream.close();
+            //socket.close();
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -59,7 +59,7 @@ public class CodeDocsClient extends Application {
         appStage = stage;
         stage.setResizable(false);
         stage.setTitle("CodeDocs");
-        SceneService.setScene(AppScreen.splashScreen);
+        SceneService.setScene(AppScreen.signupScreen);
         stage.show();
     }
 }

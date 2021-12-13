@@ -10,15 +10,15 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<AnchorPane prefHeight="720.0" prefWidth="1280.0" styleClass="background" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.LoginScreenController">
+<AnchorPane prefHeight="720.0" prefWidth="1280.0" styleClass="background" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.LoginScreenController">
       <AnchorPane prefHeight="720.0" prefWidth="1280.0" styleClass="darkOverlay">
       <Pane layoutX="709.0" layoutY="51.0" prefHeight="618.0" prefWidth="514.0">
          <children>
-            <Text layoutX="220.0" layoutY="99.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Sign In" />
             <Label layoutX="209.0" layoutY="77.0" styleClass="headingLabel2" text="Sign In" />
-            <TextField layoutX="82.0" layoutY="214.0" prefHeight="30.0" prefWidth="364.0" promptText="Enter email" styleClass="textField" />
-            <PasswordField layoutX="83.0" layoutY="305.0" prefHeight="25.0" prefWidth="363.0" promptText="Enter password" styleClass="textField" />
-            <Button layoutX="84.0" layoutY="401.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="364.0" text="Sign In" />
+            <TextField fx:id="emailTF" layoutX="82.0" layoutY="214.0" prefHeight="30.0" prefWidth="364.0" promptText="Enter email" styleClass="textField" />
+            <PasswordField fx:id="passwordTF" layoutX="83.0" layoutY="305.0" prefHeight="25.0" prefWidth="363.0" promptText="Enter password" styleClass="textField" />
+            <Button layoutX="180.0" layoutY="460.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="154.0" styleClass="button3" text="Forgot password" />
+            <Button layoutX="83.0" layoutY="401.0" mnemonicParsing="false" onAction="#onSignInClicked" prefHeight="25.0" prefWidth="363.0" styleClass="button2" text="Sign In" />
          </children>
          <styleClass>
             <String fx:value="redOverlay" />
@@ -31,6 +31,6 @@
               </font>
           </Text>
       <Label layoutX="143.0" layoutY="149.0" styleClass="headingLabel1" text="CodeDocs" />
-      <Button layoutX="142.0" layoutY="481.0" mnemonicParsing="false" prefHeight="26.0" prefWidth="154.0" text="Sign Up" />
+      <Button layoutX="142.0" layoutY="481.0" mnemonicParsing="false" onAction="#onSignupClicked" prefHeight="26.0" prefWidth="154.0" styleClass="button1" text="Sign Up" />
       </AnchorPane>
   </AnchorPane>
