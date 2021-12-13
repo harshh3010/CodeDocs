@@ -31,9 +31,7 @@ public class LoginScreenController {
         try {
             LoginStatus status = AuthenticationService.loginUser(email, password);
             if(status == LoginStatus.SUCCESS) {
-                // TODO: Move to home
-                SceneService.setScene(AppScreen.splashScreen);
-
+                SceneService.setScene(AppScreen.mainScreen);
                 System.out.println("Login success!");
             } else if(status == LoginStatus.WRONG_CREDENTIALS) {
                 // TODO: Display error

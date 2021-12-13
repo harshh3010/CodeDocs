@@ -4,6 +4,7 @@ import mainClasses.CodeDocsClient;
 import models.User;
 import requests.appRequests.GetMeRequest;
 import response.appResponse.GetMeResponse;
+import utilities.AppScreen;
 import utilities.Status;
 import utilities.UserApi;
 
@@ -30,5 +31,10 @@ public class UserService {
         }
 
         return response;
+    }
+
+    public static void logoutUser() throws IOException {
+        StorageService.storeJWT("");
+        SceneService.setScene(AppScreen.loginScreen);
     }
 }

@@ -35,9 +35,7 @@ public class SplashScreenController {
                             } else {
                                 GetMeResponse response = UserService.loadMyData(token);
                                 if (response.getStatus() == Status.SUCCESS) {
-                                    // TODO: Navigate to home
-                                    System.out.println("Navigating to home...");
-//                                    SceneService.setScene(AppScreen.mainScreen);
+                                    SceneService.setScene(AppScreen.mainScreen);
                                 } else {
                                     SceneService.setScene(AppScreen.loginScreen);
                                 }

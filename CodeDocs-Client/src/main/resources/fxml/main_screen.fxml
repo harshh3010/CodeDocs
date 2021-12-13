@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.JFXListView?>
+<?import com.jfoenix.controls.JFXTabPane?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Text?>
+
+<AnchorPane styleClass="background" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.MainScreenController">
+    <children>
+        <AnchorPane prefHeight="720.0" prefWidth="1280.0" styleClass="darkOverlay">
+            <AnchorPane prefHeight="720.0" prefWidth="1280.0" styleClass="darkOverlay">
+            <children>
+               <JFXTabPane layoutX="302.0" layoutY="7.0" prefHeight="710.0" prefWidth="972.0">
+                  <tabs>
+                      <Tab text="My Library">
+                          <content>
+                            <AnchorPane prefHeight="668.0" prefWidth="941.0">
+                              <children>
+                                 <JFXListView fx:id="codeDocsListView" prefHeight="668.0" prefWidth="974.0" />
+                              </children></AnchorPane>
+                          </content>
+                      </Tab>
+                      <Tab text="Personal CodeDocs">
+                          <content>
+
+                          </content>
+                        <content>
+                           <AnchorPane prefHeight="200.0" prefWidth="200.0" />
+                        </content>
+                      </Tab>
+                     <Tab text="Notifications">
+                       <content>
+                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+                       </content>
+                     </Tab>
+                  </tabs>
+               </JFXTabPane>
+               <Text fx:id="firstNameLabel" fill="WHITE" layoutX="20.0" layoutY="60.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="headingLabel2" text="First Name" wrappingWidth="274.93668365478516" />
+               <Text fx:id="emailLabel" fill="WHITE" layoutX="20.0" layoutY="86.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="paragraph" text="username@example.com" wrappingWidth="263.20336532592773" />
+               <Button layoutX="21.0" layoutY="654.0" mnemonicParsing="false" onAction="#onClickLogout" prefHeight="38.0" prefWidth="221.0" styleClass="button1" text="Logout" />
+            </children></AnchorPane>
+        </AnchorPane>
+    </children>
+</AnchorPane>
