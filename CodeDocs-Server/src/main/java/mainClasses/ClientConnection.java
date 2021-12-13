@@ -1,8 +1,10 @@
 package mainClasses;
 
 import requests.appRequests.*;
+import requests.editorRequests.LoadEditorRequest;
 import services.clientServices.AuthenticationService;
 import services.clientServices.CodeDocService;
+import services.clientServices.EditorService;
 import services.clientServices.UserService;
 import utilities.RequestType;
 
@@ -55,9 +57,13 @@ public class ClientConnection extends Thread {
                     System.out.println("Client wants to create a CodeDoc!");
                     outputStream.writeObject(CodeDocService.createCodeDoc((CreateCodeDocRequest) request));
                     outputStream.flush();
-                }else if(request.getRequestType() == RequestType.FETCH_CODEDOC_REQUEST) {
+                } else if (request.getRequestType() == RequestType.FETCH_CODEDOC_REQUEST) {
                     System.out.println("Client wants to fetch CodeDoc!");
                     outputStream.writeObject(CodeDocService.fetchCodeDoc((FetchCodeDocRequest) request));
+                    outputStream.flush();
+                } else if (request.getRequestType() == RequestType.LOAD_EDITOR_REQUEST) {
+                    System.out.println("Client wants to open editor!");
+                    outputStream.writeObject(EditorService.loadEditor((LoadEditorRequest) request));
                     outputStream.flush();
                 }
 
