@@ -2,10 +2,8 @@ package mainClasses;
 
 import requests.appRequests.*;
 import requests.editorRequests.LoadEditorRequest;
-import services.clientServices.AuthenticationService;
-import services.clientServices.CodeDocService;
-import services.clientServices.EditorService;
-import services.clientServices.UserService;
+import response.appResponse.FetchInviteResponse;
+import services.clientServices.*;
 import utilities.RequestType;
 
 import java.io.IOException;
@@ -71,6 +69,26 @@ public class ClientConnection extends Thread {
                 } else if (request.getRequestType() == RequestType.LOAD_EDITOR_REQUEST) {
                     System.out.println("Client wants to open editor!");
                     outputStream.writeObject(EditorService.loadEditor((LoadEditorRequest) request));
+                    outputStream.flush();
+                }else if (request.getRequestType() == RequestType.INVITE_COLLABORATOR_REQUEST) {
+                    System.out.println("Client wants to invite a collaborator!");
+                    outputStream.writeObject(CollaborationService.inviteCollaborator((InviteCollaboratorRequest) request));
+                    outputStream.flush();
+                }else if (request.getRequestType() == RequestType.ACCEPT_INVITE_REQUEST) {
+                    System.out.println("Client wants to accept invite !");
+                    outputStream.writeObject(CollaborationService.acceptInvite((AcceptInviteRequest) request));
+                    outputStream.flush();
+                }else if (request.getRequestType() == RequestType.REJECT_INVITE_REQUEST) {
+                    System.out.println("Client wants to reject invite !");
+                    outputStream.writeObject(CollaborationService.rejectInvite((RejectInviteRequest) request));
+                    outputStream.flush();
+                }else if (request.getRequestType() == RequestType.FETCH_INVITE_REQUEST) {
+                    System.out.println("Client wants to fetch his/her invite !");
+                    outputStream.writeObject(CollaborationService.fetchInvites( (FetchInviteRequest) request));
+                    outputStream.flush();
+                }else if (request.getRequestType() == RequestType.RUN_CODEDOC_REQUEST) {
+                    System.out.println("Client wants to run codeDoc !");
+                    outputStream.writeObject(CompileService.runCodeDoc( (RunCodeDocRequest) request));
                     outputStream.flush();
                 }
 

@@ -41,7 +41,7 @@ public class CodeDocService {
         String accessQuery = "INSERT INTO " + DatabaseConstants.CODEDOC_ACCESS_TABLE_NAME
                 + "(" + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_CODEDOC_ID
                 + "," + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_USER_ID
-                + "," + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_IS_OWNER
+                + "," + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_ACCESS_RIGHT
                 + "," + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_HAS_WRITE_PERMISSIONS
                 + ") values(?,?,?,?);";
 
@@ -62,7 +62,7 @@ public class CodeDocService {
                 preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(accessQuery);
                 preparedStatement.setString(1, codeDocID);
                 preparedStatement.setString(2, createCodedocRequest.getCodeDoc().getOwnerID());
-                preparedStatement.setInt(3, 1);
+                preparedStatement.setString(3, "OWNER");
                 preparedStatement.setInt(4, 1);
                 preparedStatement.executeUpdate();
 
@@ -124,7 +124,9 @@ public class CodeDocService {
             condition = " " + DatabaseConstants.CODEDOC_TABLE_COL_CODEDOCID +
                     " IN ( SELECT " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_CODEDOC_ID +
                     " FROM " + DatabaseConstants.CODEDOC_ACCESS_TABLE_NAME +
-                    " WHERE " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_USER_ID + " = ?) ";
+                    " WHERE " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_USER_ID + " =? " +
+                    //" AND " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_ACCESS_RIGHT+ " !=? " +
+                    ") ";
             qualifier = fetchCodeDocRequest.getUserID();
         }
 
@@ -183,7 +185,6 @@ public class CodeDocService {
                 DatabaseConstants.CODEDOC_TABLE_COL_CODEDOCID+ " =? AND " +
                 DatabaseConstants.CODEDOC_TABLE_COL_OWNERID + " =?;";
         try{
-
             CodeDocsServer.databaseConnection.setAutoCommit(false);
             try {
                 PreparedStatement preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(deleteQuery);
@@ -233,9 +234,7 @@ public class CodeDocService {
                 " " +DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_HAS_WRITE_PERMISSIONS+ " = 1) ;";
 
         try{
-
             CodeDocsServer.databaseConnection.setAutoCommit(false);
-
             try {
                 PreparedStatement preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(updateQuery);
                 preparedStatement.setString(1, updateCodeDocRequest.getTitle());
