@@ -31,7 +31,7 @@ public class LoginScreenController {
         try {
             LoginStatus status = AuthenticationService.loginUser(email, password);
             if(status == LoginStatus.SUCCESS) {
-                SceneService.setScene(AppScreen.splashScreen);
+                SceneService.setScene(AppScreen.mainScreen);
                 System.out.println("Login success!");
             } else if(status == LoginStatus.WRONG_CREDENTIALS) {
                 // TODO: Display error
@@ -50,10 +50,8 @@ public class LoginScreenController {
     }
     @FXML
     public void onSignInClicked(ActionEvent actionEvent) {
-
         getData();
         loginUser();
-
     }
 
     public void onSignupClicked(ActionEvent actionEvent) {

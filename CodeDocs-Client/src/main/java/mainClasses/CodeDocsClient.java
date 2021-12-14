@@ -69,7 +69,7 @@ public class CodeDocsClient extends Application {
         appStage = stage;
         stage.setResizable(false);
         stage.setTitle("CodeDocs");
-        SceneService.setScene(AppScreen.signupScreen);
+        SceneService.setScene(AppScreen.splashScreen);
         stage.show();
     }
 }

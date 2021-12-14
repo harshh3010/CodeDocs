@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListCell?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Text?>
+
+<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="150.0" prefWidth="950.0" stylesheets="@../css/style.css" type="javafx.scene.control.ListCell" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+   <graphic>
+      <AnchorPane prefHeight="150.0" prefWidth="950.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+         <children>
+            <ImageView fx:id="imageView" fitHeight="100.0" fitWidth="100.0" layoutX="32.0" layoutY="25.0" pickOnBounds="true">
+               <image>
+                  <Image url="@../images/JAVA.png" />
+               </image>
+            </ImageView>
+            <Label fx:id="titleLabel" layoutX="170.0" layoutY="16.0" prefHeight="35.0" prefWidth="388.0" styleClass="headingLabel3" text="CodeDoc Title" />
+            <Text fx:id="descText" fill="WHITE" layoutX="170.0" layoutY="64.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="paragraph" text="This is a very short description of the code doc file created by the user." wrappingWidth="558.1367340087891" />
+            <Label fx:id="dateLabel" alignment="CENTER_RIGHT" layoutX="567.0" layoutY="12.0" prefHeight="26.0" prefWidth="368.0" styleClass="paragraph" text="01/01/2021" textAlignment="RIGHT" />
+            <Button fx:id="deleteButton" layoutX="862.0" layoutY="111.0" mnemonicParsing="false" styleClass="button3" text="Delete" />
+            <Button fx:id="updateButton" layoutX="788.0" layoutY="111.0" mnemonicParsing="false" styleClass="button3" text="Update" />
+         </children>
+      </AnchorPane>
+   </graphic>
+</fx:root>
