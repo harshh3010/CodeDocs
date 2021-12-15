@@ -4,17 +4,18 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Button;
-import javafx.scene.control.ContentDisplay;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
+import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
 import models.CodeDoc;
+import response.appResponse.DeleteCodeDocResponse;
+import response.appResponse.UpdateCodeDocResponse;
+import services.CodeDocsService;
+import services.clientServices.CodeDocService;
+import utilities.Status;
 
 import java.io.*;
-import java.util.Objects;
 
 public class CodeDocCardController extends ListCell<CodeDoc> {
 
@@ -62,7 +63,7 @@ public class CodeDocCardController extends ListCell<CodeDoc> {
             // TODO: change path
             InputStream stream = null;
             try {
-                stream = new FileInputStream("D:\\Softablitz\\CodeDocs\\CodeDocs-Client\\src\\main\\resources\\images\\" + codeDoc.getLanguageType().getLanguage() + ".png");
+                stream = new FileInputStream("F:\\third_year_Softa\\CodeDocs\\CodeDocs-Client\\src\\main\\resources\\images\\" + codeDoc.getLanguageType().getLanguage() + ".png");
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
@@ -75,14 +76,50 @@ public class CodeDocCardController extends ListCell<CodeDoc> {
             updateButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent actionEvent) {
-                    System.out.println("Update " + codeDoc.getCodeDocId());
+                    try {
+                        UpdateCodeDocResponse response = CodeDocsService.updateCodeDoc(codeDoc.getCodeDocId());
+                        if(response == null){
+                            return;
+                        }
+                        Alert alert;
+                        if(response.getStatus() == Status.SUCCESS) {
+                            alert = new Alert(Alert.AlertType.INFORMATION);
+                            alert.setContentText("CodeDoc updated successfully!");
+                        } else {
+                            alert = new Alert(Alert.AlertType.ERROR);
+                            alert.setContentText("Failed to update CodeDoc!");
+                        }
+                        alert.show();
+                    } catch (IOException | ClassNotFoundException e) {
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setContentText("Failed to update CodeDoc!");
+                        alert.show();
+                    }
                 }
             });
 
             deleteButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent actionEvent) {
-                    System.out.println("Delete " + codeDoc.getCodeDocId());
+                    try {
+                        DeleteCodeDocResponse response = CodeDocsService.deleteCodeDoc(codeDoc.getCodeDocId());
+                        if(response == null){
+                            return;
+                        }
+                        Alert alert;
+                        if (response.getStatus() == Status.SUCCESS) {
+                            alert = new Alert(Alert.AlertType.INFORMATION);
+                            alert.setContentText("CodeDoc deleted successfully!");
+                        } else {
+                            alert = new Alert(Alert.AlertType.ERROR);
+                            alert.setContentText("Failed to delete CodeDoc!");
+                        }
+                        alert.show();
+                    } catch (IOException | ClassNotFoundException e) {
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setContentText("Failed to delete CodeDoc!");
+                        alert.show();
+                    }
                 }
             });
 

@@ -1,7 +1,6 @@
 package controllers;
 
 import com.jfoenix.controls.JFXListView;
-import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -12,15 +11,12 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 import models.CodeDoc;
+import javafx.scene.control.Alert;
 import services.UserService;
-import utilities.LanguageType;
 import utilities.UserApi;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 import java.util.ResourceBundle;
 
 public class MainScreenController implements Initializable {
@@ -31,15 +27,12 @@ public class MainScreenController implements Initializable {
     @FXML
     public JFXListView<CodeDoc> codeDocsListView;
 
+    private final Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         firstNameLabel.setText(UserApi.getInstance().getFirstName());
         emailLabel.setText(UserApi.getInstance().getEmail());
-
-        // TODO: Load codedocs from server
-        List<CodeDoc> codeDocs = new ArrayList<>();
-        codeDocsListView.setItems(FXCollections.observableArrayList(codeDocs));
-        codeDocsListView.setCellFactory(new CodeDocCardFactory());
     }
     public void onClickCreate(ActionEvent actionEvent){
         try{
@@ -58,8 +51,8 @@ public class MainScreenController implements Initializable {
         try {
             UserService.logoutUser();
         } catch (IOException e) {
-            System.out.println("Unable to logout!");
-            e.printStackTrace();
+            errorAlert.setContentText("An error occurred! Please try again later.");
+            errorAlert.show();
         }
     }
 }
