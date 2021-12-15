@@ -1,18 +1,19 @@
 package services;
 
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import mainClasses.CodeDocsClient;
-import models.User;
+import requests.appRequests.DeleteCodeDocRequest;
 import requests.appRequests.FetchCodeDocRequest;
-import requests.appRequests.LoginRequest;
+import response.appResponse.DeleteCodeDocResponse;
 import response.appResponse.FetchCodeDocResponse;
-import response.appResponse.LoginResponse;
 import utilities.CodeDocRequestType;
-import utilities.LoginStatus;
 import utilities.UserApi;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Optional;
 
 public class CodeDocsService {
 
@@ -32,6 +33,25 @@ public class CodeDocsService {
         outputStream.flush();
 
         return (FetchCodeDocResponse) inputStream.readObject();
+    }
+
+    public static DeleteCodeDocResponse deleteCodeDoc(String codeDocId) throws IOException, ClassNotFoundException {
+
+        Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
+        confirmationAlert.setContentText("Are you sure?");
+        Optional<ButtonType> pressedButton = confirmationAlert.showAndWait();
+
+        if (pressedButton.get() == ButtonType.OK) {
+            DeleteCodeDocRequest request = new DeleteCodeDocRequest();
+            request.setCodeDocID(codeDocId);
+            request.setUserID(UserApi.getInstance().getId());
+            outputStream.writeObject(request);
+            outputStream.flush();
+
+            return (DeleteCodeDocResponse) inputStream.readObject();
+        }
+
+        return null;
     }
 
 }
