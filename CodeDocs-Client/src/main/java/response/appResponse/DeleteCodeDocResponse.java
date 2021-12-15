@@ -21,6 +21,7 @@ public class DeleteCodeDocResponse extends AppResponse implements Serializable {
 
     @Override
     public ResponseType getResponseType() {
-        return ResponseType.UPDATE_CODEDOC_RESPONSE;
+
+        return ResponseType.DELETE_CODEDOC_RESPONSE;
     }
 }

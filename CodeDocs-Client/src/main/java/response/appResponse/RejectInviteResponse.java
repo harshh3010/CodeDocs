@@ -5,10 +5,11 @@ import utilities.Status;
 
 import java.io.Serializable;
 
-public class DeleteCodeDocResponse extends AppResponse implements Serializable {
+public class RejectInviteResponse extends AppResponse implements Serializable {
 
     private Status status;
-    public DeleteCodeDocResponse() {
+
+    public RejectInviteResponse() {
     }
 
     public Status getStatus() {
@@ -19,8 +20,9 @@ public class DeleteCodeDocResponse extends AppResponse implements Serializable {
         this.status = status;
     }
 
+
     @Override
     public ResponseType getResponseType() {
-        return ResponseType.DELETE_CODEDOC_RESPONSE;
+        return ResponseType.REJECT_INVITE_RESPONSE;
     }
 }

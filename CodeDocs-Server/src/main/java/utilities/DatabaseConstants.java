@@ -31,7 +31,7 @@ public class DatabaseConstants {
     public static final String CODEDOC_ACCESS_TABLE_NAME = "codedoc_accessor";
     public static final String CODEDOC_ACCESS_TABLE_COL_CODEDOC_ID = "codedoc_id";
     public static final String CODEDOC_ACCESS_TABLE_COL_USER_ID = "user_id";
-    public static final String CODEDOC_ACCESS_TABLE_COL_IS_OWNER = "is_owner";
+    public static final String CODEDOC_ACCESS_TABLE_COL_ACCESS_RIGHT = "access_right";
     public static final String CODEDOC_ACCESS_TABLE_COL_HAS_WRITE_PERMISSIONS = "has_write_permissions";
     public static final String CODEDOC_ACCESS_TABLE_COL_IS_ACTIVE = "is_active";
 

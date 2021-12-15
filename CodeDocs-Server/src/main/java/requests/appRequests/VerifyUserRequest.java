@@ -6,23 +6,23 @@ import java.io.Serializable;
 
 public class VerifyUserRequest extends AppRequest implements Serializable {
 
-    private String userID;
+    private String userEmail;
     private String verificationToken;
 
-    public VerifyUserRequest(String userID, String verificationToken) {
-        this.userID = userID;
+    public VerifyUserRequest(String userEmail, String verificationToken) {
+        this.userEmail = userEmail;
         this.verificationToken = verificationToken;
     }
 
     public VerifyUserRequest() {
     }
 
-    public String getUserID() {
-        return userID;
+    public String getUserEmail() {
+        return userEmail;
     }
 
-    public void setUserID(String userID) {
-        this.userID = userID;
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
     }
 
     public String getVerificationToken() {

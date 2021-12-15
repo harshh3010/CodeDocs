@@ -5,10 +5,12 @@ import models.User;
 
 import requests.appRequests.LoginRequest;
 import requests.appRequests.SignupRequest;
+import requests.appRequests.VerifyUserRequest;
 import response.appResponse.LoginResponse;
 import response.appResponse.SignupResponse;
 import utilities.LoginStatus;
 import utilities.SignupStatus;
+import utilities.Status;
 import utilities.UserApi;
 
 import java.io.IOException;
@@ -47,6 +49,15 @@ public class AuthenticationService {
         SignupResponse response = (SignupResponse) inputStream.readObject();
 
         return response.getSignupStatus();
+    }
+
+    public static Status verifyUser(String otp,String userEmail) throws IOException, ClassNotFoundException {
+
+        outputStream.writeObject(new VerifyUserRequest(userEmail,otp));
+        outputStream.flush();
+        Status status = (Status) inputStream.readObject();
+        return status;
+
     }
 
 }

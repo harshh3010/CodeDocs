@@ -154,6 +154,12 @@ public class AuthenticationService {
 
     public static Status verifyUser(VerifyUserRequest verifyUserRequest) {
         //TODO: add trigger for deleting
+
+        String fetchEmailQuery = "SELECT " +
+                DatabaseConstants.USER_TABLE_COL_USERID +
+                " FROM " + DatabaseConstants.USER_TABLE_NAME +
+                " WHERE " +DatabaseConstants.USER_TABLE_COL_EMAIL+ "=?";
+
         String selectQuery = "Select * from " + DatabaseConstants.USER_VERIFICATION_TABLE_NAME +
                 " where " + DatabaseConstants.USER_VERIFICATION_TABLE_COL_USER_ID +
                 " = ?  AND " + DatabaseConstants.USER_VERIFICATION_TABLE_COL_VERIFICATION_TOKEN +
@@ -168,17 +174,24 @@ public class AuthenticationService {
         try {
             CodeDocsServer.databaseConnection.setAutoCommit(false);
             try {
-                PreparedStatement preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(selectQuery);
-                preparedStatement.setString(1, verifyUserRequest.getUserID());
-                preparedStatement.setString(2, verifyUserRequest.getVerificationToken());
+                PreparedStatement preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(fetchEmailQuery);
+                preparedStatement.setString(1, verifyUserRequest.getUserEmail());
                 ResultSet resultSet = preparedStatement.executeQuery();
 
-                if (resultSet.next()) {
-                    preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(updateQuery);
-                    preparedStatement.setString(1, verifyUserRequest.getUserID());
-                    preparedStatement.executeUpdate();
-                    CodeDocsServer.databaseConnection.commit();
-                    return Status.SUCCESS;
+                if(resultSet.next()){
+
+                    preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(selectQuery);
+                    preparedStatement.setString(1, resultSet.getString(1));
+                    preparedStatement.setString(2, verifyUserRequest.getVerificationToken());
+                    resultSet = preparedStatement.executeQuery();
+
+                    if (resultSet.next()) {
+                        preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(updateQuery);
+                        preparedStatement.setString(1, verifyUserRequest.getUserEmail());
+                        preparedStatement.executeUpdate();
+                        CodeDocsServer.databaseConnection.commit();
+                        return Status.SUCCESS;
+                    }
                 }
             } catch (SQLException e) {
                 e.printStackTrace();

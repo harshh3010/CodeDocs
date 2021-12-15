@@ -13,11 +13,20 @@ public class CodeDoc implements Serializable {
     private String fileName;
     private String fileContent;
     private String ownerID;
+    private String ownerName;
     private Date createdAt;
     private Date updatedAt;
     private LanguageType languageType;
 
     public CodeDoc() {
+    }
+
+    public String getOwnerName() {
+        return ownerName;
+    }
+
+    public void setOwnerName(String ownerName) {
+        this.ownerName = ownerName;
     }
 
     public String getCodeDocId() {
