@@ -10,6 +10,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.text.Text;
 import models.CodeDoc;
 import response.appResponse.DeleteCodeDocResponse;
+import response.appResponse.UpdateCodeDocResponse;
 import services.CodeDocsService;
 import services.clientServices.CodeDocService;
 import utilities.Status;
@@ -75,7 +76,25 @@ public class CodeDocCardController extends ListCell<CodeDoc> {
             updateButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent actionEvent) {
-                    System.out.println("Update " + codeDoc.getCodeDocId());
+                    try {
+                        UpdateCodeDocResponse response = CodeDocsService.updateCodeDoc(codeDoc.getCodeDocId());
+                        if(response == null){
+                            return;
+                        }
+                        Alert alert;
+                        if(response.getStatus() == Status.SUCCESS) {
+                            alert = new Alert(Alert.AlertType.INFORMATION);
+                            alert.setContentText("CodeDoc updated successfully!");
+                        } else {
+                            alert = new Alert(Alert.AlertType.ERROR);
+                            alert.setContentText("Failed to update CodeDoc!");
+                        }
+                        alert.show();
+                    } catch (IOException | ClassNotFoundException e) {
+                        Alert alert = new Alert(Alert.AlertType.ERROR);
+                        alert.setContentText("Failed to update CodeDoc!");
+                        alert.show();
+                    }
                 }
             });
 
