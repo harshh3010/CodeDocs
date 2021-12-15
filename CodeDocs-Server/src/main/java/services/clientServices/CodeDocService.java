@@ -241,7 +241,6 @@ public class CodeDocService {
                 preparedStatement.setString(2, updateCodeDocRequest.getDescription());
                 preparedStatement.setString(3, updateCodeDocRequest.getCodeDocID());
                 preparedStatement.setString(4, updateCodeDocRequest.getUserID());
-
                 preparedStatement.executeUpdate();
                 updateCodeDocResponse.setStatus(Status.SUCCESS);
                 CodeDocsServer.databaseConnection.commit();

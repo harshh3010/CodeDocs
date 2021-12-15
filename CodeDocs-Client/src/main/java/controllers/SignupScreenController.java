@@ -2,6 +2,7 @@ package controllers;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
@@ -10,6 +11,7 @@ import services.AuthenticationService;
 import services.SceneService;
 import utilities.AppScreen;
 import utilities.SignupStatus;
+import utilities.Status;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -27,7 +29,7 @@ public class SignupScreenController {
     private String lastName;
     private String email;
     private String password;
-
+    Alert a = new Alert(Alert.AlertType.NONE);
     private final Pattern pattern = Pattern.compile("^(.+)@(.+)$");
 
     private void getData() {
@@ -47,16 +49,24 @@ public class SignupScreenController {
 
     private boolean validateData() {
         if (!(2 <= firstName.length() && firstName.length() <= 20)) {
-            // TODO: Display error
+            a.setAlertType(Alert.AlertType.WARNING);
+            a.setContentText("Enter your first name");
+            a.show();
             return false;
         } else if (!(8 <= password.length() && password.length() <= 40)) {
-            // TODO: Display error
+            a.setAlertType(Alert.AlertType.WARNING);
+            a.setContentText("Enter a strong password");
+            a.show();
             return false;
         } else if (!(2 <= lastName.length() && lastName.length() <= 20)) {
-            // TODO: Display error
+            a.setAlertType(Alert.AlertType.WARNING);
+            a.setContentText("Enter your last name");
+            a.show();
             return false;
         } else if (!pattern.matcher(email).matches()) {
-            // TODO: Display error
+            a.setAlertType(Alert.AlertType.WARNING);
+            a.setContentText("Enter valid email");
+            a.show();
             return false;
         }
         return true;
@@ -71,8 +81,6 @@ public class SignupScreenController {
                     lastName
             ));
             if (signupStatus == SignupStatus.SUCCESS) {
-                // TODO: Display success
-                // TODO: Display dialog
 
                 System.out.println("Signup successful!");
 
@@ -83,16 +91,33 @@ public class SignupScreenController {
 
                 result.ifPresent(verificationCode -> {
                     // TODO: Send verification request
+                    try {
+                        Status status = AuthenticationService.verifyUser(verificationCode,email);
+                        if(status == Status.SUCCESS){
+                            SceneService.setScene(AppScreen.loginScreen);
+                            System.out.println("Account verified");
+                        }else{
+                            a.setAlertType(Alert.AlertType.ERROR);
+                            a.setContentText("Please enter correct verification code");
+                            a.show();
+                        }
+                    } catch (IOException | ClassNotFoundException e) {
+                        e.printStackTrace();
+                    }
                     System.out.println(verificationCode);
                 });
 
 
             } else {
-                // TODO: Display error
+                a.setAlertType(Alert.AlertType.ERROR);
+                a.setContentText("Cannot create at the moment. Try again later");
+                a.show();
                 System.out.println("Signup failed!");
             }
         } catch (IOException | ClassNotFoundException e) {
-            // TODO: Display error
+            a.setAlertType(Alert.AlertType.ERROR);
+            a.setContentText("Cannot create at the moment. Try again later");
+            a.show();
             e.printStackTrace();
         }
     }

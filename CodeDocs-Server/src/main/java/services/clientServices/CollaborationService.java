@@ -21,7 +21,7 @@ import java.util.List;
 
 public class CollaborationService {
 
-    //ASK :whether to add rollback or not
+
     public static InviteCollaboratorResponse inviteCollaborator(InviteCollaboratorRequest inviteCollaboratorRequest){
 
         InviteCollaboratorResponse inviteCollaboratorResponse = new InviteCollaboratorResponse();
@@ -30,7 +30,7 @@ public class CollaborationService {
             inviteCollaboratorResponse.setStatus(Status.FAILED);
             return inviteCollaboratorResponse;
         }
-        //confirm if this query is needed or not
+       //TODO: check performance
         String checkAccessRightQuery = "SELECT " +DatabaseConstants.CODEDOC_TABLE_COL_CODEDOCID +
                 " FROM " + DatabaseConstants.CODEDOC_TABLE_NAME +
                 " WHERE " + DatabaseConstants.CODEDOC_TABLE_COL_OWNERID + " =? " +
@@ -43,33 +43,38 @@ public class CollaborationService {
                 + "," + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_HAS_WRITE_PERMISSIONS
                 + ") values(?,?,?,?);";
         try {
-            PreparedStatement preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(checkAccessRightQuery);
-            preparedStatement.setString(1, inviteCollaboratorRequest.getSenderID());
-            preparedStatement.setString(2, inviteCollaboratorRequest.getCodeDocID());
-            ResultSet resultSet = preparedStatement.executeQuery();
+            CodeDocsServer.databaseConnection.setAutoCommit(false);
+            try {
+                PreparedStatement preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(checkAccessRightQuery);
+                preparedStatement.setString(1, inviteCollaboratorRequest.getSenderID());
+                preparedStatement.setString(2, inviteCollaboratorRequest.getCodeDocID());
+                ResultSet resultSet = preparedStatement.executeQuery();
 
-            if (resultSet.next()) {
+                if (resultSet.next()) {
 
-                preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(insertInviteQuery);
-                preparedStatement.setString(1, inviteCollaboratorRequest.getCodeDocID());
-                preparedStatement.setString(2, inviteCollaboratorRequest.getReceiverID());
-                preparedStatement.setString(3, "PENDING");
-                preparedStatement.setInt(4, inviteCollaboratorRequest.getWritePermissions());
-                preparedStatement.executeUpdate();
-               // CodeDocsServer.databaseConnection.commit();
-                inviteCollaboratorResponse.setStatus(Status.SUCCESS);
+                    preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(insertInviteQuery);
+                    preparedStatement.setString(1, inviteCollaboratorRequest.getCodeDocID());
+                    preparedStatement.setString(2, inviteCollaboratorRequest.getReceiverID());
+                    preparedStatement.setString(3, "PENDING");
+                    preparedStatement.setInt(4, inviteCollaboratorRequest.getWritePermissions());
+                    preparedStatement.executeUpdate();
+                    CodeDocsServer.databaseConnection.commit();
+                    inviteCollaboratorResponse.setStatus(Status.SUCCESS);
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                CodeDocsServer.databaseConnection.rollback();
+                inviteCollaboratorResponse.setStatus(Status.FAILED);
             }
 
-        } catch (SQLException e) {
-            e.printStackTrace();
-            inviteCollaboratorResponse.setStatus(Status.FAILED);
+        }catch (SQLException throwables) {
+            throwables.printStackTrace();
         }
         return inviteCollaboratorResponse;
     }
 
 
-    //ask rollback krna h ya nhi ????.....already acceepted h to dikhega ni invite... but agr tm isko kisi trh call
-    //agr kro so its returning success???????
+
     public static AcceptInviteResponse acceptInvite(AcceptInviteRequest acceptInviteRequest){
         AcceptInviteResponse acceptInviteResponse = new AcceptInviteResponse();
 
@@ -79,17 +84,22 @@ public class CollaborationService {
                 " AND " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_USER_ID+ " =?";
 
         try {
-            PreparedStatement preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(acceptInviteQuery);
-            preparedStatement.setString(1, "COLLABORATOR");
-            preparedStatement.setString(2, acceptInviteRequest.getCodeDocID());
-            preparedStatement.setString(3, acceptInviteRequest.getReceiverID());
-
-            preparedStatement.executeUpdate();
-            acceptInviteResponse.setStatus(Status.SUCCESS);
-            //CodeDocsServer.databaseConnection.commit();
-        } catch (SQLException e) {
-            acceptInviteResponse.setStatus(Status.FAILED);
-            e.printStackTrace();
+            CodeDocsServer.databaseConnection.setAutoCommit(false);
+            try {
+                PreparedStatement preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(acceptInviteQuery);
+                preparedStatement.setString(1, "COLLABORATOR");
+                preparedStatement.setString(2, acceptInviteRequest.getCodeDocID());
+                preparedStatement.setString(3, acceptInviteRequest.getReceiverID());
+                preparedStatement.executeUpdate();
+                CodeDocsServer.databaseConnection.commit();
+                acceptInviteResponse.setStatus(Status.SUCCESS);
+            } catch (SQLException e) {
+                acceptInviteResponse.setStatus(Status.FAILED);
+                CodeDocsServer.databaseConnection.rollback();
+                e.printStackTrace();
+            }
+        }catch (SQLException throwables) {
+            throwables.printStackTrace();
         }
         return acceptInviteResponse;
     }
@@ -104,16 +114,22 @@ public class CollaborationService {
                 " AND " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_ACCESS_RIGHT+ " =?";
 
         try {
-            PreparedStatement preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(rejectInviteQuery);
-            preparedStatement.setString(1, rejectInviteRequest.getCodeDocID());
-            preparedStatement.setString(2, rejectInviteRequest.getReceiverID());
-            preparedStatement.setString(3, "PENDING");
-            preparedStatement.executeUpdate();
-            rejectInviteResponse.setStatus(Status.SUCCESS);
-            //CodeDocsServer.databaseConnection.commit();
-        } catch (SQLException e) {
-            rejectInviteResponse.setStatus(Status.FAILED);
-            e.printStackTrace();
+            CodeDocsServer.databaseConnection.setAutoCommit(false);
+            try {
+                PreparedStatement preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(rejectInviteQuery);
+                preparedStatement.setString(1, rejectInviteRequest.getCodeDocID());
+                preparedStatement.setString(2, rejectInviteRequest.getReceiverID());
+                preparedStatement.setString(3, "PENDING");
+                preparedStatement.executeUpdate();
+                CodeDocsServer.databaseConnection.commit();
+                rejectInviteResponse.setStatus(Status.SUCCESS);
+            } catch (SQLException e) {
+                rejectInviteResponse.setStatus(Status.FAILED);
+                CodeDocsServer.databaseConnection.rollback();
+                e.printStackTrace();
+            }
+        }catch (SQLException throwables) {
+            throwables.printStackTrace();
         }
         return rejectInviteResponse;
     }
@@ -144,6 +160,7 @@ public class CollaborationService {
                 " , " + fetchInviteRequest.getRowcount()
                 + ";";
         List<CodeDoc> inviteList = new ArrayList<>();
+
         try {
             PreparedStatement preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(fetchInvitesQuery);
             preparedStatement.setString(1, fetchInviteRequest.getUserID());
@@ -166,7 +183,6 @@ public class CollaborationService {
             fetchInviteResponse.setStatus(Status.FAILED);
             e.printStackTrace();
         }
-
         return fetchInviteResponse;
     }
 }
