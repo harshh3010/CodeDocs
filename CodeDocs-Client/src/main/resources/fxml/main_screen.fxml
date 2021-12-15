@@ -40,6 +40,8 @@
                <Text fx:id="firstNameLabel" fill="WHITE" layoutX="20.0" layoutY="60.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="headingLabel2" text="First Name" wrappingWidth="274.93668365478516" />
                <Text fx:id="emailLabel" fill="WHITE" layoutX="20.0" layoutY="86.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="paragraph" text="username@example.com" wrappingWidth="263.20336532592773" />
                <Button layoutX="21.0" layoutY="654.0" mnemonicParsing="false" onAction="#onClickLogout" prefHeight="38.0" prefWidth="221.0" styleClass="button1" text="Logout" />
+                <Button layoutX="21.0" layoutY="600.0" mnemonicParsing="false" onAction="#onClickCreate" prefHeight="38.0" prefWidth="221.0" styleClass="button1" text="Create CodeDoc" />
+
             </children></AnchorPane>
         </AnchorPane>
     </children>

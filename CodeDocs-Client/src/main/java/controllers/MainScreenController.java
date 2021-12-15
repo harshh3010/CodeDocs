@@ -3,8 +3,14 @@ package controllers;
 import com.jfoenix.controls.JFXListView;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 import models.CodeDoc;
 import services.UserService;
 import utilities.LanguageType;
@@ -18,8 +24,11 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class MainScreenController implements Initializable {
+    @FXML
     public Text firstNameLabel;
+    @FXML
     public Text emailLabel;
+    @FXML
     public JFXListView<CodeDoc> codeDocsListView;
 
     @Override
@@ -32,7 +41,19 @@ public class MainScreenController implements Initializable {
         codeDocsListView.setItems(FXCollections.observableArrayList(codeDocs));
         codeDocsListView.setCellFactory(new CodeDocCardFactory());
     }
+    public void onClickCreate(ActionEvent actionEvent){
+        try{
+            FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/fxml/create_codedoc.fxml"));
+            Parent root1 = (Parent)fxmlLoader.load();
+            Stage stage = new Stage();
+            stage.setTitle("Create CodeDoc");
+            stage.setScene(new Scene(root1));
+            stage.show();
 
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     public void onClickLogout(ActionEvent actionEvent) {
         try {
             UserService.logoutUser();
