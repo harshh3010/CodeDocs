@@ -16,19 +16,13 @@
                   <tabs>
                       <Tab text="My Library">
                           <content>
-                            <AnchorPane prefHeight="668.0" prefWidth="941.0">
-                              <children>
-                                 <JFXListView fx:id="codeDocsListView" prefHeight="668.0" prefWidth="974.0" />
-                              </children></AnchorPane>
+                              <fx:include fx:id="myLibraryTabPage" source="my_library_tab.fxml"/>
                           </content>
                       </Tab>
                       <Tab text="Personal CodeDocs">
                           <content>
-
+                              <fx:include fx:id="personalCodeDocsTabPage" source="personal_codedocs_tab.fxml"/>
                           </content>
-                        <content>
-                           <AnchorPane prefHeight="200.0" prefWidth="200.0" />
-                        </content>
                       </Tab>
                      <Tab text="Notifications">
                        <content>
