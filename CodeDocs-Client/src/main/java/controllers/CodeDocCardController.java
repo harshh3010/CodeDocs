@@ -11,6 +11,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import models.CodeDoc;
@@ -135,7 +136,10 @@ public class CodeDocCardController extends ListCell<CodeDoc> {
                 public void handle(MouseEvent mouseEvent) {
                     if(mouseEvent.getButton() == MouseButton.PRIMARY && mouseEvent.getClickCount() == 2) {
                         try {
-                            Scene scene = new Scene(FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/fxml/codedoc_editor.fxml"))));
+                            FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource("/fxml/codedoc_editor.fxml")));
+                            Scene scene = new Scene(loader.load());
+                            EditorController editorController = loader.getController();
+                            editorController.setCodeDoc(codeDoc);
                             Stage stage = new Stage();
                             stage.setTitle("CodeDoc Editor - " + codeDoc.getTitle());
                             stage.setScene(scene);
