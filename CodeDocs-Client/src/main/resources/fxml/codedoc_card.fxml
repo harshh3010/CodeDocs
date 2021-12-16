@@ -10,7 +10,7 @@
 
 <fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="150.0" prefWidth="950.0" stylesheets="@../css/style.css" type="javafx.scene.control.ListCell" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
    <graphic>
-      <AnchorPane prefHeight="150.0" prefWidth="950.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
+      <AnchorPane fx:id="cardPane" prefHeight="150.0" prefWidth="950.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1">
          <children>
             <ImageView fx:id="imageView" fitHeight="100.0" fitWidth="100.0" layoutX="32.0" layoutY="25.0" pickOnBounds="true">
                <image>

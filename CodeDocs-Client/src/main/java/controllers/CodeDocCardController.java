@@ -4,21 +4,28 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 import models.CodeDoc;
 import response.appResponse.DeleteCodeDocResponse;
 import response.appResponse.UpdateCodeDocResponse;
 import services.CodeDocsService;
-import services.clientServices.CodeDocService;
 import utilities.Status;
 
 import java.io.*;
+import java.util.Objects;
 
 public class CodeDocCardController extends ListCell<CodeDoc> {
 
+    @FXML
+    private AnchorPane cardPane;
     @FXML
     private Label titleLabel;
     @FXML
@@ -63,7 +70,7 @@ public class CodeDocCardController extends ListCell<CodeDoc> {
             // TODO: change path
             InputStream stream = null;
             try {
-                stream = new FileInputStream("F:\\third_year_Softa\\CodeDocs\\CodeDocs-Client\\src\\main\\resources\\images\\" + codeDoc.getLanguageType().getLanguage() + ".png");
+                stream = new FileInputStream("D:\\Softablitz\\CodeDocs\\CodeDocs-Client\\src\\main\\resources\\images\\" + codeDoc.getLanguageType().getLanguage() + ".png");
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
@@ -119,6 +126,24 @@ public class CodeDocCardController extends ListCell<CodeDoc> {
                         Alert alert = new Alert(Alert.AlertType.ERROR);
                         alert.setContentText("Failed to delete CodeDoc!");
                         alert.show();
+                    }
+                }
+            });
+
+            cardPane.setOnMouseClicked(new EventHandler<MouseEvent>() {
+                @Override
+                public void handle(MouseEvent mouseEvent) {
+                    if(mouseEvent.getButton() == MouseButton.PRIMARY && mouseEvent.getClickCount() == 2) {
+                        try {
+                            Scene scene = new Scene(FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/fxml/codedoc_editor.fxml"))));
+                            Stage stage = new Stage();
+                            stage.setTitle("CodeDoc Editor - " + codeDoc.getTitle());
+                            stage.setScene(scene);
+                            stage.setMaximized(true);
+                            stage.show();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             });

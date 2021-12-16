@@ -101,7 +101,16 @@
             <artifactId>jfoenix</artifactId>
             <version>9.0.10</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.fxmisc.richtext</groupId>
+            <artifactId>richtextfx</artifactId>
+            <version>0.10.7</version>
+        </dependency>
+        <dependency>
+            <groupId>org.fxmisc.flowless</groupId>
+            <artifactId>flowless</artifactId>
+            <version>0.6.7</version>
+        </dependency>
     </dependencies>
 
     <build>
