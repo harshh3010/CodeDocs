@@ -1,12 +1,8 @@
 package models;
 
-import javafx.css.Style;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Paint;
 import org.fxmisc.richtext.StyleClassedTextArea;
-import org.fxmisc.richtext.model.StyleSpan;
-import org.fxmisc.richtext.model.StyleSpans;
-import org.fxmisc.richtext.model.StyleSpansBuilder;
 import utilities.CodeHighlightingTrie;
 import utilities.CodeTokenizer;
 
@@ -49,6 +45,14 @@ public class CodeEditor {
         for(String word : reservedWords) {
             trie.insert(word, "keyword");
         }
+        trie.insert(";", "symbol");
+        trie.insert(":", "symbol");
+        trie.insert("(", "parenthesis");
+        trie.insert(")", "parenthesis");
+        trie.insert("{", "brace");
+        trie.insert("}", "brace");
+        trie.insert("[", "bracket");
+        trie.insert("]", "bracket");
     }
 
     private void inputHandler(KeyEvent keyEvent) {
@@ -57,10 +61,9 @@ public class CodeEditor {
         String currentLineText = textArea.getText(currentLine);
 
         // TODO: Highlight for comments and strings
-        CodeTokenizer tokenizer = new CodeTokenizer(currentLineText);
-        for(CodeTokenizer.Token token : tokenizer.getTokens()) {
-            String styleClass = trie.search(token.getWord());
-            textArea.setStyle(currentLine, token.getStartIndex(), token.getEndIndex(), Collections.singleton(styleClass));
+        CodeTokenizer tokenizer = new CodeTokenizer(currentLineText, trie);
+        for(CodeTokenizer.Token token : tokenizer.getStyles()) {
+            textArea.setStyle(currentLine, token.getStartIndex(), token.getEndIndex(), Collections.singleton(token.getStyle()));
         }
     }
 

@@ -1,2 +1,6 @@
 .keyword { -fx-fill: red; -fx-font-weight: bold;}
-.green { -fx-fill: green; }
+.symbol { -fx-fill: red; -fx-font-weight: bold;}
+.bracket { -fx-fill: blue; -fx-font-weight: bold;}
+.parenthesis { -fx-fill: blue; -fx-font-weight: bold;}
+.brace { -fx-fill: blue; -fx-font-weight: bold;}
+.quotes {-fx-fill: green;}
