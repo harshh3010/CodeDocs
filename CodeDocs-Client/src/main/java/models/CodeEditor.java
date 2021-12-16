@@ -26,12 +26,13 @@ public class CodeEditor {
         textArea.appendText(initialContent);
         textArea.setWrapText(true);
         textArea.setParagraphGraphicFactory(LineNumberFactory.get(textArea));
+        textArea.setContextMenu(new ContextMenu());
 
         // TODO: Do using CSS
         textArea.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/test.css")).toExternalForm());
         textArea.setLineHighlighterFill(Paint.valueOf("#e3e3e3"));
         textArea.setLineHighlighterOn(true);
-        textArea.setContextMenu(new ContextMenu());
+
 
         textArea.setOnKeyTyped(keyEvent -> inputHandler(keyEvent));
 
@@ -76,24 +77,30 @@ public class CodeEditor {
             textArea.setStyle(currentLine, token.getStartIndex(), token.getEndIndex(), Collections.singleton(token.getStyle()));
         }
 
-        ContextMenu contextMenu = textArea.getContextMenu();
-        contextMenu.getItems().clear();
+        String lastWord = "";
+        int idx = textArea.getCaretColumn() - 1;
+        while(idx >= 0 && !(textArea.getText(currentLine, idx, currentLine, idx + 1).trim().isEmpty())){
+            lastWord = textArea.getText(currentLine, idx, currentLine, idx + 1) + lastWord;
+            idx--;
+        }
 
-        String lastWord = tokenizer.getLast();
         ArrayList<String> suggestions = new ArrayList<>();
         if (!lastWord.isEmpty()) {
-            suggestions = codeAutocompleteTrie.getRecommendations(tokenizer.getLast());
+            suggestions = codeAutocompleteTrie.getRecommendations(lastWord);
         }
 
         if (!suggestions.isEmpty()) {
             // TODO: See some good approach
 
+            ContextMenu contextMenu = textArea.getContextMenu();
+            contextMenu.getItems().clear();
+
             for (String suggestion : suggestions) {
-                MenuItem menuItem = new MenuItem(tokenizer.getLast() + suggestion);
+                MenuItem menuItem = new MenuItem(lastWord + suggestion);
                 menuItem.setOnAction(new EventHandler<ActionEvent>() {
                     @Override
                     public void handle(ActionEvent actionEvent) {
-                        textArea.appendText(suggestion);
+                        textArea.insertText(textArea.getCaretPosition(), suggestion);
                         contextMenu.hide();
                     }
                 });
@@ -103,9 +110,7 @@ public class CodeEditor {
             double x = textArea.getCaretBounds().get().getCenterX();
             double y = textArea.getCaretBounds().get().getCenterY();
 
-           contextMenu.show(textArea, x, y);
-        } else {
-           contextMenu.hide();
+            contextMenu.show(textArea, x, y);
         }
 
     }

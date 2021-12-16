@@ -30,7 +30,6 @@ public class CodeTokenizer {
 
     private final String line;
     private final CodeHighlightingTrie trie;
-    private String last = "";
 
     public CodeTokenizer(String line, CodeHighlightingTrie trie) {
         this.line = line;
@@ -38,9 +37,6 @@ public class CodeTokenizer {
     }
 
     public ArrayList<Token> getStyles() {
-
-        last = "";
-
         ArrayList<Token> tokenList = new ArrayList<>();
         int i;
         String temp = "";
@@ -82,7 +78,6 @@ public class CodeTokenizer {
             String style;
             if (quote == '#') {
                 style = trie.search(temp);
-                last = temp;
             } else {
                 style = "quotes";
             }
@@ -91,9 +86,5 @@ public class CodeTokenizer {
         }
 
         return tokenList;
-    }
-
-    public String getLast() {
-        return last;
     }
 }
