@@ -2,7 +2,9 @@ package services.clientServices;
 
 import mainClasses.CodeDocsServer;
 import requests.editorRequests.LoadEditorRequest;
+import requests.editorRequests.SaveCodeDocRequest;
 import response.editorResponse.LoadEditorResponse;
+import response.editorResponse.SaveCodeDocResponse;
 import utilities.DatabaseConstants;
 import utilities.Status;
 
@@ -67,6 +69,46 @@ public class EditorService {
 
         response.setStatus(Status.FAILED);
         return response;
+    }
+
+    public static SaveCodeDocResponse saveCodeDoc(SaveCodeDocRequest saveCodeDocRequest){
+        SaveCodeDocResponse saveCodeDocResponse = new SaveCodeDocResponse();
+        String query = "SELECT " +
+                DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_USER_ID +
+                " FROM " + DatabaseConstants.CODEDOC_ACCESS_TABLE_NAME +
+                " WHERE " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_CODEDOC_ID + "=?" +
+                " AND " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_USER_ID +" =? " +
+                " AND " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_HAS_WRITE_PERMISSIONS+ " =1;";
+
+        try {
+            PreparedStatement preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(query);
+            preparedStatement.setString(1, saveCodeDocRequest.getCodeDoc().getCodeDocId());
+            preparedStatement.setString(2, saveCodeDocRequest.getUserId());
+            ResultSet resultSet = preparedStatement.executeQuery();
+            System.out.println("******");
+            if (resultSet.next()) {
+                System.out.println(";;;;;");
+                Properties properties = new Properties();
+                FileReader fileReader = new FileReader("CodeDocs-Server/src/main/resources/configurations/db.properties");
+                properties.load(fileReader);
+                String filePath = properties.getProperty("FILEPATH");
+
+                filePath += saveCodeDocRequest.getCodeDoc().getCodeDocId() + "/Solution" + saveCodeDocRequest.getCodeDoc().getLanguageType().getExtension();
+                BufferedWriter fileWriter = new BufferedWriter(new FileWriter(filePath ));
+                fileWriter.write(saveCodeDocRequest.getCodeDoc().getFileContent());
+                fileWriter.close();
+                saveCodeDocResponse.setStatus(Status.SUCCESS);
+            }
+            else {
+                saveCodeDocResponse.setStatus(Status.FAILED);
+            }
+        } catch (SQLException | IOException e) {
+            saveCodeDocResponse.setStatus(Status.FAILED);
+            e.printStackTrace();
+        }
+
+
+        return saveCodeDocResponse;
     }
 
 }

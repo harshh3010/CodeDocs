@@ -2,7 +2,9 @@ package mainClasses;
 
 import requests.appRequests.*;
 import requests.editorRequests.LoadEditorRequest;
+import requests.editorRequests.SaveCodeDocRequest;
 import response.appResponse.FetchInviteResponse;
+import response.editorResponse.SaveCodeDocResponse;
 import services.clientServices.*;
 import utilities.RequestType;
 
@@ -70,7 +72,11 @@ public class ClientConnection extends Thread {
                     System.out.println("Client wants to open editor!");
                     outputStream.writeObject(EditorService.loadEditor((LoadEditorRequest) request));
                     outputStream.flush();
-                }else if (request.getRequestType() == RequestType.INVITE_COLLABORATOR_REQUEST) {
+                }else if (request.getRequestType() == RequestType.SAVE_CODEDOC_REQUEST) {
+                    System.out.println("Client wants to save codedoc!");
+                    outputStream.writeObject(EditorService.saveCodeDoc((SaveCodeDocRequest) request));
+                    outputStream.flush();
+                } else if (request.getRequestType() == RequestType.INVITE_COLLABORATOR_REQUEST) {
                     System.out.println("Client wants to invite a collaborator!");
                     outputStream.writeObject(CollaborationService.inviteCollaborator((InviteCollaboratorRequest) request));
                     outputStream.flush();

@@ -1,7 +1,10 @@
 package models;
 
+import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
+import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.StyleClassedTextArea;
 import utilities.CodeHighlightingTrie;
 import utilities.CodeTokenizer;
@@ -16,7 +19,8 @@ public class CodeEditor {
     private StyleClassedTextArea textArea;
     private ArrayList<String> reservedWords;
     private  CodeHighlightingTrie trie;
-
+    private Label label;
+    private StackPane lblContainer ;
     public CodeEditor(String initialContent) {
         textArea = new StyleClassedTextArea();
 
@@ -27,7 +31,7 @@ public class CodeEditor {
         textArea.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/test.css")).toExternalForm());
         textArea.setLineHighlighterFill(Paint.valueOf("#e3e3e3"));
         textArea.setLineHighlighterOn(true);
-
+        textArea.setParagraphGraphicFactory(LineNumberFactory.get(textArea));
         textArea.setOnKeyTyped(keyEvent -> inputHandler(keyEvent));
 
         // TODO: Do using language type
