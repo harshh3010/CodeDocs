@@ -38,7 +38,7 @@ public class AuthenticationService {
                 + ") values(?,?,?,?,?);";
 
         String verificationQuery = "INSERT INTO " + DatabaseConstants.USER_VERIFICATION_TABLE_NAME
-                + "(" + DatabaseConstants.USER_VERIFICATION_TABLE_COL_USER_ID
+                + "(" + DatabaseConstants.USER_VERIFICATION_TABLE_COL_USER_EMAIL
                 + "," + DatabaseConstants.USER_VERIFICATION_TABLE_COL_VERIFICATION_TOKEN
                 + "," + DatabaseConstants.USER_VERIFICATION_TABLE_COL_EXPIRES_AT
                 + ") values(?,?, NOW() + INTERVAL 1 HOUR );";
@@ -58,7 +58,7 @@ public class AuthenticationService {
                 signupPreparedStatement.setString(5, userID);
 
                 PreparedStatement verificationPreparedStatement = CodeDocsServer.databaseConnection.prepareStatement(verificationQuery);
-                verificationPreparedStatement.setString(1, userID);
+                verificationPreparedStatement.setString(1, signupRequest.getUser().getEmail());
                 verificationPreparedStatement.setString(2, verificationToken);
 
                 signupPreparedStatement.executeUpdate();
@@ -95,7 +95,7 @@ public class AuthenticationService {
                 " AND " + DatabaseConstants.USER_TABLE_COL_PASSWORD + "=? ;";
 
         String verificationQuery = "INSERT INTO " + DatabaseConstants.USER_VERIFICATION_TABLE_NAME
-                + "(" + DatabaseConstants.USER_VERIFICATION_TABLE_COL_USER_ID
+                + "(" + DatabaseConstants.USER_VERIFICATION_TABLE_COL_USER_EMAIL
                 + "," + DatabaseConstants.USER_VERIFICATION_TABLE_COL_VERIFICATION_TOKEN
                 + "," + DatabaseConstants.USER_VERIFICATION_TABLE_COL_EXPIRES_AT
                 + ") values(?,?, NOW() + INTERVAL 1 HOUR );";
@@ -116,7 +116,7 @@ public class AuthenticationService {
                         String verificationToken = VerificationTokenGenerator.getAlphaNumericString(6);
 
                         PreparedStatement verificationPreparedStatement = CodeDocsServer.databaseConnection.prepareStatement(verificationQuery);
-                        verificationPreparedStatement.setString(1, resultSet.getString(4));
+                        verificationPreparedStatement.setString(1, resultSet.getString(1));
                         verificationPreparedStatement.setString(2, verificationToken);
                         verificationPreparedStatement.executeUpdate();
 
@@ -154,44 +154,33 @@ public class AuthenticationService {
 
     public static Status verifyUser(VerifyUserRequest verifyUserRequest) {
         //TODO: add trigger for deleting
-
-        String fetchEmailQuery = "SELECT " +
-                DatabaseConstants.USER_TABLE_COL_USERID +
-                " FROM " + DatabaseConstants.USER_TABLE_NAME +
-                " WHERE " +DatabaseConstants.USER_TABLE_COL_EMAIL+ "=?";
-
+        //TODO : delete verification entry on success.. maybe its not needed if event is working
         String selectQuery = "Select * from " + DatabaseConstants.USER_VERIFICATION_TABLE_NAME +
-                " where " + DatabaseConstants.USER_VERIFICATION_TABLE_COL_USER_ID +
+                " where " + DatabaseConstants.USER_VERIFICATION_TABLE_COL_USER_EMAIL +
                 " = ?  AND " + DatabaseConstants.USER_VERIFICATION_TABLE_COL_VERIFICATION_TOKEN +
                 " = ? AND " + DatabaseConstants.USER_VERIFICATION_TABLE_COL_EXPIRES_AT + " > NOW()" +
                 " ORDER BY "+ DatabaseConstants.USER_VERIFICATION_TABLE_COL_EXPIRES_AT +" DESC LIMIT 1;";
 
         String updateQuery = "UPDATE " + DatabaseConstants.USER_TABLE_NAME + " "
                 + " SET " + DatabaseConstants.USER_TABLE_COL_ISVERIFIED + " =  1 "
-                + " WHERE " + DatabaseConstants.USER_TABLE_COL_USERID
+                + " WHERE " + DatabaseConstants.USER_TABLE_COL_EMAIL
                 + " = ?";
-
         try {
             CodeDocsServer.databaseConnection.setAutoCommit(false);
             try {
-                PreparedStatement preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(fetchEmailQuery);
+
+                PreparedStatement preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(selectQuery);
                 preparedStatement.setString(1, verifyUserRequest.getUserEmail());
+                preparedStatement.setString(2, verifyUserRequest.getVerificationToken());
                 ResultSet resultSet = preparedStatement.executeQuery();
 
-                if(resultSet.next()){
+                if (resultSet.next()) {
 
-                    preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(selectQuery);
-                    preparedStatement.setString(1, resultSet.getString(1));
-                    preparedStatement.setString(2, verifyUserRequest.getVerificationToken());
-                    resultSet = preparedStatement.executeQuery();
-
-                    if (resultSet.next()) {
-                        preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(updateQuery);
-                        preparedStatement.setString(1, verifyUserRequest.getUserEmail());
-                        preparedStatement.executeUpdate();
-                        CodeDocsServer.databaseConnection.commit();
-                        return Status.SUCCESS;
-                    }
+                    preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(updateQuery);
+                    preparedStatement.setString(1, verifyUserRequest.getUserEmail());
+                    preparedStatement.executeUpdate();
+                    CodeDocsServer.databaseConnection.commit();
+                    return Status.SUCCESS;
                 }
             } catch (SQLException e) {
                 e.printStackTrace();

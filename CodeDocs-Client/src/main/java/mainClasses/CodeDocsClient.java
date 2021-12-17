@@ -3,16 +3,10 @@ package mainClasses;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import models.CodeDoc;
-import requests.appRequests.CreateCodeDocRequest;
-import requests.appRequests.FetchInviteRequest;
-import requests.appRequests.InviteCollaboratorRequest;
-import requests.appRequests.RunCodeDocRequest;
-import requests.editorRequests.SaveCodeDocRequest;
-import response.appResponse.CreateCodeDocResponse;
-import response.appResponse.FetchInviteResponse;
-import response.appResponse.InviteCollaboratorResponse;
-import response.appResponse.RunCodeDocResponse;
-import response.editorResponse.SaveCodeDocResponse;
+import requests.editorRequests.CompileCodeDocRequest;
+import requests.editorRequests.RunCodeDocRequest;
+import response.editorResponse.CompileCodeDocResponse;
+import response.editorResponse.RunCodeDocResponse;
 import services.SceneService;
 import utilities.AppScreen;
 import utilities.LanguageType;
@@ -54,12 +48,10 @@ public class CodeDocsClient extends Application {
             outputStream = new ObjectOutputStream(socket.getOutputStream());
             inputStream = new ObjectInputStream(socket.getInputStream());
 
-
-
             //inputStream.close();
             //outputStream.close();
             //socket.close();
-        } catch (IOException e) {
+        } catch (IOException  e) {
             e.printStackTrace();
         }
 

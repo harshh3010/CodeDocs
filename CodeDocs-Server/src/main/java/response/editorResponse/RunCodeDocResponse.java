@@ -1,5 +1,6 @@
-package response.appResponse;
+package response.editorResponse;
 
+import response.appResponse.AppResponse;
 import utilities.ResponseType;
 import utilities.Status;
 
@@ -9,15 +10,7 @@ public class RunCodeDocResponse extends AppResponse implements Serializable {
 
     private String output;
     private String error;
-    private int exitStatus;
     private Status status;
-
-    public RunCodeDocResponse() {
-    }
-
-    public int getExitStatus() {
-        return exitStatus;
-    }
 
     public String getOutput() {
         return output;
@@ -25,10 +18,6 @@ public class RunCodeDocResponse extends AppResponse implements Serializable {
 
     public void setOutput(String output) {
         this.output = output;
-    }
-
-    public void setExitStatus(int exitStatus) {
-        this.exitStatus = exitStatus;
     }
 
     public String getError() {

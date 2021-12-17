@@ -16,6 +16,7 @@ import utilities.Status;
 
 import java.io.IOException;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 public class LoginScreenController {
     @FXML
@@ -25,10 +26,27 @@ public class LoginScreenController {
 
     private String email;
     private String password;
-    Alert a = new Alert(Alert.AlertType.NONE);
+    private final Pattern pattern = Pattern.compile("^(.+)@(.+)$");
+
+    Alert alert = new Alert(Alert.AlertType.NONE);
     private void getData() {
         email = emailTF.getText().trim().toLowerCase();
         password = passwordTF.getText();
+    }
+
+    private boolean validateData(){
+        if(email == "" || password == ""){
+            alert.setAlertType(Alert.AlertType.ERROR);
+            alert.setContentText("Enter complete details!");
+            alert.show();
+            return false;
+        }else if(!pattern.matcher(email).matches()){
+            alert.setAlertType(Alert.AlertType.ERROR);
+            alert.setContentText("Enter valid email address!");
+            alert.show();
+            return false;
+        }
+        return true;
     }
 
     private void loginUser() {
@@ -38,14 +56,14 @@ public class LoginScreenController {
                 SceneService.setScene(AppScreen.mainScreen);
                 System.out.println("Login success!");
             } else if(status == LoginStatus.WRONG_CREDENTIALS) {
-                a.setAlertType(Alert.AlertType.ERROR);
-                a.setContentText("Wrong Credentials");
-                a.show();
+                alert.setAlertType(Alert.AlertType.ERROR);
+                alert.setContentText("Wrong Credentials");
+                alert.show();
             } else if(status == LoginStatus.SERVER_SIDE_ERROR) {
 
-                a.setAlertType(Alert.AlertType.ERROR);
-                a.setContentText("Try again later");
-                a.show();
+                alert.setAlertType(Alert.AlertType.ERROR);
+                alert.setContentText("Cannot login at the moment. Try again later!");
+                alert.show();
             } else if(status == LoginStatus.UNVERIFIED_USER) {
                 TextInputDialog inputDialog = new TextInputDialog("Enter verification code");
                 inputDialog.setHeaderText("Registration successful! Please verify your email address.");
@@ -57,14 +75,14 @@ public class LoginScreenController {
                     try {
                         Status status1 = AuthenticationService.verifyUser(verificationCode,email);
                         if(status1 == Status.SUCCESS){
-                            System.out.println(verificationCode);
                             SceneService.setScene(AppScreen.loginScreen);
-                            System.out.println("Account verified");
+                            alert.setAlertType(Alert.AlertType.INFORMATION);
+                            alert.setContentText("Your account is verified. Please login again!");
                         }else{
                             System.out.println(verificationCode);
-                            a.setAlertType(Alert.AlertType.ERROR);
-                            a.setContentText("Please enter correct verification code");
-                            a.show();
+                            alert.setAlertType(Alert.AlertType.ERROR);
+                            alert.setContentText("Please enter correct verification code");
+                            alert.show();
                         }
                     } catch (IOException e) {
                         e.printStackTrace();
@@ -75,15 +93,17 @@ public class LoginScreenController {
                 });
             }
         } catch (IOException | ClassNotFoundException e) {
-            a.setAlertType(Alert.AlertType.ERROR);
-            a.setContentText("Cannot login at the moment. Try again later.");
-            a.show();
+            alert.setAlertType(Alert.AlertType.ERROR);
+            alert.setContentText("Cannot login at the moment. Try again later.");
+            alert.show();
             e.printStackTrace();
         }
     }
     @FXML
     public void onSignInClicked(ActionEvent actionEvent) {
         getData();
+        if(!validateData())
+            return;
         loginUser();
     }
 

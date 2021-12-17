@@ -125,7 +125,7 @@ public class CodeDocService {
                     " IN ( SELECT " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_CODEDOC_ID +
                     " FROM " + DatabaseConstants.CODEDOC_ACCESS_TABLE_NAME +
                     " WHERE " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_USER_ID + " =? " +
-                    //" AND " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_ACCESS_RIGHT+ " !=? " +
+                    " AND " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_ACCESS_RIGHT+ " != \"PENDING\" " +
                     ") ";
             qualifier = fetchCodeDocRequest.getUserID();
         }

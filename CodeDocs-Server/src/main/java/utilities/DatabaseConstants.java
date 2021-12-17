@@ -13,7 +13,7 @@ public class DatabaseConstants {
 
     // USER VERIFICATION TABLE
     public static final String USER_VERIFICATION_TABLE_NAME = "user_verification";
-    public static final String USER_VERIFICATION_TABLE_COL_USER_ID = "user_id";
+    public static final String USER_VERIFICATION_TABLE_COL_USER_EMAIL = "user_email";
     public static final String USER_VERIFICATION_TABLE_COL_VERIFICATION_TOKEN = "verification_token";
     public static final String USER_VERIFICATION_TABLE_COL_EXPIRES_AT = "expires_at";
 
