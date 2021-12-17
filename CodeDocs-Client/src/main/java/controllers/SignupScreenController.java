@@ -29,7 +29,7 @@ public class SignupScreenController {
     private String lastName;
     private String email;
     private String password;
-    Alert a = new Alert(Alert.AlertType.NONE);
+    Alert alert = new Alert(Alert.AlertType.NONE);
     private final Pattern pattern = Pattern.compile("^(.+)@(.+)$");
 
     private void getData() {
@@ -49,24 +49,24 @@ public class SignupScreenController {
 
     private boolean validateData() {
         if (!(2 <= firstName.length() && firstName.length() <= 20)) {
-            a.setAlertType(Alert.AlertType.WARNING);
-            a.setContentText("Enter your first name");
-            a.show();
+            alert.setAlertType(Alert.AlertType.WARNING);
+            alert.setContentText("Enter your first name");
+            alert.show();
             return false;
         } else if (!(8 <= password.length() && password.length() <= 40)) {
-            a.setAlertType(Alert.AlertType.WARNING);
-            a.setContentText("Enter a strong password");
-            a.show();
+            alert.setAlertType(Alert.AlertType.WARNING);
+            alert.setContentText("Enter a strong password");
+            alert.show();
             return false;
         } else if (!(2 <= lastName.length() && lastName.length() <= 20)) {
-            a.setAlertType(Alert.AlertType.WARNING);
-            a.setContentText("Enter your last name");
-            a.show();
+            alert.setAlertType(Alert.AlertType.WARNING);
+            alert.setContentText("Enter your last name");
+            alert.show();
             return false;
         } else if (!pattern.matcher(email).matches()) {
-            a.setAlertType(Alert.AlertType.WARNING);
-            a.setContentText("Enter valid email");
-            a.show();
+            alert.setAlertType(Alert.AlertType.WARNING);
+            alert.setContentText("Enter valid email");
+            alert.show();
             return false;
         }
         return true;
@@ -95,12 +95,13 @@ public class SignupScreenController {
                         Status status = AuthenticationService.verifyUser(verificationCode,email);
                         if(status == Status.SUCCESS){
                             SceneService.setScene(AppScreen.loginScreen);
-                            System.out.println("Account verified");
+                            alert.setAlertType(Alert.AlertType.INFORMATION);
+                            alert.setContentText("Account is verified. You can login now!");
                         }else{
-                            a.setAlertType(Alert.AlertType.ERROR);
-                            a.setContentText("Please enter correct verification code");
-                            a.show();
+                            alert.setAlertType(Alert.AlertType.ERROR);
+                            alert.setContentText("Please enter correct verification code");
                         }
+                        alert.show();
                     } catch (IOException | ClassNotFoundException e) {
                         e.printStackTrace();
                     }
@@ -109,15 +110,15 @@ public class SignupScreenController {
 
 
             } else {
-                a.setAlertType(Alert.AlertType.ERROR);
-                a.setContentText("Cannot create at the moment. Try again later");
-                a.show();
+                alert.setAlertType(Alert.AlertType.ERROR);
+                alert.setContentText("Cannot create account at the moment. Try again later");
+                alert.show();
                 System.out.println("Signup failed!");
             }
         } catch (IOException | ClassNotFoundException e) {
-            a.setAlertType(Alert.AlertType.ERROR);
-            a.setContentText("Cannot create at the moment. Try again later");
-            a.show();
+            alert.setAlertType(Alert.AlertType.ERROR);
+            alert.setContentText("Cannot create account at the moment. Try again later");
+            alert.show();
             e.printStackTrace();
         }
     }
