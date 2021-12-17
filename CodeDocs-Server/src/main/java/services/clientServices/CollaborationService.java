@@ -82,8 +82,7 @@ public class CollaborationService {
                 " SET " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_ACCESS_RIGHT + " =?" +
                 " WHERE " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_CODEDOC_ID+ " =?" +
                 " AND " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_USER_ID+ " =?";
-
-        try {
+         try {
             CodeDocsServer.databaseConnection.setAutoCommit(false);
             try {
                 PreparedStatement preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(acceptInviteQuery);
@@ -91,6 +90,7 @@ public class CollaborationService {
                 preparedStatement.setString(2, acceptInviteRequest.getCodeDocID());
                 preparedStatement.setString(3, acceptInviteRequest.getReceiverID());
                 preparedStatement.executeUpdate();
+                System.out.println("*********");
                 CodeDocsServer.databaseConnection.commit();
                 acceptInviteResponse.setStatus(Status.SUCCESS);
             } catch (SQLException e) {
@@ -140,7 +140,8 @@ public class CollaborationService {
         String fetchInvitesQuery = " SELECT " +
                 DatabaseConstants.CODEDOC_TABLE_NAME + "." +DatabaseConstants.CODEDOC_TABLE_COL_TITLE+ ", " +
                 DatabaseConstants.CODEDOC_TABLE_NAME+ "." +DatabaseConstants.CODEDOC_TABLE_COL_DESCRIPTION+ ", " +
-                DatabaseConstants.USER_TABLE_NAME+ "." +DatabaseConstants.USER_TABLE_COL_FIRSTNAME +
+                DatabaseConstants.USER_TABLE_NAME+ "." +DatabaseConstants.USER_TABLE_COL_FIRSTNAME + ", " +
+                DatabaseConstants.CODEDOC_TABLE_NAME+ "." +DatabaseConstants.CODEDOC_TABLE_COL_CODEDOCID +
                 " FROM " +
                 "(( " +DatabaseConstants.CODEDOC_TABLE_NAME +
                 " INNER JOIN " +DatabaseConstants.CODEDOC_ACCESS_TABLE_NAME+ " ON " +
@@ -172,17 +173,19 @@ public class CollaborationService {
             while (resultSet.next()) {
                 invite = new CodeDoc();
                 invite.setTitle(resultSet.getString(1));
+                invite.setCodeDocId(resultSet.getString(4));
                 invite.setDescription(resultSet.getString(2));
                 invite.setOwnerName(resultSet.getString(3));
                 inviteList.add(invite);
             }
-            fetchInviteResponse.setInvites(inviteList);
+
             fetchInviteResponse.setStatus(Status.SUCCESS);
 
         } catch (SQLException e) {
             fetchInviteResponse.setStatus(Status.FAILED);
             e.printStackTrace();
         }
+        fetchInviteResponse.setInvites(inviteList);
         return fetchInviteResponse;
     }
 }

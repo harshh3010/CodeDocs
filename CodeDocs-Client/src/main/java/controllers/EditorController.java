@@ -32,6 +32,7 @@ public class EditorController {
             if(response.getStatus() == Status.SUCCESS){
                 codeEditor = new CodeEditor(response.getContent(), codeDoc.getLanguageType());
                 borderPane.setCenter(codeEditor.getTextArea());
+
             }else {
                 alert.setContentText("Cannot load at the moment");
                 alert.show();

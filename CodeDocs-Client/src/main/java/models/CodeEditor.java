@@ -1,12 +1,17 @@
 package models;
 
+import javafx.geometry.Insets;
 import javafx.scene.control.Label;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.StyleClassedTextArea;
@@ -39,7 +44,6 @@ public class CodeEditor {
         textArea.setLineHighlighterOn(true);
         textArea.setParagraphGraphicFactory(LineNumberFactory.get(textArea));
         textArea.setOnKeyTyped(keyEvent -> inputHandler(keyEvent));
-
         setupLanguageParser();
         highlightCode();
         textArea.appendText(initialContent);

@@ -24,10 +24,10 @@
                               <fx:include fx:id="personalCodeDocsTabPage" source="personal_codedocs_tab.fxml"/>
                           </content>
                       </Tab>
-                     <Tab text="Notifications">
-                       <content>
-                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
-                       </content>
+                     <Tab text="Invitations">
+                         <content>
+                             <fx:include fx:id="invitationsTabPage" source="invitations_tab.fxml"/>
+                         </content>
                      </Tab>
                   </tabs>
                </JFXTabPane>
