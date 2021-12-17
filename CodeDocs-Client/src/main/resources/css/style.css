@@ -176,4 +176,37 @@
     -fx-background-color: transparent;
 }
 
+.menu-bar {
+    -fx-background-color: transparent ;
+}
 
+.menu-bar .label {
+    -fx-text-fill: white;
+    -fx-padding: 5.0px;
+}
+
+.menu-bar .menu-button:hover, .menu-bar .menu-button:focused, .menu-bar .menu-button:showing {
+    -fx-text-fill: white;
+     -fx-background: rgb(214, 6, 77);
+}
+
+.menu-item {
+    -fx-text-fill: rgb(214, 6, 77);
+}
+
+.menu-item .label{
+    -fx-text-fill: white;
+}
+
+.menu-item:hover, .menu-item:focused{
+    -fx-background: rgb(214, 6, 77);
+}
+
+.context-menu {
+    -fx-background-color: rgba(0,0,0,0.8);
+}
+
+.styled-text-area {
+
+    -fx-background-color: rgba(0,0,0,0.75);
+};

@@ -1,7 +1,6 @@
 package controllers;
 
 import javafx.event.ActionEvent;
-import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
@@ -10,12 +9,9 @@ import models.CodeEditor;
 import response.editorResponse.LoadEditorResponse;
 import response.editorResponse.SaveCodeDocResponse;
 import services.EditorService;
-import utilities.LanguageType;
 import utilities.Status;
 
 import java.io.IOException;
-import java.net.URL;
-import java.util.ResourceBundle;
 
 public class EditorController {
 
@@ -47,15 +43,10 @@ public class EditorController {
             Stage stage = (Stage) borderPane.getScene().getWindow();
             stage.close();
         }
-
-
-
     }
 
 
     public void saveContent(ActionEvent actionEvent) {
-
-
         codeDoc.setFileContent(codeEditor.getTextArea().getText());
         try{
             SaveCodeDocResponse response = EditorService.saveCodeDoc(codeDoc);

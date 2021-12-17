@@ -41,12 +41,10 @@ public class CreateCodeDocController implements Initializable {
     Alert a = new Alert(Alert.AlertType.NONE);
 
     private void getData() {
-        title = titleTF.getText().trim().toLowerCase();
-        description = descriptionTF.getText().trim().toLowerCase();
+        title = titleTF.getText().trim();
+        description = descriptionTF.getText().trim();
         int languageIndex = languageSelector.getSelectionModel().getSelectedIndex();
         languageType = languageList.get(languageIndex);
-        System.out.println(languageType+"***");
-
     }
 
 
@@ -86,6 +84,7 @@ public class CreateCodeDocController implements Initializable {
         for(LanguageType l : languageList){
             lang.add(l.getLanguage());
         }
+
         languageSelector.setItems(FXCollections.observableArrayList(lang));
 
     }
