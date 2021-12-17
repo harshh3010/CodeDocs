@@ -4,6 +4,7 @@ import javafx.event.ActionEvent;
 import javafx.scene.control.Alert;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import mainClasses.EditorConnection;
 import models.CodeDoc;
 import models.CodeEditor;
 import response.editorResponse.LoadEditorResponse;
@@ -22,27 +23,33 @@ public class EditorController {
 
     public void setCodeDoc(CodeDoc codeDoc){
         this.codeDoc = codeDoc;
-        System.out.println(codeDoc.getTitle());
-        try{
-            LoadEditorResponse response = EditorService.loadEditorContent(codeDoc.getCodeDocId(),codeDoc.getLanguageType());
-            if(response.getStatus() == Status.SUCCESS){
-                codeEditor = new CodeEditor(response.getContent(), codeDoc.getLanguageType());
-                borderPane.setCenter(codeEditor.getTextArea());
 
-            }else {
-                alert.setContentText("Cannot load at the moment");
-                alert.show();
-                Stage stage = (Stage) borderPane.getScene().getWindow();
-                stage.close();
-
-            }
+        try {
+            EditorConnection editorConnection = new EditorConnection(codeDoc.getCodeDocId());
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
-            alert.setContentText("Cannot load at the moment");
-            alert.show();
-            Stage stage = (Stage) borderPane.getScene().getWindow();
-            stage.close();
         }
+
+//        try{
+//            LoadEditorResponse response = EditorService.loadEditorContent(codeDoc.getCodeDocId(),codeDoc.getLanguageType());
+//            if(response.getStatus() == Status.SUCCESS){
+//                codeEditor = new CodeEditor(response.getContent(), codeDoc.getLanguageType());
+//                borderPane.setCenter(codeEditor.getTextArea());
+//
+//            }else {
+//                alert.setContentText("Cannot load at the moment");
+//                alert.show();
+//                Stage stage = (Stage) borderPane.getScene().getWindow();
+//                stage.close();
+//
+//            }
+//        } catch (IOException | ClassNotFoundException e) {
+//            e.printStackTrace();
+//            alert.setContentText("Cannot load at the moment");
+//            alert.show();
+//            Stage stage = (Stage) borderPane.getScene().getWindow();
+//            stage.close();
+//        }
     }
 
 

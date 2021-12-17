@@ -13,43 +13,51 @@
 <AnchorPane minHeight="720" minWidth="1280" prefHeight="720" prefWidth="1280" styleClass="background" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.EditorController">
 
     <children>
-        <VBox>
-            <children>
-                <MenuBar prefHeight="26.0" prefWidth="599.0">
-                    <menus>
-                        <Menu mnemonicParsing="false" text="File">
-                            <items>
-                                <MenuItem mnemonicParsing="false" onAction="#saveContent" text="Save" />
-                                <MenuItem mnemonicParsing="false" text="Download" />
-                                <MenuItem mnemonicParsing="false" text="Appearance" />
-                                <MenuItem mnemonicParsing="false" text="Search" />
-                                <MenuItem mnemonicParsing="false" text="Exit" />
-                            </items>
-                        </Menu>
-                    </menus>
-                </MenuBar>
-                <BorderPane fx:id="borderPane" prefHeight="687.0" prefWidth="1280.0" VBox.vgrow="NEVER">
-                    <top>
-                        <AnchorPane prefHeight="48.0" prefWidth="1280.0" BorderPane.alignment="CENTER">
-                            <children>
-                                <HBox alignment="CENTER_RIGHT" layoutX="1015.0" layoutY="-4.0" prefHeight="100.0" prefWidth="232.0" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                    <children>
-                                        <Button mnemonicParsing="false" text="Compile" />
-                                        <Button mnemonicParsing="false" text="Run" />
-                                    </children>
-                                    <padding>
-                                        <Insets right="20.0" />
-                                    </padding>
-                                </HBox>
-                            </children>
-                        </AnchorPane>
-                    </top>
-                    <left>
-                        <AnchorPane prefHeight="639.0" prefWidth="282.0" BorderPane.alignment="CENTER" />
-                    </left>
-                </BorderPane>
-            </children>
-        </VBox>
+      <AnchorPane styleClass="darkOverlay">
+         <children>
+            <AnchorPane styleClass="darkOverlay">
+               <children>
+                    <VBox>
+                        <children>
+                            <MenuBar prefHeight="26.0" prefWidth="599.0">
+                                <menus>
+                                    <Menu mnemonicParsing="false" text="File">
+                                        <items>
+                                            <MenuItem mnemonicParsing="false" onAction="#saveContent" text="Save" />
+                                            <MenuItem mnemonicParsing="false" text="Download" />
+                                            <MenuItem mnemonicParsing="false" text="Appearance" />
+                                            <MenuItem mnemonicParsing="false" text="Search" />
+                                            <MenuItem mnemonicParsing="false" text="Exit" />
+                                        </items>
+                                    </Menu>
+                                </menus>
+                            </MenuBar>
+                            <BorderPane fx:id="borderPane" prefHeight="687.0" prefWidth="1280.0" VBox.vgrow="NEVER">
+                                <top>
+                                    <AnchorPane prefHeight="48.0" prefWidth="1280.0" BorderPane.alignment="CENTER">
+                                        <children>
+                                            <HBox alignment="CENTER_RIGHT" layoutX="1015.0" layoutY="-4.0" prefHeight="100.0" prefWidth="232.0" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                <children>
+                                                    <Button mnemonicParsing="false" styleClass="button1" text="Compile" />
+                                                    <Button mnemonicParsing="false" styleClass="button1" text="Run" />
+                                                </children>
+                                                <padding>
+                                                    <Insets right="20.0" />
+                                                </padding>
+                                            </HBox>
+                                        </children>
+                                    </AnchorPane>
+                                </top>
+                                <left>
+                                    <AnchorPane prefHeight="639.0" prefWidth="282.0" BorderPane.alignment="CENTER" />
+                                </left>
+                            </BorderPane>
+                        </children>
+                    </VBox>
+               </children>
+            </AnchorPane>
+         </children>
+      </AnchorPane>
 
     </children>
 </AnchorPane>

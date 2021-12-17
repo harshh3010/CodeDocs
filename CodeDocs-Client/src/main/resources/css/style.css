@@ -207,6 +207,24 @@
 }
 
 .styled-text-area {
+    -fx-fill: white;
+    -fx-background-color: rgba(255,255,255,0.1);
+}
 
-    -fx-background-color: rgba(0,0,0,0.75);
-};
+.styled-text-area .text {
+    -fx-fill: white;
+}
+
+.styled-text-area .selection {
+    -fx-text-fill: white;
+    -fx-fill: rgb(214, 6, 77);
+}
+
+.styled-text-area:read-only {
+
+}
+
+.lineno {
+    -fx-text-fill: white;
+    -fx-background-color: rgb(54, 0, 19);
+}

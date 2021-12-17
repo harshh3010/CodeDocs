@@ -2,9 +2,10 @@ package services;
 
 import mainClasses.CodeDocsClient;
 import models.CodeDoc;
-import models.CodeEditor;
+import requests.editorRequests.EditorConnectionRequest;
 import requests.editorRequests.LoadEditorRequest;
 import requests.editorRequests.SaveCodeDocRequest;
+import response.editorResponse.EditorConnectionResponse;
 import response.editorResponse.LoadEditorResponse;
 import response.editorResponse.SaveCodeDocResponse;
 import utilities.LanguageType;
@@ -17,6 +18,18 @@ import java.io.ObjectOutputStream;
 public class EditorService {
     private static final ObjectInputStream inputStream = CodeDocsClient.inputStream;
     private static final ObjectOutputStream outputStream = CodeDocsClient.outputStream;
+
+    public static EditorConnectionResponse establishConnection(String codeDocId, int port) throws IOException, ClassNotFoundException {
+        EditorConnectionRequest request = new EditorConnectionRequest();
+        request.setUserId(UserApi.getInstance().getId());
+        request.setCodeDocId(codeDocId);
+        request.setPort(port);
+
+        outputStream.writeObject(request);
+        outputStream.flush();
+
+        return (EditorConnectionResponse) inputStream.readObject();
+    }
 
     public static LoadEditorResponse loadEditorContent(String codeDocID, LanguageType languageType) throws IOException, ClassNotFoundException {
         LoadEditorRequest loadEditorRequest = new LoadEditorRequest();

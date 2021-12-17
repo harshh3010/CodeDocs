@@ -34,6 +34,13 @@ public class DatabaseConstants {
     public static final String CODEDOC_ACCESS_TABLE_COL_ACCESS_RIGHT = "access_right";
     public static final String CODEDOC_ACCESS_TABLE_COL_HAS_WRITE_PERMISSIONS = "has_write_permissions";
     public static final String CODEDOC_ACCESS_TABLE_COL_IS_ACTIVE = "is_active";
+    public static final String CODEDOC_ACCESS_TABLE_COL_IP_ADDRESS = "ip_address";
+    public static final String CODEDOC_ACCESS_TABLE_COL_PORT = "port";
+
+    // ACTIVE EDITORS TABLE
+    public static final String ACTIVE_EDITORS_TABLE_NAME = "active_editors";
+    public static final String ACTIVE_EDITORS_COL_CODEDOC_ID = "codedoc_id";
+    public static final String ACTIVE_EDITORS_COL_USER_IN_CONTROL = "user_in_control";
 
 
 }

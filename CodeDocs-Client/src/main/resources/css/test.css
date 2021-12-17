@@ -1,7 +1,7 @@
-.keyword { -fx-fill: red; -fx-font-weight: bold;}
-.symbol { -fx-fill: red; -fx-font-weight: bold;}
-.bracket { -fx-fill: blue; -fx-font-weight: bold;}
-.parenthesis { -fx-fill: blue; -fx-font-weight: bold;}
-.brace { -fx-fill: blue; -fx-font-weight: bold;}
-.quotes {-fx-fill: green;}
+.styled-text-area .keyword { -fx-fill: red; -fx-font-weight: bold;}
+.styled-text-area .symbol { -fx-fill: red; -fx-font-weight: bold;}
+.styled-text-area .bracket { -fx-fill: blue; -fx-font-weight: bold;}
+.styled-text-area .parenthesis { -fx-fill: blue; -fx-font-weight: bold;}
+.styled-text-area .brace { -fx-fill: blue; -fx-font-weight: bold;}
+.styled-text-area .quotes {-fx-fill: green;}
 

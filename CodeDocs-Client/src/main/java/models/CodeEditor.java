@@ -40,7 +40,7 @@ public class CodeEditor {
 
         // TODO: Do using CSS
         textArea.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/test.css")).toExternalForm());
-        textArea.setLineHighlighterFill(Paint.valueOf("#e3e3e3"));
+        textArea.setLineHighlighterFill(Paint.valueOf("#690026"));
         textArea.setLineHighlighterOn(true);
         textArea.setParagraphGraphicFactory(LineNumberFactory.get(textArea));
         textArea.setOnKeyTyped(keyEvent -> inputHandler(keyEvent));
@@ -114,8 +114,8 @@ public class CodeEditor {
                 String content = plainTextChange.getInserted();
                 CodeTokenizer tokenizer = new CodeTokenizer(content, codeHighlightingTrie);
                 for (CodeTokenizer.Token token : tokenizer.getStyles()) {
-                    int start = token.getStartIndex()+plainTextChange.getPosition();
-                    int end  = token.getEndIndex()+plainTextChange.getPosition();
+                    int start = token.getStartIndex() + plainTextChange.getPosition();
+                    int end = token.getEndIndex() + plainTextChange.getPosition();
 
                     String styleClass = token.getStyle();
                     textArea.setStyleClass(start, end, styleClass);
@@ -136,12 +136,11 @@ public class CodeEditor {
         if (!lastWord.isEmpty()) {
             suggestions = codeAutocompleteTrie.getRecommendations(lastWord);
         }
-
+        ContextMenu contextMenu = textArea.getContextMenu();
+        contextMenu.getItems().clear();
         if (!suggestions.isEmpty()) {
             // TODO: See some good approach
 
-            ContextMenu contextMenu = textArea.getContextMenu();
-            contextMenu.getItems().clear();
 
             for (String suggestion : suggestions) {
                 MenuItem menuItem = new MenuItem(lastWord + suggestion);
@@ -159,6 +158,8 @@ public class CodeEditor {
             double y = textArea.getCaretBounds().get().getCenterY();
 
             contextMenu.show(textArea, x, y);
+        } else {
+            contextMenu.hide();
         }
     }
 }

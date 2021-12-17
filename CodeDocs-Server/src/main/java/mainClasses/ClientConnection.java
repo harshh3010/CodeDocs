@@ -1,10 +1,7 @@
 package mainClasses;
 
 import requests.appRequests.*;
-import requests.editorRequests.CompileCodeDocRequest;
-import requests.editorRequests.LoadEditorRequest;
-import requests.editorRequests.RunCodeDocRequest;
-import requests.editorRequests.SaveCodeDocRequest;
+import requests.editorRequests.*;
 import response.appResponse.FetchInviteResponse;
 import response.editorResponse.SaveCodeDocResponse;
 import services.clientServices.*;
@@ -101,6 +98,10 @@ public class ClientConnection extends Thread {
                 }else if (request.getRequestType() == RequestType.COMPILE_CODEDOC_REQUEST) {
                     System.out.println("Client wants to compile codeDoc !");
                     outputStream.writeObject(CompileService.compileCodeDoc( (CompileCodeDocRequest) request));
+                    outputStream.flush();
+                }else if(request.getRequestType() == RequestType.EDITOR_CONNECTION_REQUEST) {
+                    System.out.println("Client wants to start codedoc editor!");
+                    outputStream.writeObject(EditorService.establishConnection((EditorConnectionRequest) request, client.getInetAddress().getCanonicalHostName()));
                     outputStream.flush();
                 }
 
