@@ -2,6 +2,7 @@ package mainClasses;
 
 import models.Peer;
 import models.User;
+import org.fxmisc.richtext.StyleClassedTextArea;
 import requests.peerRequests.SendPeerConnectionRequest;
 import response.editorResponse.EditorConnectionResponse;
 import services.EditorService;
@@ -21,6 +22,7 @@ public class EditorConnection {
     private final boolean hasWritePermissions;
     public static HashMap<String, Peer> connectedPeers = new HashMap<>();
     private ArrayList<Peer> activePeers;
+    public static StyleClassedTextArea textArea;
 
     public EditorConnection(String codeDocId) throws IOException, ClassNotFoundException {
 

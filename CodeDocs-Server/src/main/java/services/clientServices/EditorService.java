@@ -46,11 +46,13 @@ public class EditorService {
                 if (resultSet.next()) {
                     response.setHasWritePermissions(resultSet.getBoolean(1));
 
-                    String activeQuery = "SELECT " + DatabaseConstants.ACTIVE_EDITORS_COL_CODEDOC_ID
+                    String activeQuery = "SELECT " + DatabaseConstants.ACTIVE_EDITORS_COL_USER_IN_CONTROL
                             + " FROM " + DatabaseConstants.ACTIVE_EDITORS_TABLE_NAME
-                            + ";";
+                            + " WHERE " + DatabaseConstants.ACTIVE_EDITORS_COL_CODEDOC_ID
+                            + " = ?;";
 
                     preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(activeQuery);
+                    preparedStatement.setString(1, editorConnectionRequest.getCodeDocId());
                     resultSet = preparedStatement.executeQuery();
 
                     if (resultSet.next()) {

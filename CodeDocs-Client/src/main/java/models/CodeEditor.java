@@ -1,8 +1,11 @@
 package models;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.IndexRange;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Paint;
@@ -11,6 +14,7 @@ import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.StyleClassedTextArea;
 import org.fxmisc.richtext.model.PlainTextChange;
 import requests.peerRequests.StreamContentChangeRequest;
+import requests.peerRequests.StreamContentSelectionRequest;
 import utilities.*;
 
 import java.io.IOException;
@@ -25,6 +29,7 @@ public class CodeEditor {
     private CodeAutocompleteTrie codeAutocompleteTrie;
     private final boolean hasWritePermissions;
     private final boolean hasControl;
+    private int previousParagraph = 0;
 
     public CodeEditor(String initialContent, LanguageType languageType, boolean hasWritePermissions, boolean hasControl) {
 
@@ -51,21 +56,9 @@ public class CodeEditor {
 
         setupLanguageParser();
         setupTextChangeHandler();
+        setupTextSelectionHandler();
 
         textArea.appendText(initialContent);
-    }
-
-    private void inputHandler(KeyEvent keyEvent) {
-
-        int currentLine = textArea.getCurrentParagraph();
-        String currentLineText = textArea.getText(currentLine);
-
-        CodeTokenizer tokenizer = new CodeTokenizer(currentLineText, codeHighlightingTrie);
-        for (CodeTokenizer.Token token : tokenizer.getStyles()) {
-            textArea.setStyle(currentLine, token.getStartIndex(), token.getEndIndex(), Collections.singleton(token.getStyle()));
-        }
-
-        autocompleteCode(currentLine);
     }
 
     public StyleClassedTextArea getTextArea() {
@@ -109,15 +102,47 @@ public class CodeEditor {
 
     }
 
+    private void inputHandler(KeyEvent keyEvent) {
+
+        if(hasControl) {
+            int currentLine = textArea.getCurrentParagraph();
+
+//        String currentLineText = textArea.getText(currentLine);
+//
+//        CodeTokenizer tokenizer = new CodeTokenizer(currentLineText, codeHighlightingTrie);
+//        for (CodeTokenizer.Token token : tokenizer.getStyles()) {
+//            textArea.setStyle(currentLine, token.getStartIndex(), token.getEndIndex(), Collections.singleton(token.getStyle()));
+//        }
+
+            autocompleteCode(currentLine);
+        }
+    }
+
     private void setupTextChangeHandler() {
 
         textArea.plainTextChanges().subscribe(new Consumer<PlainTextChange>() {
             @Override
             public void accept(PlainTextChange plainTextChange) {
-                highlightCode(plainTextChange);
-                System.out.println(plainTextChange.getRemoved()+":::::::");
+
+                highlightCode();
+                if (hasControl) {
+                    try {
+                        streamContent(plainTextChange);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
+    }
+
+    private void setupTextSelectionHandler() {
+        textArea.selectionProperty().addListener(new ChangeListener<IndexRange>() {
+            @Override
+            public void changed(ObservableValue<? extends IndexRange> observableValue, IndexRange indexRange, IndexRange t1) {
+
                 try {
-                    streamContent(plainTextChange);
+                    streamSelection();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -125,28 +150,55 @@ public class CodeEditor {
         });
     }
 
+    private void streamSelection() throws IOException {
+        int start = textArea.getSelection().getStart();
+        int end = textArea.getSelection().getEnd();
+        if(start != end) {
+            StreamContentSelectionRequest request = new StreamContentSelectionRequest();
+            request.setStart(start);
+            request.setEnd(end);
+
+            for (Peer peer : EditorConnection.connectedPeers.values()) {
+                peer.getOutputStream().writeObject(request);
+                peer.getOutputStream().flush();
+            }
+        }
+    }
+
     private void streamContent(PlainTextChange plainTextChange) throws IOException {
         StreamContentChangeRequest contentChangeRequest = new StreamContentChangeRequest();
-        contentChangeRequest.setContent(plainTextChange.getInserted());
-        contentChangeRequest.setStartPosition(plainTextChange.getPosition());
-
-        for(Peer peer: EditorConnection.connectedPeers.values()) {
+        contentChangeRequest.setInsertedContent(plainTextChange.getInserted());
+        contentChangeRequest.setInsertedStart(plainTextChange.getPosition());
+        contentChangeRequest.setRemovedContent(plainTextChange.getRemoved());
+        contentChangeRequest.setRemovedEnd(plainTextChange.getRemovalEnd());
+        for (Peer peer : EditorConnection.connectedPeers.values()) {
             peer.getOutputStream().writeObject(contentChangeRequest);
             peer.getOutputStream().flush();
         }
     }
 
-    private void highlightCode(PlainTextChange plainTextChange) {
-        //TODO : resolve bugs
-        String content = plainTextChange.getInserted();
-        CodeTokenizer tokenizer = new CodeTokenizer(content, codeHighlightingTrie);
-        for (CodeTokenizer.Token token : tokenizer.getStyles()) {
-            int start = token.getStartIndex() + plainTextChange.getPosition();
-            int end = token.getEndIndex() + plainTextChange.getPosition();
+    private void highlightCode() {
 
+        CodeTokenizer tokenizer = new CodeTokenizer(textArea.getText(), codeHighlightingTrie);
+        for (CodeTokenizer.Token token : tokenizer.getStyles()) {
+            int start = token.getStartIndex();
+            int end = token.getEndIndex();
             String styleClass = token.getStyle();
             textArea.setStyleClass(start, end, styleClass);
         }
+
+//        //TODO : resolve bugs
+//        Get prev and next paragraph and apply tokenization
+//        System.out.println(textArea.getCurrentParagraph());
+//        String content = plainTextChange.getInserted();
+//        CodeTokenizer tokenizer = new CodeTokenizer(content, codeHighlightingTrie);
+//        for (CodeTokenizer.Token token : tokenizer.getStyles()) {
+//            int start = token.getStartIndex() + plainTextChange.getPosition();
+//            int end = token.getEndIndex() + plainTextChange.getPosition();
+//
+//            String styleClass = token.getStyle();
+//            textArea.setStyleClass(start, end, styleClass);
+//        }
     }
 
     private void autocompleteCode(int currentLine) {
@@ -165,7 +217,6 @@ public class CodeEditor {
         contextMenu.getItems().clear();
         if (!suggestions.isEmpty()) {
             // TODO: See some good approach
-
 
             for (String suggestion : suggestions) {
                 MenuItem menuItem = new MenuItem(lastWord + suggestion);

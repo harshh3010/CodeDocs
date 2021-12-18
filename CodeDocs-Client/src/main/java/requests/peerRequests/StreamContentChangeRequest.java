@@ -7,23 +7,42 @@ import java.io.Serializable;
 
 public class StreamContentChangeRequest extends AppRequest implements Serializable {
 
-    private int startPosition;
-    private String content;
+    private int insertedStart;
+    private String insertedContent;
+    private int removedEnd;
+    private String removedContent;
 
-    public int getStartPosition() {
-        return startPosition;
+
+    public int getRemovedEnd() {
+        return removedEnd;
     }
 
-    public void setStartPosition(int startPosition) {
-        this.startPosition = startPosition;
+    public void setRemovedEnd(int removedEnd) {
+        this.removedEnd = removedEnd;
     }
 
-    public String getContent() {
-        return content;
+    public String getRemovedContent() {
+        return removedContent;
     }
 
-    public void setContent(String content) {
-        this.content = content;
+    public void setRemovedContent(String removedContent) {
+        this.removedContent = removedContent;
+    }
+
+    public int getInsertedStart() {
+        return insertedStart;
+    }
+
+    public void setInsertedStart(int insertedStart) {
+        this.insertedStart = insertedStart;
+    }
+
+    public String getInsertedContent() {
+        return insertedContent;
+    }
+
+    public void setInsertedContent(String insertedContent) {
+        this.insertedContent = insertedContent;
     }
 
     @Override
