@@ -81,7 +81,8 @@ public class CollaborationService {
         String acceptInviteQuery = "UPDATE " + DatabaseConstants.CODEDOC_ACCESS_TABLE_NAME +
                 " SET " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_ACCESS_RIGHT + " =?" +
                 " WHERE " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_CODEDOC_ID+ " =?" +
-                " AND " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_USER_ID+ " =?";
+                " AND " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_ACCESS_RIGHT+ " =\"PENDING\"" +
+                " AND " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_USER_ID+ " =?;";
          try {
             CodeDocsServer.databaseConnection.setAutoCommit(false);
             try {
@@ -89,10 +90,13 @@ public class CollaborationService {
                 preparedStatement.setString(1, "COLLABORATOR");
                 preparedStatement.setString(2, acceptInviteRequest.getCodeDocID());
                 preparedStatement.setString(3, acceptInviteRequest.getReceiverID());
-                preparedStatement.executeUpdate();
-                System.out.println("*********");
+                int result = preparedStatement.executeUpdate();
+
                 CodeDocsServer.databaseConnection.commit();
-                acceptInviteResponse.setStatus(Status.SUCCESS);
+                if(result !=0)
+                    acceptInviteResponse.setStatus(Status.SUCCESS);
+                else
+                    acceptInviteResponse.setStatus(Status.FAILED);
             } catch (SQLException e) {
                 acceptInviteResponse.setStatus(Status.FAILED);
                 CodeDocsServer.databaseConnection.rollback();
