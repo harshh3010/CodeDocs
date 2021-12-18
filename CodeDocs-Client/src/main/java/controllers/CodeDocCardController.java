@@ -83,15 +83,8 @@ public class CodeDocCardController extends ListCell<CodeDoc> {
             titleLabel.setText(codeDoc.getTitle());
             descText.setText(codeDoc.getDescription());
             dateLabel.setText(codeDoc.getCreatedAt().toString());
-
-            // TODO: change path
-            InputStream stream = null;
-            try {
-                stream = new FileInputStream("F:\\third_year_Softa\\trial 2\\CodeDocs\\CodeDocs-Client\\src\\main\\resources\\images\\" + codeDoc.getLanguageType().getLanguage() + ".png");
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-            }
-            Image image = new Image(stream);//Creating the image viewImageView
+            
+            Image image = new Image(getClass().getResource("/images/" + codeDoc.getLanguageType().getLanguage() + ".png").toExternalForm());//Creating the image viewImageView
             imageView.setImage(image);//Setting the image view parameters
             imageView.setPreserveRatio(false);
             imageView.setFitHeight(100);

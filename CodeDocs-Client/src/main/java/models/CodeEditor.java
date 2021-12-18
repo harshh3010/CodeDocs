@@ -1,24 +1,19 @@
 package models;
 
-import javafx.geometry.Insets;
-import javafx.scene.control.Label;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
-import javafx.scene.layout.CornerRadii;
-import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
+import mainClasses.EditorConnection;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.StyleClassedTextArea;
-import org.fxmisc.richtext.model.Paragraph;
 import org.fxmisc.richtext.model.PlainTextChange;
+import requests.peerRequests.StreamContentChangeRequest;
 import utilities.*;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.function.Consumer;
 
@@ -28,11 +23,20 @@ public class CodeEditor {
     private final StyleClassedTextArea textArea;
     private CodeHighlightingTrie codeHighlightingTrie;
     private CodeAutocompleteTrie codeAutocompleteTrie;
+    private final boolean hasWritePermissions;
+    private final boolean hasControl;
 
-    public CodeEditor(String initialContent, LanguageType languageType) {
+    public CodeEditor(String initialContent, LanguageType languageType, boolean hasWritePermissions, boolean hasControl) {
+
+        this.hasControl = hasControl;
+        this.hasWritePermissions = hasWritePermissions;
 
         this.languageType = languageType;
         textArea = new StyleClassedTextArea();
+
+        if (!hasWritePermissions || !hasControl) {
+            textArea.setEditable(false);
+        }
 
         textArea.setWrapText(true);
         textArea.setParagraphGraphicFactory(LineNumberFactory.get(textArea));
@@ -44,10 +48,11 @@ public class CodeEditor {
         textArea.setLineHighlighterOn(true);
         textArea.setParagraphGraphicFactory(LineNumberFactory.get(textArea));
         textArea.setOnKeyTyped(keyEvent -> inputHandler(keyEvent));
-        setupLanguageParser();
-        highlightCode();
-        textArea.appendText(initialContent);
 
+        setupLanguageParser();
+        setupTextChangeHandler();
+
+        textArea.appendText(initialContent);
     }
 
     private void inputHandler(KeyEvent keyEvent) {
@@ -55,14 +60,12 @@ public class CodeEditor {
         int currentLine = textArea.getCurrentParagraph();
         String currentLineText = textArea.getText(currentLine);
 
-        highlightCode();
-
         CodeTokenizer tokenizer = new CodeTokenizer(currentLineText, codeHighlightingTrie);
         for (CodeTokenizer.Token token : tokenizer.getStyles()) {
             textArea.setStyle(currentLine, token.getStartIndex(), token.getEndIndex(), Collections.singleton(token.getStyle()));
         }
-        autocompleteCode(currentLine);
 
+        autocompleteCode(currentLine);
     }
 
     public StyleClassedTextArea getTextArea() {
@@ -106,22 +109,42 @@ public class CodeEditor {
 
     }
 
-    private void highlightCode() {
-        //TODO : resolve bugs
+    private void setupTextChangeHandler() {
         textArea.plainTextChanges().subscribe(new Consumer<PlainTextChange>() {
             @Override
             public void accept(PlainTextChange plainTextChange) {
-                String content = plainTextChange.getInserted();
-                CodeTokenizer tokenizer = new CodeTokenizer(content, codeHighlightingTrie);
-                for (CodeTokenizer.Token token : tokenizer.getStyles()) {
-                    int start = token.getStartIndex() + plainTextChange.getPosition();
-                    int end = token.getEndIndex() + plainTextChange.getPosition();
-
-                    String styleClass = token.getStyle();
-                    textArea.setStyleClass(start, end, styleClass);
+                highlightCode(plainTextChange);
+                try {
+                    streamContent(plainTextChange);
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
         });
+    }
+
+    private void streamContent(PlainTextChange plainTextChange) throws IOException {
+        StreamContentChangeRequest contentChangeRequest = new StreamContentChangeRequest();
+        contentChangeRequest.setContent(plainTextChange.getInserted());
+        contentChangeRequest.setStartPosition(plainTextChange.getPosition());
+
+        for(Peer peer: EditorConnection.connectedPeers.values()) {
+            peer.getOutputStream().writeObject(contentChangeRequest);
+            peer.getOutputStream().flush();
+        }
+    }
+
+    private void highlightCode(PlainTextChange plainTextChange) {
+        //TODO : resolve bugs
+        String content = plainTextChange.getInserted();
+        CodeTokenizer tokenizer = new CodeTokenizer(content, codeHighlightingTrie);
+        for (CodeTokenizer.Token token : tokenizer.getStyles()) {
+            int start = token.getStartIndex() + plainTextChange.getPosition();
+            int end = token.getEndIndex() + plainTextChange.getPosition();
+
+            String styleClass = token.getStyle();
+            textArea.setStyleClass(start, end, styleClass);
+        }
     }
 
     private void autocompleteCode(int currentLine) {

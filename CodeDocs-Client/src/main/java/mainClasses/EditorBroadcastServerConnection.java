@@ -3,6 +3,7 @@ package mainClasses;
 import models.Peer;
 import requests.appRequests.AppRequest;
 import requests.peerRequests.SendPeerConnectionRequest;
+import requests.peerRequests.StreamContentChangeRequest;
 import utilities.RequestType;
 
 import java.io.IOException;
@@ -37,6 +38,7 @@ public class EditorBroadcastServerConnection extends Thread {
                     peer.setUser(connectionRequest.getUser());
                     peer.setPort(connectionRequest.getPort());
                     peer.setIpAddress(connection.getInetAddress().getCanonicalHostName());
+                    peer.setHasWritePermissions(connectionRequest.isHasWritePermissions());
 
                     Socket socket = new Socket(peer.getIpAddress(), peer.getPort());
 
@@ -45,7 +47,11 @@ public class EditorBroadcastServerConnection extends Thread {
                     peer.setInputStream(new ObjectInputStream(socket.getInputStream()));
 
                     EditorConnection.connectedPeers.put(peer.getUser().getUserID(), peer);
-                }
+                } else if (request.getRequestType() == RequestType.STREAM_CONTENT_CHANGES_REQUEST) {
+                    StreamContentChangeRequest contentChangeRequest = (StreamContentChangeRequest) request;
+                    System.out.println(contentChangeRequest.getStartPosition());
+                    System.out.println(contentChangeRequest.getContent());
+                 }
             }
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();

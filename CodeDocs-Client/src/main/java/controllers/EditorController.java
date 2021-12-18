@@ -7,10 +7,12 @@ import javafx.stage.Stage;
 import mainClasses.EditorConnection;
 import models.CodeDoc;
 import models.CodeEditor;
+import models.Peer;
 import response.editorResponse.LoadEditorResponse;
 import response.editorResponse.SaveCodeDocResponse;
 import services.EditorService;
 import utilities.Status;
+import utilities.UserApi;
 
 import java.io.IOException;
 
@@ -19,48 +21,59 @@ public class EditorController {
     public BorderPane borderPane;
     private CodeDoc codeDoc;
     private CodeEditor codeEditor;
+    private EditorConnection editorConnection;
     Alert alert = new Alert(Alert.AlertType.ERROR);
 
-    public void setCodeDoc(CodeDoc codeDoc){
+    public void setCodeDoc(CodeDoc codeDoc) {
         this.codeDoc = codeDoc;
 
         try {
-            EditorConnection editorConnection = new EditorConnection(codeDoc.getCodeDocId());
+            editorConnection = new EditorConnection(codeDoc.getCodeDocId());
+
+            try {
+
+                System.out.println("Control: " + editorConnection.getUserInControl());
+                System.out.println("Current: " + UserApi.getInstance().getId());
+
+                // TODO: Fetch content from user in control
+                LoadEditorResponse response = EditorService.loadEditorContent(codeDoc.getCodeDocId(), codeDoc.getLanguageType());
+                if (response.getStatus() == Status.SUCCESS) {
+                    codeEditor = new CodeEditor(response.getContent(),
+                            codeDoc.getLanguageType(),
+                            editorConnection.isHasWritePermissions(),
+                            editorConnection.getUserInControl().equals(UserApi.getInstance().getId()));
+
+                    borderPane.setCenter(codeEditor.getTextArea());
+
+                } else {
+                    alert.setContentText("Cannot load at the moment");
+                    alert.show();
+                    Stage stage = (Stage) borderPane.getScene().getWindow();
+                    stage.close();
+
+                }
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
+                alert.setContentText("Cannot load at the moment");
+                alert.show();
+                Stage stage = (Stage) borderPane.getScene().getWindow();
+                stage.close();
+            }
+
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
-
-//        try{
-//            LoadEditorResponse response = EditorService.loadEditorContent(codeDoc.getCodeDocId(),codeDoc.getLanguageType());
-//            if(response.getStatus() == Status.SUCCESS){
-//                codeEditor = new CodeEditor(response.getContent(), codeDoc.getLanguageType());
-//                borderPane.setCenter(codeEditor.getTextArea());
-//
-//            }else {
-//                alert.setContentText("Cannot load at the moment");
-//                alert.show();
-//                Stage stage = (Stage) borderPane.getScene().getWindow();
-//                stage.close();
-//
-//            }
-//        } catch (IOException | ClassNotFoundException e) {
-//            e.printStackTrace();
-//            alert.setContentText("Cannot load at the moment");
-//            alert.show();
-//            Stage stage = (Stage) borderPane.getScene().getWindow();
-//            stage.close();
-//        }
     }
 
 
     public void saveContent(ActionEvent actionEvent) {
         codeDoc.setFileContent(codeEditor.getTextArea().getText());
-        try{
+        try {
             SaveCodeDocResponse response = EditorService.saveCodeDoc(codeDoc);
-            if(response.getStatus() == Status.SUCCESS){
+            if (response.getStatus() == Status.SUCCESS) {
                 alert.setAlertType(Alert.AlertType.INFORMATION);
                 alert.setContentText("Saved successfully");
-            }else {
+            } else {
                 alert.setContentText("Cannot save at the moment");
             }
             alert.show();
@@ -73,9 +86,19 @@ public class EditorController {
 
     public void exitEditor(ActionEvent actionEvent) {
 
-        try{
-            //TODO: send user in control
-            EditorService.destroyConnection(codeDoc.getCodeDocId(),null);
+        try {
+            String userInControl = editorConnection.getUserInControl();
+            if (userInControl.equals(UserApi.getInstance().getId())) {
+                userInControl = null;
+                for (Peer peer : EditorConnection.connectedPeers.values()) {
+                    if (peer.isHasWritePermissions()) {
+                        userInControl = peer.getUser().getUserID();
+                    }
+                }
+                // TODO: Transfer control
+                System.out.println("User in control leaving... Control transfer to " + userInControl);
+            }
+            EditorService.destroyConnection(codeDoc.getCodeDocId(), userInControl);
             Stage stage = (Stage) borderPane.getScene().getWindow();
             stage.close();
         } catch (IOException e) {

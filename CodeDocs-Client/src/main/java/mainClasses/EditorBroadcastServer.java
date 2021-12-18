@@ -14,7 +14,7 @@ public class EditorBroadcastServer extends Thread{
 
     public EditorBroadcastServer() throws IOException {
         // TODO: Read port from config file
-        port = 3003;
+        port = 3002;
         serverSocket = new ServerSocket(port);
     }
 

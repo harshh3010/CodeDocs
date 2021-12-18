@@ -77,6 +77,7 @@ public class EditorService {
                             + ", " + DatabaseConstants.USER_TABLE_COL_LASTNAME
                             + ", " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_IP_ADDRESS
                             + ", " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_PORT
+                            + ", " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_HAS_WRITE_PERMISSIONS
                             + " FROM " + DatabaseConstants.USER_TABLE_NAME
                             + " JOIN " + DatabaseConstants.CODEDOC_ACCESS_TABLE_NAME
                             + " ON " + DatabaseConstants.USER_TABLE_NAME + "." + DatabaseConstants.USER_TABLE_COL_USERID
@@ -101,6 +102,7 @@ public class EditorService {
                         peer.setUser(user);
                         peer.setIpAddress(resultSet.getString(5));
                         peer.setPort(resultSet.getInt(6));
+                        peer.setHasWritePermissions(resultSet.getBoolean(7));
 
                         activeUsers.add(peer);
                     }

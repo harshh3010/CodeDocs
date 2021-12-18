@@ -17,6 +17,8 @@ import java.util.HashMap;
 
 public class EditorConnection {
 
+    private final String userInControl;
+    private final boolean hasWritePermissions;
     public static HashMap<String, Peer> connectedPeers = new HashMap<>();
     private ArrayList<Peer> activePeers;
 
@@ -36,6 +38,8 @@ public class EditorConnection {
 
         // Fetch the list of active users in current editor
         activePeers = response.getActivePeers();
+        hasWritePermissions = response.isHasWritePermissions();
+        userInControl = response.getUserInControl();
 
         // Connect to the broadcasting server of each active user
         for(Peer peer : activePeers) {
@@ -62,11 +66,20 @@ public class EditorConnection {
 
             request.setUser(user);
             request.setPort(server.getPort());
+            request.setHasWritePermissions(hasWritePermissions);
 
             peer.getOutputStream().writeObject(request);
             peer.getOutputStream().flush();
 
             connectedPeers.put(peer.getUser().getUserID(), peer);
         }
+    }
+
+    public String getUserInControl() {
+        return userInControl;
+    }
+
+    public boolean isHasWritePermissions() {
+        return hasWritePermissions;
     }
 }
