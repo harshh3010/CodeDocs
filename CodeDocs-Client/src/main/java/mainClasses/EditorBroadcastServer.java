@@ -11,8 +11,6 @@ public class EditorBroadcastServer extends Thread{
 
     private final int port;
     private final ServerSocket serverSocket;
-    public static HashMap<Socket, ObjectInputStream> inputStreams = new HashMap<>();
-    public static HashMap<Socket, ObjectOutputStream> outputStreams = new HashMap<>();
 
     public EditorBroadcastServer() throws IOException {
         // TODO: Read port from config file

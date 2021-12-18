@@ -1,21 +1,23 @@
 package mainClasses;
 
 import models.Peer;
-import requests.peerRequests.SendConnectionPortRequest;
+import models.User;
+import requests.peerRequests.SendPeerConnectionRequest;
 import response.editorResponse.EditorConnectionResponse;
 import services.EditorService;
 import utilities.Status;
+import utilities.UserApi;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class EditorConnection {
 
+    public static HashMap<String, Peer> connectedPeers = new HashMap<>();
     private ArrayList<Peer> activePeers;
 
     public EditorConnection(String codeDocId) throws IOException, ClassNotFoundException {
@@ -41,18 +43,30 @@ public class EditorConnection {
             System.out.println(peer.getPort());
             // Connecting to the peer's broadcast server
             Socket socket = new Socket(peer.getIpAddress(), peer.getPort());
+            peer.setSocket(socket);
 
             // Storing the IO streams for later use
-            ObjectOutputStream outputStream = new ObjectOutputStream(socket.getOutputStream());
-            EditorBroadcastServer.outputStreams.put(socket, outputStream);
-            EditorBroadcastServer.inputStreams.put(socket, new ObjectInputStream(socket.getInputStream()));
+            peer.setOutputStream(new ObjectOutputStream(socket.getOutputStream()));
+            peer.setInputStream(new ObjectInputStream(socket.getInputStream()));
 
             // Sending port to the peer to allow him to connect to current user's broadcast server
             System.out.println("Writing " + server.getPort());
-            SendConnectionPortRequest request = new SendConnectionPortRequest();
+
+            SendPeerConnectionRequest request = new SendPeerConnectionRequest();
+
+            User user = new User();
+            user.setUserID(UserApi.getInstance().getId());
+            user.setFirstName(UserApi.getInstance().getFirstName());
+            user.setLastName(UserApi.getInstance().getLastName());
+            user.setEmail(UserApi.getInstance().getEmail());
+
+            request.setUser(user);
             request.setPort(server.getPort());
-            outputStream.writeObject(request);
-            outputStream.flush();
+
+            peer.getOutputStream().writeObject(request);
+            peer.getOutputStream().flush();
+
+            connectedPeers.put(peer.getUser().getUserID(), peer);
         }
     }
 }

@@ -44,20 +44,19 @@ public class EditorService {
 
                 ResultSet resultSet = preparedStatement.executeQuery();
                 if (resultSet.next()) {
-                    boolean hasWritePermissions = resultSet.getBoolean(1);
-                    if (!hasWritePermissions) {
-                        response.setHasWritePermissions(false);
-                        response.setHasControl(false);
+                    response.setHasWritePermissions(resultSet.getBoolean(1));
+
+                    String activeQuery = "SELECT " + DatabaseConstants.ACTIVE_EDITORS_COL_CODEDOC_ID
+                            + " FROM " + DatabaseConstants.ACTIVE_EDITORS_TABLE_NAME
+                            + ";";
+
+                    preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(activeQuery);
+                    resultSet = preparedStatement.executeQuery();
+
+                    if (resultSet.next()) {
+                        response.setUserInControl(resultSet.getString(1));
                     } else {
-                        response.setHasWritePermissions(true);
-                        String activeQuery = "SELECT " + DatabaseConstants.ACTIVE_EDITORS_COL_CODEDOC_ID
-                                + " FROM " + DatabaseConstants.ACTIVE_EDITORS_TABLE_NAME
-                                + ";";
-                        preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(activeQuery);
-                        resultSet = preparedStatement.executeQuery();
-                        if (resultSet.next()) {
-                            response.setHasControl(false);
-                        } else {
+                        if(response.isHasWritePermissions()) {
                             activeQuery = "INSERT INTO " + DatabaseConstants.ACTIVE_EDITORS_TABLE_NAME
                                     + " (" + DatabaseConstants.ACTIVE_EDITORS_COL_CODEDOC_ID
                                     + ", " + DatabaseConstants.ACTIVE_EDITORS_COL_USER_IN_CONTROL
@@ -66,9 +65,12 @@ public class EditorService {
                             preparedStatement.setString(1, editorConnectionRequest.getCodeDocId());
                             preparedStatement.setString(2, editorConnectionRequest.getUserId());
                             preparedStatement.executeUpdate();
-                            response.setHasControl(true);
+                            response.setUserInControl(editorConnectionRequest.getUserId());
+                        } else {
+                            response.setUserInControl(null);
                         }
                     }
+
                     String activeUsersQuery = "SELECT " + DatabaseConstants.USER_TABLE_NAME + "."+ DatabaseConstants.USER_TABLE_COL_USERID
                             + ", " + DatabaseConstants.USER_TABLE_COL_EMAIL
                             + ", " + DatabaseConstants.USER_TABLE_COL_FIRSTNAME

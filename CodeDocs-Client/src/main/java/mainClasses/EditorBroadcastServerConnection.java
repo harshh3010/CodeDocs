@@ -1,7 +1,8 @@
 package mainClasses;
 
+import models.Peer;
 import requests.appRequests.AppRequest;
-import requests.peerRequests.SendConnectionPortRequest;
+import requests.peerRequests.SendPeerConnectionRequest;
 import utilities.RequestType;
 
 import java.io.IOException;
@@ -9,7 +10,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-public class EditorBroadcastServerConnection extends Thread{
+public class EditorBroadcastServerConnection extends Thread {
 
     private final Socket connection;
     private final ObjectOutputStream outputStream;
@@ -23,18 +24,29 @@ public class EditorBroadcastServerConnection extends Thread{
 
     @Override
     public void run() {
+
+        // Update online status
         try {
             while (true) {
                 AppRequest request = (AppRequest) inputStream.readObject();
-                if(request.getRequestType() == RequestType.SEND_CONNECTION_PORT_REQUEST){
-                    int port = ((SendConnectionPortRequest) request).getPort();
-                    System.out.println(port);
-                    Socket socket = new Socket(connection.getInetAddress().getCanonicalHostName(), port);
-                    EditorBroadcastServer.outputStreams.put(socket, new ObjectOutputStream(socket.getOutputStream()));
-                    EditorBroadcastServer.inputStreams.put(socket, new ObjectInputStream(socket.getInputStream()));
+                if (request.getRequestType() == RequestType.SEND_PEER_CONNECTION_REQUEST) {
+
+                    SendPeerConnectionRequest connectionRequest = (SendPeerConnectionRequest) request;
+
+                    Peer peer = new Peer();
+                    peer.setUser(connectionRequest.getUser());
+                    peer.setPort(connectionRequest.getPort());
+                    peer.setIpAddress(connection.getInetAddress().getCanonicalHostName());
+
+                    Socket socket = new Socket(peer.getIpAddress(), peer.getPort());
+
+                    peer.setSocket(connection);
+                    peer.setOutputStream(new ObjectOutputStream(socket.getOutputStream()));
+                    peer.setInputStream(new ObjectInputStream(socket.getInputStream()));
+
+                    EditorConnection.connectedPeers.put(peer.getUser().getUserID(), peer);
                 }
             }
-
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -46,5 +58,7 @@ public class EditorBroadcastServerConnection extends Thread{
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+
     }
 }

@@ -12,7 +12,7 @@ public class EditorConnectionResponse extends AppResponse implements Serializabl
 
     private Status status;
     private boolean hasWritePermissions;
-    private boolean hasControl;
+    private String userInControl;
     private ArrayList<Peer> activePeers;
 
     public boolean isHasWritePermissions() {
@@ -23,12 +23,12 @@ public class EditorConnectionResponse extends AppResponse implements Serializabl
         this.hasWritePermissions = hasWritePermissions;
     }
 
-    public boolean isHasControl() {
-        return hasControl;
+    public String getUserInControl() {
+        return userInControl;
     }
 
-    public void setHasControl(boolean hasControl) {
-        this.hasControl = hasControl;
+    public void setUserInControl(String userInControl) {
+        this.userInControl = userInControl;
     }
 
     public Status getStatus() {
