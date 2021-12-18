@@ -1,14 +1,8 @@
 package services;
 
 import mainClasses.CodeDocsClient;
-import requests.appRequests.AcceptInviteRequest;
-import requests.appRequests.FetchCodeDocRequest;
-import requests.appRequests.FetchInviteRequest;
-import requests.appRequests.RejectInviteRequest;
-import response.appResponse.AcceptInviteResponse;
-import response.appResponse.FetchCodeDocResponse;
-import response.appResponse.FetchInviteResponse;
-import response.appResponse.RejectInviteResponse;
+import requests.appRequests.*;
+import response.appResponse.*;
 import utilities.CodeDocRequestType;
 import utilities.UserApi;
 
@@ -20,6 +14,21 @@ public class CollaborationService {
 
     private static final ObjectInputStream inputStream = CodeDocsClient.inputStream;
     private static final ObjectOutputStream outputStream = CodeDocsClient.outputStream;
+
+    public static InviteCollaboratorResponse inviteCollaborator(String codeDocID, String receiverID,int writePermissions) throws IOException, ClassNotFoundException {
+
+        InviteCollaboratorRequest request = new InviteCollaboratorRequest();
+        request.setSenderID(UserApi.getInstance().getId());
+        request.setReceiverID(receiverID);
+        request.setCodeDocID(codeDocID);
+        request.setWritePermissions(writePermissions);
+
+        outputStream.writeObject(request);
+        outputStream.flush();
+
+        return (InviteCollaboratorResponse) inputStream.readObject();
+
+    }
 
     public static FetchInviteResponse fetchInvites(int rowCount, int offset) throws IOException, ClassNotFoundException {
 

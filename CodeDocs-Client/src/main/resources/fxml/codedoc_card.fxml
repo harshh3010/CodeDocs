@@ -20,6 +20,7 @@
             <Label fx:id="titleLabel" layoutX="170.0" layoutY="16.0" prefHeight="35.0" prefWidth="388.0" styleClass="headingLabel3" text="CodeDoc Title" />
             <Text fx:id="descText" fill="WHITE" layoutX="170.0" layoutY="64.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="paragraph" text="This is a very short description of the code doc file created by the user." wrappingWidth="558.1367340087891" />
             <Label fx:id="dateLabel" alignment="CENTER_RIGHT" layoutX="567.0" layoutY="12.0" prefHeight="26.0" prefWidth="368.0" styleClass="paragraph" text="01/01/2021" textAlignment="RIGHT" />
+            <Button fx:id="inviteButton" layoutX="714.0" layoutY="111.0" mnemonicParsing="false" styleClass="button3" text="Invite" />
             <Button fx:id="deleteButton" layoutX="862.0" layoutY="111.0" mnemonicParsing="false" styleClass="button3" text="Delete" />
             <Button fx:id="updateButton" layoutX="788.0" layoutY="111.0" mnemonicParsing="false" styleClass="button3" text="Update" />
          </children>
