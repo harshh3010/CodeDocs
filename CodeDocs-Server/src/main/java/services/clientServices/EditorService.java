@@ -3,6 +3,7 @@ package services.clientServices;
 import mainClasses.CodeDocsServer;
 import models.Peer;
 import models.User;
+import requests.editorRequests.EditorCloseRequest;
 import requests.editorRequests.EditorConnectionRequest;
 import requests.editorRequests.LoadEditorRequest;
 import requests.editorRequests.SaveCodeDocRequest;
@@ -135,6 +136,52 @@ public class EditorService {
         response.setStatus(Status.FAILED);
         return response;
     }
+
+    public static void destroyConnection(EditorCloseRequest request){
+
+        String updateQuery = "UPDATE " + DatabaseConstants.CODEDOC_ACCESS_TABLE_NAME
+                + " SET " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_IS_ACTIVE + " = FALSE " +
+                " WHERE " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_USER_ID+ " =? " +
+                " AND " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_CODEDOC_ID + " = ?;";
+
+        try{
+            CodeDocsServer.databaseConnection.setAutoCommit(false);
+            try{
+                PreparedStatement preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(updateQuery);
+                preparedStatement.setString(1, request.getUserId());
+                preparedStatement.setString(2, request.getCodeDocId());
+                preparedStatement.executeUpdate();
+
+                String query = "";
+                if(request.getUserInControl() == null){
+                    query = "DELETE FROM " + DatabaseConstants.ACTIVE_EDITORS_TABLE_NAME +
+                            " WHERE " + DatabaseConstants.ACTIVE_EDITORS_COL_CODEDOC_ID+ " = ?;";
+                    preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(query);
+                    preparedStatement.setString(1,request.getCodeDocId());
+
+                }
+                else {
+                    query = "UPDATE " + DatabaseConstants.ACTIVE_EDITORS_TABLE_NAME +
+                            " SET " + DatabaseConstants.ACTIVE_EDITORS_COL_USER_IN_CONTROL + " =? " +
+                            " WHERE " + DatabaseConstants.ACTIVE_EDITORS_COL_CODEDOC_ID + " = ?;";
+                    preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(query);
+                    preparedStatement.setString(1,request.getUserInControl());
+                    preparedStatement.setString(1,request.getCodeDocId());
+                }
+                preparedStatement.executeUpdate();
+                CodeDocsServer.databaseConnection.commit();
+
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+                CodeDocsServer.databaseConnection.rollback();
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+    }
+
+
 
     public static LoadEditorResponse loadEditor(LoadEditorRequest loadEditorRequest) {
         LoadEditorResponse response = new LoadEditorResponse();

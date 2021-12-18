@@ -27,7 +27,7 @@
                                             <MenuItem mnemonicParsing="false" text="Download" />
                                             <MenuItem mnemonicParsing="false" text="Appearance" />
                                             <MenuItem mnemonicParsing="false" text="Search" />
-                                            <MenuItem mnemonicParsing="false" text="Exit" />
+                                            <MenuItem mnemonicParsing="false" onAction="#exitEditor" text="Exit" />
                                         </items>
                                     </Menu>
                                 </menus>

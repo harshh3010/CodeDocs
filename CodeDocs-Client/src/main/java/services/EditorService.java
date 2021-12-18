@@ -2,6 +2,7 @@ package services;
 
 import mainClasses.CodeDocsClient;
 import models.CodeDoc;
+import requests.editorRequests.EditorCloseRequest;
 import requests.editorRequests.EditorConnectionRequest;
 import requests.editorRequests.LoadEditorRequest;
 import requests.editorRequests.SaveCodeDocRequest;
@@ -29,6 +30,15 @@ public class EditorService {
         outputStream.flush();
 
         return (EditorConnectionResponse) inputStream.readObject();
+    }
+    public static void destroyConnection(String codeDocID,String userInControl) throws IOException {
+        EditorCloseRequest request = new EditorCloseRequest();
+        request.setUserInControl(userInControl);
+        request.setCodeDocId(codeDocID);
+        request.setUserId(UserApi.getInstance().getId());
+
+        outputStream.writeObject(request);
+        outputStream.flush();
     }
 
     public static LoadEditorResponse loadEditorContent(String codeDocID, LanguageType languageType) throws IOException, ClassNotFoundException {

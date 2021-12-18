@@ -103,6 +103,10 @@ public class ClientConnection extends Thread {
                     System.out.println("Client wants to start codedoc editor!");
                     outputStream.writeObject(EditorService.establishConnection((EditorConnectionRequest) request, client.getInetAddress().getCanonicalHostName()));
                     outputStream.flush();
+                }else if(request.getRequestType() == RequestType.EDITOR_CLOSE_REQUEST) {
+                    System.out.println("Client wants to close codedoc editor!");
+                    EditorService.destroyConnection((EditorCloseRequest) request);
+
                 }
 
             } catch (IOException | ClassNotFoundException e) {

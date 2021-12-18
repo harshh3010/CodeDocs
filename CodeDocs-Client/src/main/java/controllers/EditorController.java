@@ -70,4 +70,16 @@ public class EditorController {
             e.printStackTrace();
         }
     }
+
+    public void exitEditor(ActionEvent actionEvent) {
+
+        try{
+            //TODO: send user in control
+            EditorService.destroyConnection(codeDoc.getCodeDocId(),null);
+            Stage stage = (Stage) borderPane.getScene().getWindow();
+            stage.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 }

@@ -71,7 +71,7 @@ public class CodeDocCardController extends ListCell<CodeDoc> {
             // TODO: change path
             InputStream stream = null;
             try {
-                stream = new FileInputStream("D:\\Softablitz\\CodeDocs\\CodeDocs-Client\\src\\main\\resources\\images\\" + codeDoc.getLanguageType().getLanguage() + ".png");
+                stream = new FileInputStream("F:\\third_year_Softa\\trial 2\\CodeDocs\\CodeDocs-Client\\src\\main\\resources\\images\\" + codeDoc.getLanguageType().getLanguage() + ".png");
             } catch (FileNotFoundException e) {
                 e.printStackTrace();
             }
