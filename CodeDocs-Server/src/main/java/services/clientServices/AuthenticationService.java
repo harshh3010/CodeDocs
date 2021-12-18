@@ -1,6 +1,7 @@
 package services.clientServices;
 
 
+import mainClasses.ClientConnection;
 import mainClasses.CodeDocsServer;
 import models.User;
 import requests.appRequests.LoginRequest;
@@ -135,6 +136,7 @@ public class AuthenticationService {
 
                     loginResponse.setUser(user);
                     loginResponse.setLoginStatus(LoginStatus.SUCCESS);
+
                     return loginResponse;
                 }
                 loginResponse.setLoginStatus(LoginStatus.WRONG_CREDENTIALS);

@@ -3,7 +3,10 @@ package mainClasses;
 import requests.appRequests.*;
 import requests.editorRequests.*;
 import response.appResponse.FetchInviteResponse;
+import response.appResponse.GetMeResponse;
+import response.appResponse.LoginResponse;
 import response.editorResponse.SaveCodeDocResponse;
+import services.DestroyResources;
 import services.clientServices.*;
 import utilities.RequestType;
 
@@ -18,6 +21,7 @@ public class ClientConnection extends Thread {
     private final Socket client;
     private final ObjectInputStream inputStream;
     private final ObjectOutputStream outputStream;
+    public  String clientUserID="" ;
 
     public ClientConnection(Socket client) throws IOException {
 
@@ -42,7 +46,9 @@ public class ClientConnection extends Thread {
                     outputStream.flush();
                 } else if (request.getRequestType() == RequestType.LOGIN_REQUEST) {
                     System.out.println("Client wants to login!");
-                    outputStream.writeObject(AuthenticationService.loginUser((LoginRequest) request));
+                    LoginResponse response = AuthenticationService.loginUser((LoginRequest) request);
+                    clientUserID = response.getUser().getUserID();
+                    outputStream.writeObject(response);
                     outputStream.flush();
                 } else if (request.getRequestType() == RequestType.VERIFY_USER_REQUEST) {
                     System.out.println("Client wants to verify his account!");
@@ -50,7 +56,9 @@ public class ClientConnection extends Thread {
                     outputStream.flush();
                 } else if (request.getRequestType() == RequestType.GET_ME_REQUEST) {
                     System.out.println("Client wants to fetch his info!");
-                    outputStream.writeObject(UserService.getUserData((GetMeRequest) request));
+                    GetMeResponse response = UserService.getUserData((GetMeRequest) request);
+                    clientUserID = response.getUser().getUserID();
+                    outputStream.writeObject(response);
                     outputStream.flush();
                 } else if (request.getRequestType() == RequestType.CREATE_CODEDOC_REQUEST) {
                     System.out.println("Client wants to create a CodeDoc!");
@@ -117,6 +125,12 @@ public class ClientConnection extends Thread {
                 } catch (IOException e1) {
                     System.out.println("Error: Unable to close connection!");
                     e1.printStackTrace();
+                }
+                if(clientUserID != ""){
+
+                    //destroy all codeDoc connections + along with entries in the active editor table if any
+                    DestroyResources.destroyAllocations(clientUserID);
+
                 }
                 System.out.println("Client disconnected!");
                 break;

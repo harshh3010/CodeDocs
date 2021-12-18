@@ -31,6 +31,7 @@ public class EditorBroadcastServer extends Thread{
                 e.printStackTrace();
             }
         }
+
     }
 
     public void stopServer() throws IOException {

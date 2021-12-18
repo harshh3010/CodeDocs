@@ -110,10 +110,12 @@ public class CodeEditor {
     }
 
     private void setupTextChangeHandler() {
+
         textArea.plainTextChanges().subscribe(new Consumer<PlainTextChange>() {
             @Override
             public void accept(PlainTextChange plainTextChange) {
                 highlightCode(plainTextChange);
+                System.out.println(plainTextChange.getRemoved()+":::::::");
                 try {
                     streamContent(plainTextChange);
                 } catch (IOException e) {
