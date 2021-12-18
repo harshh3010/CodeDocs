@@ -1,9 +1,12 @@
 package controllers;
 
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import mainClasses.EditorConnection;
 import models.CodeDoc;
 import models.CodeEditor;
@@ -43,6 +46,7 @@ public class EditorController {
                             editorConnection.isHasWritePermissions(),
                             editorConnection.getUserInControl().equals(UserApi.getInstance().getId()));
 
+                    EditorConnection.textArea = codeEditor.getTextArea();
                     borderPane.setCenter(codeEditor.getTextArea());
 
                 } else {
@@ -65,7 +69,6 @@ public class EditorController {
         }
     }
 
-
     public void saveContent(ActionEvent actionEvent) {
         codeDoc.setFileContent(codeEditor.getTextArea().getText());
         try {
@@ -84,8 +87,7 @@ public class EditorController {
         }
     }
 
-    public void exitEditor(ActionEvent actionEvent) {
-
+    public void exitEditor() {
         try {
             String userInControl = editorConnection.getUserInControl();
             if (userInControl.equals(UserApi.getInstance().getId())) {

@@ -1,9 +1,11 @@
 package mainClasses;
 
+import javafx.application.Platform;
 import models.Peer;
 import requests.appRequests.AppRequest;
 import requests.peerRequests.SendPeerConnectionRequest;
 import requests.peerRequests.StreamContentChangeRequest;
+import requests.peerRequests.StreamContentSelectionRequest;
 import utilities.RequestType;
 
 import java.io.IOException;
@@ -49,9 +51,29 @@ public class EditorBroadcastServerConnection extends Thread {
                     EditorConnection.connectedPeers.put(peer.getUser().getUserID(), peer);
                 } else if (request.getRequestType() == RequestType.STREAM_CONTENT_CHANGES_REQUEST) {
                     StreamContentChangeRequest contentChangeRequest = (StreamContentChangeRequest) request;
-                    System.out.println(contentChangeRequest.getStartPosition());
-                    System.out.println(contentChangeRequest.getContent());
-                 }
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            String insertedText = contentChangeRequest.getInsertedContent();
+                            String removedText = contentChangeRequest.getRemovedContent();
+
+                            int insertedStart = contentChangeRequest.getInsertedStart();
+                            int removedEnd = contentChangeRequest.getRemovedEnd();
+                            int removedStart = removedEnd - removedText.length();
+
+                            EditorConnection.textArea.replaceText(removedStart, removedEnd, "");
+                            EditorConnection.textArea.insertText(insertedStart, insertedText);
+                        }
+                    });
+                } else if (request.getRequestType() == RequestType.STREAM_CONTENT_SELECTION_REQUEST) {
+                    StreamContentSelectionRequest contentSelectionRequest = (StreamContentSelectionRequest) request;
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            EditorConnection.textArea.selectRange(contentSelectionRequest.getStart(), contentSelectionRequest.getEnd());
+                        }
+                    });
+                }
             }
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();

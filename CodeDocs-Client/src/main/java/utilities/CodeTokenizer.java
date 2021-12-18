@@ -66,6 +66,10 @@ public class CodeTokenizer {
                 start = i + 1;
                 temp = "";
             } else if (ch == '(' || ch == ')' || ch == '{' || ch == '}' || ch == '[' || ch == ']' || ch == ';' || ch == ':') {
+                if (!temp.isEmpty()) {
+                    Token token = new Token(start, i, trie.search(temp));
+                    tokenList.add(token);
+                }
                 Token token = new Token(i, i + 1, trie.search(ch + ""));
                 tokenList.add(token);
                 start = i + 1;
@@ -85,7 +89,7 @@ public class CodeTokenizer {
             Token token = new Token(start, line.length(), style);
             tokenList.add(token);
         }
-        tokenList.add(new Token(line.length(),line.length(),null));
+//        tokenList.add(new Token(line.length(),line.length(),null));
         return tokenList;
     }
 }
