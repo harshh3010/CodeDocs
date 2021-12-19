@@ -18,6 +18,7 @@ import org.fxmisc.richtext.StyleClassedTextArea;
 import org.fxmisc.richtext.model.PlainTextChange;
 import requests.peerRequests.StreamContentChangeRequest;
 import requests.peerRequests.StreamContentSelectionRequest;
+import requests.peerRequests.StreamCursorPositionRequest;
 import utilities.*;
 
 import java.io.IOException;
@@ -60,6 +61,7 @@ public class CodeEditor {
         setupLanguageParser();
         setupTextChangeHandler();
         setupTextSelectionHandler();
+        setupCursorPositionHandler();
 
         textArea.appendText(initialContent);
     }
@@ -123,11 +125,9 @@ public class CodeEditor {
     }
 
     private void setupTextChangeHandler() {
-
         textArea.plainTextChanges().subscribe(new Consumer<PlainTextChange>() {
             @Override
             public void accept(PlainTextChange plainTextChange) {
-
                 highlightCode();
                 if (hasControl) {
                     try {
@@ -144,14 +144,41 @@ public class CodeEditor {
         textArea.selectionProperty().addListener(new ChangeListener<IndexRange>() {
             @Override
             public void changed(ObservableValue<? extends IndexRange> observableValue, IndexRange indexRange, IndexRange t1) {
+               if(hasControl) {
+                   try {
+                       streamSelection();
+                   } catch (IOException e) {
+                       e.printStackTrace();
+                   }
+               }
+            }
+        });
+    }
 
-                try {
-                    streamSelection();
-                } catch (IOException e) {
-                    e.printStackTrace();
+    private void setupCursorPositionHandler() {
+        textArea.caretPositionProperty().addListener(new ChangeListener<Integer>() {
+            @Override
+            public void changed(ObservableValue<? extends Integer> observableValue, Integer integer, Integer t1) {
+                if(hasControl) {
+                    try {
+                        streamCursorPosition();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         });
+    }
+
+    private void streamCursorPosition() throws IOException {
+        StreamCursorPositionRequest request = new StreamCursorPositionRequest();
+        request.setPosition(textArea.getCaretPosition());
+
+        for (Peer peer : EditorConnection.connectedPeers.values()) {
+            peer.getOutputStream().writeObject(request);
+            peer.getOutputStream().flush();
+        }
+
     }
 
     private void streamSelection() throws IOException {
