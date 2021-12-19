@@ -7,6 +7,7 @@ import javafx.event.EventHandler;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.IndexRange;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Paint;
 import mainClasses.EditorConnection;
@@ -25,6 +26,8 @@ public class CodeEditor {
 
     private final LanguageType languageType;
     private final StyleClassedTextArea textArea;
+//    private final TextArea inputTextArea;
+//    private final TextArea outputTextArea;
     private CodeHighlightingTrie codeHighlightingTrie;
     private CodeAutocompleteTrie codeAutocompleteTrie;
     private final boolean hasWritePermissions;
