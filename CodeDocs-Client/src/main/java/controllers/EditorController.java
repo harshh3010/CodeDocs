@@ -3,8 +3,12 @@ package controllers;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
+import javafx.scene.control.TextArea;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import mainClasses.EditorConnection;
@@ -26,6 +30,8 @@ import java.io.IOException;
 public class EditorController {
 
     public BorderPane borderPane;
+    public TextArea inputTextArea;
+    public TextArea outputTextArea;
     private CodeDoc codeDoc;
     private CodeEditor codeEditor;
     private EditorConnection editorConnection;
@@ -73,7 +79,7 @@ public class EditorController {
         }
     }
 
-    public void saveContent(ActionEvent actionEvent) {
+    public void saveContent() {
         codeDoc.setFileContent(codeEditor.getTextArea().getText());
         try {
             SaveCodeDocResponse response = EditorService.saveCodeDoc(codeDoc);
@@ -114,13 +120,15 @@ public class EditorController {
 
     private void compileCodeDoc() {
         try {
+            saveContent();
             CompileCodeDocResponse response = EditorService.compileCodeDoc(codeDoc.getCodeDocId(),codeDoc.getLanguageType());
             if (response.getStatus() == Status.SUCCESS){
-                if(response.getError()==""){
-                    //TODO: set input text area text= Your code compiled successfully
-                    System.out.println("No error");
+                if(response.getError().isEmpty()){
+                    outputTextArea.setStyle("-fx-text-fill: black;");
+                    outputTextArea.setText("Your code compiled successfully!");
                 } else{
-                    System.out.println(response.getError());
+                    outputTextArea.setStyle("-fx-text-fill: red;");
+                    outputTextArea.setText("ERROR: "+response.getError());
                 }
             }else{
                 Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -134,14 +142,18 @@ public class EditorController {
 
     private void runCodeDoc() {
         try {
-            //TODO: set input = inputTextArea.getText()
-            RunCodeDocResponse response = EditorService.runCodeDoc(codeDoc.getCodeDocId(),codeDoc.getLanguageType(),"10 20");
+            saveContent();
+            String input = inputTextArea.getText();
+            RunCodeDocResponse response = EditorService.runCodeDoc(codeDoc.getCodeDocId(),codeDoc.getLanguageType(),input);
             if (response.getStatus() == Status.SUCCESS){
-                if(response.getError()==""){
-                    //TODO: set output text area text response.getOutput
-                    System.out.println(response.getOutput());
+                if(response.getError().isEmpty()){
+                    outputTextArea.setStyle("-fx-text-fill: black;");
+                    outputTextArea.setText(response.getOutput());
+
                 } else{
-                    System.out.println(response.getError());
+                    outputTextArea.setStyle("-fx-text-fill: red;");
+                    outputTextArea.setText("ERROR: "+response.getError());
+
                 }
             }else{
                 Alert alert = new Alert(Alert.AlertType.ERROR);

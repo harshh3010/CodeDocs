@@ -5,12 +5,14 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane minHeight="720" minWidth="1280" prefHeight="720" prefWidth="1280" styleClass="background" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.EditorController">
+<AnchorPane prefHeight="720" prefWidth="1280" styleClass="background" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.EditorController">
 
     <children>
       <AnchorPane styleClass="darkOverlay">
@@ -37,11 +39,6 @@
                                     <AnchorPane prefHeight="48.0" prefWidth="1280.0" BorderPane.alignment="CENTER">
                                         <children>
                                             <HBox alignment="CENTER_RIGHT" layoutX="1015.0" layoutY="-4.0" prefHeight="100.0" prefWidth="232.0" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                                <children>
-
-                                                    <Button mnemonicParsing="false" onAction="#onCompileClicked" styleClass="button1" text="Compile" />
-                                                    <Button mnemonicParsing="false" onAction="#onRunClicked" styleClass="button1" text="Run" />
-                                                </children>
                                                 <padding>
                                                     <Insets right="20.0" />
                                                 </padding>
@@ -49,9 +46,29 @@
                                         </children>
                                     </AnchorPane>
                                 </top>
-                                <left>
-                                    <AnchorPane prefHeight="639.0" prefWidth="282.0" BorderPane.alignment="CENTER" />
-                                </left>
+                           <bottom>
+                              <HBox alignment="BOTTOM_CENTER" nodeOrientation="LEFT_TO_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="50.0" BorderPane.alignment="CENTER">
+                                 <children>
+                                    <TitledPane prefHeight="200.0" prefWidth="500.0" text="Input">
+                                       <content>
+                                          <TextArea fx:id="inputTextArea" prefHeight="200.0" prefWidth="200.0" />
+                                       </content>
+                                    </TitledPane>
+                                    <TitledPane prefHeight="200.0" prefWidth="500.0" text="Output">
+                                       <content>
+                                          <TextArea fx:id="outputTextArea" editable="false" prefHeight="200.0" prefWidth="200.0" />
+                                       </content>
+                                    </TitledPane>
+                                    <VBox prefHeight="200.0" prefWidth="100.0" spacing="20.0">
+                                       <children>
+
+                                                    <Button mnemonicParsing="false" onAction="#onCompileClicked" prefWidth="240.0" styleClass="button1" text="Compile" />
+                                                    <Button mnemonicParsing="false" onAction="#onRunClicked" prefWidth="240.0" styleClass="button1" text="Run" />
+                                       </children>
+                                    </VBox>
+                                 </children>
+                              </HBox>
+                           </bottom>
                             </BorderPane>
                         </children>
                     </VBox>

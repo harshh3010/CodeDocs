@@ -4,11 +4,13 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.IndexRange;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.TextArea;
+import javafx.geometry.Insets;
+import javafx.geometry.VPos;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.Background;
+import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import mainClasses.EditorConnection;
 import org.fxmisc.richtext.LineNumberFactory;
@@ -26,8 +28,6 @@ public class CodeEditor {
 
     private final LanguageType languageType;
     private final StyleClassedTextArea textArea;
-//    private final TextArea inputTextArea;
-//    private final TextArea outputTextArea;
     private CodeHighlightingTrie codeHighlightingTrie;
     private CodeAutocompleteTrie codeAutocompleteTrie;
     private final boolean hasWritePermissions;
@@ -41,7 +41,6 @@ public class CodeEditor {
 
         this.languageType = languageType;
         textArea = new StyleClassedTextArea();
-
         if (!hasWritePermissions || !hasControl) {
             textArea.setEditable(false);
         }
@@ -49,6 +48,7 @@ public class CodeEditor {
         textArea.setWrapText(true);
         textArea.setParagraphGraphicFactory(LineNumberFactory.get(textArea));
         textArea.setContextMenu(new ContextMenu());
+
 
         // TODO: Do using CSS
         textArea.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/test.css")).toExternalForm());
@@ -67,6 +67,7 @@ public class CodeEditor {
     public StyleClassedTextArea getTextArea() {
         return textArea;
     }
+
 
     private void setupLanguageParser() {
 

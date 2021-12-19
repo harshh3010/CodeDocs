@@ -232,7 +232,6 @@ public class CodeDocCardController extends ListCell<CodeDoc> {
                             Stage stage = new Stage();
                             stage.setTitle("CodeDoc Editor - " + codeDoc.getTitle());
                             stage.setScene(scene);
-                            stage.setMaximized(true);
                             stage.show();
                         } catch (IOException e) {
                             e.printStackTrace();
