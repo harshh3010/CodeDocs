@@ -1,5 +1,6 @@
 package services.clientServices;
 
+import mainClasses.ClientConnection;
 import mainClasses.CodeDocsServer;
 import models.User;
 import requests.appRequests.GetMeRequest;

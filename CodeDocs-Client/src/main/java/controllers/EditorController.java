@@ -11,8 +11,12 @@ import mainClasses.EditorConnection;
 import models.CodeDoc;
 import models.CodeEditor;
 import models.Peer;
+import response.appResponse.CreateCodeDocResponse;
+import response.editorResponse.CompileCodeDocResponse;
 import response.editorResponse.LoadEditorResponse;
+import response.editorResponse.RunCodeDocResponse;
 import response.editorResponse.SaveCodeDocResponse;
+import services.CodeDocsService;
 import services.EditorService;
 import utilities.Status;
 import utilities.UserApi;
@@ -106,5 +110,54 @@ public class EditorController {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private void compileCodeDoc() {
+        try {
+            CompileCodeDocResponse response = EditorService.compileCodeDoc(codeDoc.getCodeDocId(),codeDoc.getLanguageType());
+            if (response.getStatus() == Status.SUCCESS){
+                if(response.getError()==""){
+                    //TODO: set input text area text= Your code compiled successfully
+                    System.out.println("No error");
+                } else{
+                    System.out.println(response.getError());
+                }
+            }else{
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setContentText("Cannot compile codedoc at the moment!");
+                alert.show();
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void runCodeDoc() {
+        try {
+            //TODO: set input = inputTextArea.getText()
+            RunCodeDocResponse response = EditorService.runCodeDoc(codeDoc.getCodeDocId(),codeDoc.getLanguageType(),"10 20");
+            if (response.getStatus() == Status.SUCCESS){
+                if(response.getError()==""){
+                    //TODO: set output text area text response.getOutput
+                    System.out.println(response.getOutput());
+                } else{
+                    System.out.println(response.getError());
+                }
+            }else{
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setContentText("Cannot run codedoc at the moment!");
+                alert.show();
+            }
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void onCompileClicked(ActionEvent actionEvent) {
+        compileCodeDoc();
+    }
+
+    public void onRunClicked(ActionEvent actionEvent) {
+        runCodeDoc();
     }
 }

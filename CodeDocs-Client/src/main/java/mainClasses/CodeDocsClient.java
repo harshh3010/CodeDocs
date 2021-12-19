@@ -1,6 +1,7 @@
 package mainClasses;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.stage.Stage;
 import models.CodeDoc;
 import requests.editorRequests.CompileCodeDocRequest;
@@ -66,5 +67,10 @@ public class CodeDocsClient extends Application {
         stage.setTitle("CodeDocs");
         SceneService.setScene(AppScreen.splashScreen);
         stage.show();
+        Platform.setImplicitExit(true);
+        stage.setOnCloseRequest((ae) -> {
+            Platform.exit();
+            System.exit(0);
+        });
     }
 }

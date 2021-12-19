@@ -7,6 +7,7 @@ import javafx.event.EventHandler;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.IndexRange;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Paint;
 import mainClasses.EditorConnection;
@@ -48,6 +49,7 @@ public class CodeEditor {
         textArea.setParagraphGraphicFactory(LineNumberFactory.get(textArea));
         textArea.setContextMenu(new ContextMenu());
 
+        // TODO: Do using CSS
         textArea.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/css/test.css")).toExternalForm());
         textArea.setLineHighlighterFill(Paint.valueOf("#690026"));
         textArea.setLineHighlighterOn(true);

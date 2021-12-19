@@ -56,7 +56,7 @@ public class CreateCodeDocController implements Initializable {
                 alert.setContentText("Codedoc created successfully!");
                 alert.show();
             }else{
-                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setContentText("Cannot create codedoc at the moment!");
                 alert.show();
             }

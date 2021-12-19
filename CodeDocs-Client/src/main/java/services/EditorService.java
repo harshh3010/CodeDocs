@@ -2,13 +2,8 @@ package services;
 
 import mainClasses.CodeDocsClient;
 import models.CodeDoc;
-import requests.editorRequests.EditorCloseRequest;
-import requests.editorRequests.EditorConnectionRequest;
-import requests.editorRequests.LoadEditorRequest;
-import requests.editorRequests.SaveCodeDocRequest;
-import response.editorResponse.EditorConnectionResponse;
-import response.editorResponse.LoadEditorResponse;
-import response.editorResponse.SaveCodeDocResponse;
+import requests.editorRequests.*;
+import response.editorResponse.*;
 import utilities.LanguageType;
 import utilities.UserApi;
 
@@ -59,4 +54,33 @@ public class EditorService {
         outputStream.flush();
         return (SaveCodeDocResponse) inputStream.readObject();
     }
+
+    public static CompileCodeDocResponse compileCodeDoc(String codeDocID, LanguageType languageType) throws IOException, ClassNotFoundException {
+
+        CompileCodeDocRequest request = new CompileCodeDocRequest();
+        request.setLanguageType(languageType);
+        request.setUserID(UserApi.getInstance().getId());
+        request.setCodeDocID(codeDocID);
+
+        outputStream.writeObject(request);
+        outputStream.flush();
+
+        return (CompileCodeDocResponse)inputStream.readObject();
+    }
+
+    public static RunCodeDocResponse runCodeDoc(String codeDocID,LanguageType languageType, String input) throws IOException, ClassNotFoundException {
+
+        RunCodeDocRequest request = new RunCodeDocRequest();
+        request.setInput(input);
+        request.setLanguageType(languageType);
+        request.setUserID(UserApi.getInstance().getId());
+        request.setCodeDocID(codeDocID);
+
+        outputStream.writeObject(request);
+        outputStream.flush();
+
+        return (RunCodeDocResponse) inputStream.readObject();
+    }
+
+
 }
