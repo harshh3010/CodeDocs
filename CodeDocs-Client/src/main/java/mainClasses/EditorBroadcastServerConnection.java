@@ -1,6 +1,9 @@
 package mainClasses;
 
 import javafx.application.Platform;
+import javafx.geometry.Bounds;
+import javafx.scene.control.Label;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import models.Peer;
 import org.fxmisc.richtext.Caret;
@@ -12,7 +15,6 @@ import requests.peerRequests.StreamContentSelectionRequest;
 import requests.peerRequests.StreamCursorPositionRequest;
 import utilities.RequestType;
 
-import java.awt.*;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -66,6 +68,7 @@ public class EditorBroadcastServerConnection extends Thread {
                             int removedEnd = contentChangeRequest.getRemovedEnd();
                             int removedStart = removedEnd - removedText.length();
 
+                            // TODO: Check
                             EditorConnection.textArea.replaceText(removedStart, removedEnd, "");
                             EditorConnection.textArea.insertText(insertedStart, insertedText);
                         }
@@ -83,11 +86,39 @@ public class EditorBroadcastServerConnection extends Thread {
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
-                            EditorConnection.textArea.setShowCaret(Caret.CaretVisibility.ON);
-                            EditorConnection.textArea.moveTo(cursorPositionRequest.getPosition());
+                            // TODO: Implement multiple cursors
+                            String userId = cursorPositionRequest.getUserId();
+                            int pos = cursorPositionRequest.getPosition();
+                            int mxPos = EditorConnection.textArea.getLength();
+
+                            if (pos <= mxPos) {
+                                if (EditorConnection.cursors.get(userId) == null) {
+                                    EditorConnection.cursors.put(userId, new CaretNode(userId, EditorConnection.textArea, 0));
+                                    EditorConnection.cursors.get(userId).setVisible(true);
+                                    EditorConnection.textArea.addCaret(EditorConnection.cursors.get(userId));
+
+                                    EditorConnection.cursorLabels.put(userId, new Label());
+                                    EditorConnection.cursorLabels.get(userId).setText(EditorConnection.connectedPeers.get(userId).getUser().getFirstName());
+                                    EditorConnection.cursorLabels.get(userId).setVisible(true);
+                                    EditorConnection.cursorLabels.get(userId).setStyle("-fx-text-fill: white;");
+                                    EditorConnection.pane.getChildren().add(EditorConnection.cursorLabels.get(userId));
+                                }
+                                EditorConnection.cursors.get(userId).moveTo(pos);
+                                double x = EditorConnection.cursors.get(userId).getCaretBounds().get().getCenterX();
+                                double y = EditorConnection.cursors.get(userId).getCaretBounds().get().getCenterY();
+                                double x1 = EditorConnection.pane.localToScreen(EditorConnection.pane.getBoundsInLocal()).getMinX();
+                                double y1 = EditorConnection.pane.localToScreen(EditorConnection.pane.getBoundsInLocal()).getMinY();
+
+//                                System.out.println(x + ":" + y);
+//                                System.out.println(x1 + ":" + y1);
+
+                                EditorConnection.cursorLabels.get(userId).setLayoutX(x - x1);
+                                EditorConnection.cursorLabels.get(userId).setLayoutY(y - y1);
+
+                            }
                         }
                     });
-                 }
+                }
             }
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();

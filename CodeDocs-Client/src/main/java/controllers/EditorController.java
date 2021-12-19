@@ -6,9 +6,7 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextArea;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import mainClasses.EditorConnection;
@@ -56,8 +54,13 @@ public class EditorController {
                             editorConnection.isHasWritePermissions(),
                             editorConnection.getUserInControl().equals(UserApi.getInstance().getId()));
 
+                    StackPane stackPane = new StackPane();
+                    stackPane.getChildren().add(codeEditor.getTextArea());
                     EditorConnection.textArea = codeEditor.getTextArea();
-                    borderPane.setCenter(codeEditor.getTextArea());
+                    EditorConnection.pane = new Pane();
+                    EditorConnection.pane.setMouseTransparent(true);
+                    stackPane.getChildren().add(EditorConnection.pane);
+                    borderPane.setCenter(stackPane);
 
                 } else {
                     alert.setContentText("Cannot load at the moment");

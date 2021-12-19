@@ -7,7 +7,16 @@ import java.io.Serializable;
 
 public class StreamCursorPositionRequest extends AppRequest implements Serializable {
 
+    private String userId;
     private int position;
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 
     public int getPosition() {
         return position;

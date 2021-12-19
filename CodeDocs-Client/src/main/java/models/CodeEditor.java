@@ -13,6 +13,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import mainClasses.EditorConnection;
+import org.fxmisc.richtext.Caret;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.StyleClassedTextArea;
 import org.fxmisc.richtext.model.PlainTextChange;
@@ -46,6 +47,7 @@ public class CodeEditor {
             textArea.setEditable(false);
         }
 
+//        textArea.setShowCaret(Caret.CaretVisibility.ON);
         textArea.setWrapText(true);
         textArea.setParagraphGraphicFactory(LineNumberFactory.get(textArea));
         textArea.setContextMenu(new ContextMenu());
@@ -132,6 +134,7 @@ public class CodeEditor {
                 if (hasControl) {
                     try {
                         streamContent(plainTextChange);
+                        streamCursorPosition();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
@@ -171,14 +174,15 @@ public class CodeEditor {
     }
 
     private void streamCursorPosition() throws IOException {
+
         StreamCursorPositionRequest request = new StreamCursorPositionRequest();
+        request.setUserId(UserApi.getInstance().getId());
         request.setPosition(textArea.getCaretPosition());
 
         for (Peer peer : EditorConnection.connectedPeers.values()) {
             peer.getOutputStream().writeObject(request);
             peer.getOutputStream().flush();
         }
-
     }
 
     private void streamSelection() throws IOException {

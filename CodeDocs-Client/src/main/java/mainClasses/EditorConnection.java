@@ -1,7 +1,11 @@
 package mainClasses;
 
+import javafx.scene.control.Label;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import models.Peer;
 import models.User;
+import org.fxmisc.richtext.CaretNode;
 import org.fxmisc.richtext.StyleClassedTextArea;
 import requests.peerRequests.SendPeerConnectionRequest;
 import response.editorResponse.EditorConnectionResponse;
@@ -18,6 +22,9 @@ import java.util.HashMap;
 
 public class EditorConnection {
 
+    public static Pane pane;
+    public static HashMap<String, CaretNode> cursors = new HashMap<>();
+    public static HashMap<String, Label> cursorLabels = new HashMap<>();
     private final String userInControl;
     private final boolean hasWritePermissions;
     public static HashMap<String, Peer> connectedPeers = new HashMap<>();
