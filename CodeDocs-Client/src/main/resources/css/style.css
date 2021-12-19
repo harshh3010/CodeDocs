@@ -224,6 +224,10 @@
 
 }
 
+.styled-text-area .caret {
+    -fx-stroke: white;
+}
+
 .lineno {
     -fx-text-fill: white;
     -fx-background-color: rgb(54, 0, 19);

@@ -1,13 +1,18 @@
 package mainClasses;
 
 import javafx.application.Platform;
+import javafx.scene.layout.StackPane;
 import models.Peer;
+import org.fxmisc.richtext.Caret;
+import org.fxmisc.richtext.CaretNode;
 import requests.appRequests.AppRequest;
 import requests.peerRequests.SendPeerConnectionRequest;
 import requests.peerRequests.StreamContentChangeRequest;
 import requests.peerRequests.StreamContentSelectionRequest;
+import requests.peerRequests.StreamCursorPositionRequest;
 import utilities.RequestType;
 
+import java.awt.*;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -73,7 +78,16 @@ public class EditorBroadcastServerConnection extends Thread {
                             EditorConnection.textArea.selectRange(contentSelectionRequest.getStart(), contentSelectionRequest.getEnd());
                         }
                     });
-                }
+                } else if (request.getRequestType() == RequestType.STREAM_CURSOR_POSITION_REQUEST) {
+                    StreamCursorPositionRequest cursorPositionRequest = (StreamCursorPositionRequest) request;
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            EditorConnection.textArea.setShowCaret(Caret.CaretVisibility.ON);
+                            EditorConnection.textArea.moveTo(cursorPositionRequest.getPosition());
+                        }
+                    });
+                 }
             }
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
