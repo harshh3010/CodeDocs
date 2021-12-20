@@ -9,9 +9,7 @@ import requests.peerRequests.StreamContentSelectionRequest;
 import requests.peerRequests.StreamCursorPositionRequest;
 import utilities.RequestType;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.Socket;
 
 /**
@@ -56,6 +54,7 @@ public class EditorBroadcastServerConnection extends Thread {
                     Peer peer = new Peer();
                     peer.setUser(connectionRequest.getUser());
                     peer.setPort(connectionRequest.getPort());
+                    peer.setAudioPort(connectionRequest.getAudioPort());
                     peer.setIpAddress(connection.getInetAddress().getCanonicalHostName());
                     peer.setHasWritePermissions(connectionRequest.isHasWritePermissions());
 
@@ -64,6 +63,11 @@ public class EditorBroadcastServerConnection extends Thread {
                     peer.setSocket(connection);
                     peer.setOutputStream(new ObjectOutputStream(socket.getOutputStream()));
                     peer.setInputStream(new ObjectInputStream(socket.getInputStream()));
+
+                    Socket audioSocket = new Socket(peer.getIpAddress(), peer.getAudioPort());
+
+                    peer.setAudioOutputStream(new DataOutputStream(audioSocket.getOutputStream()));
+                    peer.setAudioInputStream(new DataInputStream(audioSocket.getInputStream()));
 
                     editorConnection.getConnectedPeers().put(peer.getUser().getUserID(), peer);
 

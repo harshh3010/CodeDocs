@@ -1,8 +1,6 @@
 package models;
 
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.Serializable;
+import java.io.*;
 import java.net.Socket;
 
 public class Peer implements Serializable {
@@ -11,9 +9,36 @@ public class Peer implements Serializable {
     private boolean hasWritePermissions;
     private String ipAddress;
     private int port;
+    private int audioPort;
     private Socket socket;
     private ObjectOutputStream outputStream;
     private ObjectInputStream inputStream;
+    private DataInputStream audioInputStream;
+    private DataOutputStream audioOutputStream;
+
+    public DataInputStream getAudioInputStream() {
+        return audioInputStream;
+    }
+
+    public void setAudioInputStream(DataInputStream audioInputStream) {
+        this.audioInputStream = audioInputStream;
+    }
+
+    public DataOutputStream getAudioOutputStream() {
+        return audioOutputStream;
+    }
+
+    public void setAudioOutputStream(DataOutputStream audioOutputStream) {
+        this.audioOutputStream = audioOutputStream;
+    }
+
+    public int getAudioPort() {
+        return audioPort;
+    }
+
+    public void setAudioPort(int audioPort) {
+        this.audioPort = audioPort;
+    }
 
     public boolean isHasWritePermissions() {
         return hasWritePermissions;

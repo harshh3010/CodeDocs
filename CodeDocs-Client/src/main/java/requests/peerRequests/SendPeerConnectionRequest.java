@@ -9,8 +9,17 @@ import java.io.Serializable;
 public class SendPeerConnectionRequest extends AppRequest implements Serializable {
 
     private int port;
+    private int audioPort;
     private boolean hasWritePermissions;
     private User user;
+
+    public int getAudioPort() {
+        return audioPort;
+    }
+
+    public void setAudioPort(int audioPort) {
+        this.audioPort = audioPort;
+    }
 
     public boolean isHasWritePermissions() {
         return hasWritePermissions;

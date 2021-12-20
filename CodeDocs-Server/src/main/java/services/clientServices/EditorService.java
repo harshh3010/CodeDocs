@@ -80,6 +80,7 @@ public class EditorService {
                             + ", " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_IP_ADDRESS
                             + ", " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_PORT
                             + ", " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_HAS_WRITE_PERMISSIONS
+                            + ", " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_AUDIO_PORT
                             + " FROM " + DatabaseConstants.USER_TABLE_NAME
                             + " JOIN " + DatabaseConstants.CODEDOC_ACCESS_TABLE_NAME
                             + " ON " + DatabaseConstants.USER_TABLE_NAME + "." + DatabaseConstants.USER_TABLE_COL_USERID
@@ -105,6 +106,7 @@ public class EditorService {
                         peer.setIpAddress(resultSet.getString(5));
                         peer.setPort(resultSet.getInt(6));
                         peer.setHasWritePermissions(resultSet.getBoolean(7));
+                        peer.setAudioPort(resultSet.getInt(8));
 
                         activeUsers.add(peer);
                     }
@@ -115,6 +117,7 @@ public class EditorService {
                             + " SET " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_IS_ACTIVE
                             + " = TRUE, " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_IP_ADDRESS
                             + " = ?, " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_PORT
+                            + " = ?, " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_AUDIO_PORT
                             + " = ? WHERE " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_USER_ID
                             + " = ? AND " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_CODEDOC_ID
                             + " = ?;";
@@ -122,8 +125,9 @@ public class EditorService {
                     preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(updateQuery);
                     preparedStatement.setString(1, ipAddress);
                     preparedStatement.setInt(2, editorConnectionRequest.getPort());
-                    preparedStatement.setString(3, editorConnectionRequest.getUserId());
-                    preparedStatement.setString(4, editorConnectionRequest.getCodeDocId());
+                    preparedStatement.setInt(3, editorConnectionRequest.getAudioPort());
+                    preparedStatement.setString(4, editorConnectionRequest.getUserId());
+                    preparedStatement.setString(5, editorConnectionRequest.getCodeDocId());
                     preparedStatement.executeUpdate();
 
                     CodeDocsServer.databaseConnection.commit();
