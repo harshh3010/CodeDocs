@@ -1,5 +1,8 @@
 package services;
 
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
 import mainClasses.CodeDocsClient;
 import requests.appRequests.*;
 import response.appResponse.*;
@@ -9,6 +12,7 @@ import utilities.UserApi;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.Optional;
 
 public class CollaborationService {
 
@@ -66,6 +70,58 @@ public class CollaborationService {
         outputStream.flush();
 
         return (RejectInviteResponse) inputStream.readObject();
+
+    }
+
+    public static FetchCollaboratorResponse fetchCollaborator(String codeDocID, int rowCount, int offset) throws IOException, ClassNotFoundException {
+
+        FetchCollaboratorRequest request = new FetchCollaboratorRequest();
+        request.setCodeDocID(codeDocID);
+        request.setOwnerID(UserApi.getInstance().getId());
+        request.setOffset(offset);
+        request.setRowcount(rowCount);
+
+        outputStream.writeObject(request);
+        outputStream.flush();
+
+        return (FetchCollaboratorResponse)inputStream.readObject();
+
+    }
+
+    public static RemoveCollaboratorResponse removeCollaborator(String codeDocID, String collaboratorID) throws IOException, ClassNotFoundException {
+
+        ButtonType confirm = new ButtonType("Yes", ButtonBar.ButtonData.OK_DONE);
+        ButtonType cancel = new ButtonType("No", ButtonBar.ButtonData.CANCEL_CLOSE);
+        Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION,"",confirm,cancel);
+        confirmationAlert.setContentText("Are you sure?");
+        Optional<ButtonType> pressedButton = confirmationAlert.showAndWait();
+
+        if (pressedButton.orElse(cancel) == confirm) {
+            RemoveCollaboratorRequest request = new RemoveCollaboratorRequest();
+            request.setOwnerID(UserApi.getInstance().getId());
+            request.setCodeDocID(codeDocID);
+            request.setCollaboratorID(collaboratorID);
+
+            outputStream.writeObject(request);
+            outputStream.flush();
+
+            return (RemoveCollaboratorResponse)inputStream.readObject();
+        }
+        return null;
+    }
+
+    public static ChangeCollaboratorRightsResponse changeCollaboratorRights(String codeDocID, String collaboratorID, int writePermissions) throws IOException, ClassNotFoundException {
+
+        ChangeCollaboratorRightsRequest request = new ChangeCollaboratorRightsRequest();
+        request.setWritePermissions(writePermissions);
+        request.setOwnerID(UserApi.getInstance().getId());
+        request.setCollaboratorID(collaboratorID);
+        request.setCodeDocID(codeDocID);
+
+        outputStream.writeObject(request);
+        outputStream.flush();
+
+        return (ChangeCollaboratorRightsResponse) inputStream.readObject();
 
     }
 

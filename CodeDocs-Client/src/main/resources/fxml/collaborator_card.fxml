@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListCell?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+
+<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="90.0" prefWidth="950.0" stylesheets="@../css/style.css" type="javafx.scene.control.ListCell" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1">
+    <graphic>
+        <AnchorPane fx:id="cardPane" prefHeight="200.0" prefWidth="200.0" stylesheets="@../css/style.css">
+            <children>
+            <HBox alignment="CENTER" layoutX="-6.0" layoutY="-3.0" prefHeight="90.0" prefWidth="950.0" spacing="30.0">
+               <children>
+                      <Label fx:id="usernameLabel" prefHeight="35.0" prefWidth="250.0" styleClass="headingLabel4" text="username" />
+                      <Label fx:id="emailLabel" prefHeight="20.0" prefWidth="250.0" styleClass="headingLabel4" text="email@gmail.com" />
+                      <Button fx:id="changeRightButton" mnemonicParsing="false" styleClass="button3" text="Change Right" />
+                      <Button fx:id="removeButton" contentDisplay="CENTER" mnemonicParsing="false" styleClass="button3" text="Remove" />
+               </children>
+            </HBox>
+            </children>
+        </AnchorPane>
+    </graphic>
+</fx:root>

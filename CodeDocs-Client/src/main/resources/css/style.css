@@ -37,6 +37,15 @@
     -fx-text-fill: #ffffff;
     -fx-font-weight: bold;
 }
+.headingLabel4 {
+    -fx-font-size: 18px;
+
+
+}
+.headingLabel5 {
+    -fx-font-size: 12px;
+
+}
 
 
 .paragraph {
@@ -75,6 +84,11 @@
 .button3{
     -fx-font-size: 16px;
     -fx-text-fill: white;
+    -fx-background-color: transparent;
+}
+.button3:hover{
+    -fx-font-size: 16px;
+    -fx-text-fill: rgb(214, 6, 77);
     -fx-background-color: transparent;
 }
 

@@ -7,4 +7,5 @@ public class AppScreen {
     public static String mainScreen = "main_screen.fxml";
     public static String createCodedocScreen = "create_codedoc_screen.fxml";
     public static String editorScreen = "editor_screen.fxml";
+    public static String manageCodeDocScreen = "manage_codedoc.fxml";
 }

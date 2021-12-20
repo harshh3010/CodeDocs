@@ -268,6 +268,7 @@ public class EditorService {
 
                 filePath += saveCodeDocRequest.getCodeDoc().getCodeDocId() + "/Solution" + saveCodeDocRequest.getCodeDoc().getLanguageType().getExtension();
                 BufferedWriter fileWriter = new BufferedWriter(new FileWriter(filePath));
+                //System.out.println(saveCodeDocRequest.getCodeDoc().getFileContent() );
                 fileWriter.write(saveCodeDocRequest.getCodeDoc().getFileContent());
                 fileWriter.close();
                 saveCodeDocResponse.setStatus(Status.SUCCESS);
