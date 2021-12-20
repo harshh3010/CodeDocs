@@ -27,7 +27,7 @@ public class EditorBroadcastServerConnection extends Thread {
     private final EditorConnection editorConnection; // Reference to current editor connection
 
     /**
-     * @param connection stores info of current connection with other user
+     * @param connection       stores info of current connection with other user
      * @param editorConnection stores reference to current editor connection
      */
     public EditorBroadcastServerConnection(Socket connection, EditorConnection editorConnection) throws IOException {
@@ -78,7 +78,7 @@ public class EditorBroadcastServerConnection extends Thread {
                         int removedStart = removedEnd - removedText.length();
 
                         // TODO: Check
-                        editorConnection.getCodeEditor().replaceContent(removedStart, removedEnd, "");
+                        editorConnection.getCodeEditor().removeContent(removedStart, removedEnd);
                         editorConnection.getCodeEditor().insertContent(insertedStart, insertedText);
                     });
                 } else if (request.getRequestType() == RequestType.STREAM_CONTENT_SELECTION_REQUEST) {
@@ -86,7 +86,7 @@ public class EditorBroadcastServerConnection extends Thread {
                     Platform.runLater(() -> editorConnection.getCodeEditor().selectContent(contentSelectionRequest.getStart(), contentSelectionRequest.getEnd()));
                 } else if (request.getRequestType() == RequestType.STREAM_CURSOR_POSITION_REQUEST) {
                     StreamCursorPositionRequest cursorPositionRequest = (StreamCursorPositionRequest) request;
-                    Platform.runLater(() -> editorConnection.getCodeEditor().moveCursor(cursorPositionRequest.getUserId(), cursorPositionRequest.getPosition()));
+//                    Platform.runLater(() -> editorConnection.getCodeEditor().moveCursor(cursorPositionRequest.getUserId(), cursorPositionRequest.getPosition()));
                 }
             }
         } catch (IOException | ClassNotFoundException e) {

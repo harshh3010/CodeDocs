@@ -39,8 +39,8 @@ public class EditorController {
             LoadEditorResponse response = EditorService.loadEditorContent(codeDoc.getCodeDocId(), codeDoc.getLanguageType());
             if (response.getStatus() == Status.SUCCESS) {
 
-                codeEditor = new CodeEditor(codeDoc.getLanguageType(), editorConnection, response.getContent());
-                codeEditor.setEditable(editorConnection.getUserInControl().equals(UserApi.getInstance().getId()));
+                boolean isEditable = editorConnection.getUserInControl().equals(UserApi.getInstance().getId());
+                codeEditor = new CodeEditor(codeDoc.getLanguageType(), editorConnection, response.getContent(), isEditable);
                 codeEditor.applyContentStyle(getClass().getResource("/css/test.css").toExternalForm(), "#690026");
                 editorConnection.setCodeEditor(codeEditor);
 
