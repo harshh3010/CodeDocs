@@ -8,8 +8,17 @@ import java.io.Serializable;
 public class EditorConnectionRequest extends AppRequest implements Serializable {
 
     private int port;
+    private int audioPort;
     private String userId;
     private String codeDocId;
+
+    public int getAudioPort() {
+        return audioPort;
+    }
+
+    public void setAudioPort(int audioPort) {
+        this.audioPort = audioPort;
+    }
 
     public int getPort() {
         return port;

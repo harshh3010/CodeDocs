@@ -9,8 +9,6 @@ import java.sql.SQLException;
 
 public class DestroyResources {
 
-
-
     public static void destroyAllocations(String userID){
 
         String updateQuery = "UPDATE " + DatabaseConstants.CODEDOC_ACCESS_TABLE_NAME +

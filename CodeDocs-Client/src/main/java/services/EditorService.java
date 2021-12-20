@@ -15,11 +15,12 @@ public class EditorService {
     private static final ObjectInputStream inputStream = CodeDocsClient.inputStream;
     private static final ObjectOutputStream outputStream = CodeDocsClient.outputStream;
 
-    public static EditorConnectionResponse establishConnection(String codeDocId, int port) throws IOException, ClassNotFoundException {
+    public static EditorConnectionResponse establishConnection(String codeDocId, int port, int audioPort) throws IOException, ClassNotFoundException {
         EditorConnectionRequest request = new EditorConnectionRequest();
         request.setUserId(UserApi.getInstance().getId());
         request.setCodeDocId(codeDocId);
         request.setPort(port);
+        request.setAudioPort(audioPort);
 
         outputStream.writeObject(request);
         outputStream.flush();

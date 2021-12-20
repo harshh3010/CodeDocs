@@ -36,6 +36,7 @@ public class DatabaseConstants {
     public static final String CODEDOC_ACCESS_TABLE_COL_IS_ACTIVE = "is_active";
     public static final String CODEDOC_ACCESS_TABLE_COL_IP_ADDRESS = "ip_address";
     public static final String CODEDOC_ACCESS_TABLE_COL_PORT = "port";
+    public static final String CODEDOC_ACCESS_TABLE_COL_AUDIO_PORT = "audio_port";
 
     // ACTIVE EDITORS TABLE
     public static final String ACTIVE_EDITORS_TABLE_NAME = "active_editors";

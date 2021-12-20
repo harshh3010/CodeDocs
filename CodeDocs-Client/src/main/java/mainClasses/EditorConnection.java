@@ -1,5 +1,7 @@
 package mainClasses;
 
+import mainClasses.audioConnection.AudioReceiver;
+import mainClasses.audioConnection.AudioTransmitter;
 import models.Peer;
 import models.User;
 import requests.peerRequests.SendPeerConnectionRequest;
@@ -9,9 +11,7 @@ import utilities.CodeEditor;
 import utilities.Status;
 import utilities.UserApi;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,6 +30,8 @@ public class EditorConnection {
     private final HashMap<String, Peer> connectedPeers = new HashMap<>(); // Collection of all connected users
 
     private final EditorBroadcastServer server; // Server to receive requests from other connected users
+    private final AudioReceiver audioReceiver;
+    private final AudioTransmitter audioTransmitter;
 
     /**
      * @param codeDocId of the CodeDoc to be edited
@@ -41,11 +43,19 @@ public class EditorConnection {
         server = new EditorBroadcastServer(this);
         server.start();
 
+        audioReceiver = new AudioReceiver(this);
+        audioReceiver.start();
+
+        audioTransmitter = new AudioTransmitter(this);
+        audioTransmitter.start();
+
         // Send editor connection request to server
-        EditorConnectionResponse response = EditorService.establishConnection(codeDocId, server.getPort());
+        EditorConnectionResponse response = EditorService.establishConnection(codeDocId, server.getPort(), audioReceiver.getPort());
         if (response.getStatus() == Status.FAILED) {
             // Stop the broadcasting server in case of failure
             server.stopServer();
+            audioReceiver.stopServer();
+            audioTransmitter.stop();
             throw new IOException();
         }
 
@@ -65,9 +75,12 @@ public class EditorConnection {
             peer.setOutputStream(new ObjectOutputStream(socket.getOutputStream()));
             peer.setInputStream(new ObjectInputStream(socket.getInputStream()));
 
-            // Sending port to the peer to allow him to connect to current user's broadcast server
-            System.out.println("Writing " + server.getPort());
+            Socket audioSocket = new Socket(peer.getIpAddress(), peer.getAudioPort());
 
+            peer.setAudioOutputStream(new DataOutputStream(audioSocket.getOutputStream()));
+            peer.setAudioInputStream(new DataInputStream(audioSocket.getInputStream()));
+
+            // Sending port to the peer to allow him to connect to current user's broadcast server
             // Creating a new connection request to connect to the user's server
             SendPeerConnectionRequest request = new SendPeerConnectionRequest();
 
@@ -79,6 +92,7 @@ public class EditorConnection {
 
             request.setUser(user);
             request.setPort(server.getPort());
+            request.setAudioPort(audioReceiver.getPort());
             request.setHasWritePermissions(hasWritePermissions);
 
             peer.getOutputStream().writeObject(request);
@@ -91,6 +105,7 @@ public class EditorConnection {
 
     /**
      * To close the editor connection
+     *
      * @throws IOException in case of failure
      */
     public void closeConnection() throws IOException {

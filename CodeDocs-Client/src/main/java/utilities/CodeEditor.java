@@ -1,8 +1,12 @@
 package utilities;
 
+import javafx.event.EventHandler;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
@@ -46,11 +50,11 @@ public class CodeEditor extends StackPane {
 
 
     /**
-     * @param languageType The programming language of CodeDoc opened in current editor instance
+     * @param languageType     The programming language of CodeDoc opened in current editor instance
      * @param editorConnection Reference to editor connection for streaming
-     * @param initialContent Initial content to be displayed in editor
+     * @param initialContent   Initial content to be displayed in editor
      */
-    public CodeEditor(LanguageType languageType, EditorConnection editorConnection, String initialContent) {
+    public CodeEditor(LanguageType languageType, EditorConnection editorConnection, String initialContent, boolean isEditable) {
         this.editorConnection = editorConnection;
         this.languageType = languageType;
 
@@ -64,6 +68,8 @@ public class CodeEditor extends StackPane {
         textArea.setContextMenu(suggestionMenu); // Attaching suggestion menu to text area
 
         // Setting up the code editor
+        this.isEditable = isEditable;
+        textArea.setEditable(isEditable);
         setupLanguageParser();
         setupInputHandler();
         setupTextChangeHandler();
@@ -133,7 +139,7 @@ public class CodeEditor extends StackPane {
             // If the editor was in write mode, then stream the content changes
             if (isEditable) {
                 streamContent(plainTextChange);
-                streamCursorPosition();
+//                streamCursorPosition();
             }
         });
     }
@@ -157,11 +163,19 @@ public class CodeEditor extends StackPane {
      * specified actions are performed when cursor position changes
      */
     private void setupCursorPositionHandler() {
-        textArea.caretPositionProperty().addListener((observableValue, integer, t1) -> {
+//        textArea.caretPositionProperty().addListener((observableValue, integer, t1) -> {
+//
+//            // If the editor is opened in write mode then stream the new position to other users
+//            if (isEditable) {
+//                streamCursorPosition();
+//            }
+//        });
 
-            // If the editor is opened in write mode then stream the new position to other users
-            if (isEditable) {
-                streamCursorPosition();
+        textArea.setOnMouseClicked(mouseEvent -> {
+            if (mouseEvent.getButton() == MouseButton.PRIMARY) {
+                if (isEditable) {
+                    streamCursorPosition();
+                }
             }
         });
     }
@@ -175,12 +189,14 @@ public class CodeEditor extends StackPane {
             // If the editor is opened in write mode then display code suggestions to the user
             if (isEditable) {
                 autocompleteCode();
+                streamCursorPosition();
             }
         });
     }
 
     /**
      * This method streams some part of the content of code editor to other online users
+     *
      * @param plainTextChange stores the info of the text change that is to be streamed
      */
     private void streamContent(PlainTextChange plainTextChange) {
@@ -338,6 +354,7 @@ public class CodeEditor extends StackPane {
 
     /**
      * This utility function return the last-typed/currently-typing word
+     *
      * @return last typed word in current line
      */
     private String getLastTypedWord() {
@@ -359,7 +376,8 @@ public class CodeEditor extends StackPane {
 
     /**
      * This method is used for applying styles to the current code editor instance
-     * @param resource is the path to css file
+     *
+     * @param resource         is the path to css file
      * @param currentLineColor is the hex value of highlighting color for current line
      */
     public void applyContentStyle(String resource, String currentLineColor) {
@@ -374,6 +392,7 @@ public class CodeEditor extends StackPane {
 
     /**
      * This method is for adding a new cursor on code editor
+     *
      * @param userId for the user corresponding to the cursor
      */
     public void addCursor(String userId) {
@@ -400,6 +419,7 @@ public class CodeEditor extends StackPane {
 
     /**
      * This function removes the cursor corresponding to a specified user
+     *
      * @param userId represents the user of the cursor
      */
     public void removeCursor(String userId) {
@@ -416,8 +436,9 @@ public class CodeEditor extends StackPane {
 
     /**
      * This function moves the cursor for specific user on specific position
+     *
      * @param userId of the user of cursor
-     * @param pos is the new position of cursor
+     * @param pos    is the new position of cursor
      */
     public void moveCursor(String userId, int pos) {
         int mxPos = textArea.getLength();
@@ -447,8 +468,9 @@ public class CodeEditor extends StackPane {
 
     /**
      * Selects the content in specified range
+     *
      * @param start pos of the range
-     * @param end pos of the range
+     * @param end   pos of the range
      */
     public void selectContent(int start, int end) {
         textArea.selectRange(start, end);
@@ -465,10 +487,9 @@ public class CodeEditor extends StackPane {
     /**
      * Replaces content between start and end
      */
-    public void replaceContent(int start, int end, String content) {
-        textArea.replaceText(start, end, content);
+    public void removeContent(int start, int end) {
+        textArea.deleteText(start, end);
     }
-
 
     /**
      * Enables syntax highlighting
@@ -503,6 +524,14 @@ public class CodeEditor extends StackPane {
      */
     public void setEditable(boolean editable) {
         isEditable = editable;
+
+        // Setting up the code editor
+        textArea.setEditable(isEditable);
+        setupLanguageParser();
+        setupInputHandler();
+        setupTextChangeHandler();
+        setupTextSelectionHandler();
+        setupCursorPositionHandler();
     }
 
     /**
