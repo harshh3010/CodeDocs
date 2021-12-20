@@ -4,8 +4,15 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.stage.Stage;
 import models.CodeDoc;
+import models.Collaborator;
+import requests.appRequests.ChangeCollaboratorRightsRequest;
+import requests.appRequests.FetchCollaboratorRequest;
+import requests.appRequests.RemoveCollaboratorRequest;
 import requests.editorRequests.CompileCodeDocRequest;
 import requests.editorRequests.RunCodeDocRequest;
+import response.appResponse.ChangeCollaboratorRightsResponse;
+import response.appResponse.FetchCollaboratorResponse;
+import response.appResponse.RemoveCollaboratorResponse;
 import response.editorResponse.CompileCodeDocResponse;
 import response.editorResponse.RunCodeDocResponse;
 import services.SceneService;
@@ -49,10 +56,11 @@ public class CodeDocsClient extends Application {
             outputStream = new ObjectOutputStream(socket.getOutputStream());
             inputStream = new ObjectInputStream(socket.getInputStream());
 
+
             //inputStream.close();
             //outputStream.close();
             //socket.close();
-        } catch (IOException  e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 

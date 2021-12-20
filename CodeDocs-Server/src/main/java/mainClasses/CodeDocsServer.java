@@ -1,6 +1,7 @@
 package mainClasses;
 
 import services.DatabaseConnection;
+import services.DestroyResources;
 import utilities.LanguageType;
 
 import java.io.FileReader;
@@ -35,6 +36,7 @@ public class CodeDocsServer {
         try {
             databaseConnection = DatabaseConnection.connect();
             System.out.println("Database connection established.");
+            DestroyResources.cleanDB();
         } catch (SQLException | IOException | ClassNotFoundException e) {
             System.out.println("Unable to establish connection with the database!");
             System.out.println("Error: " + e.getMessage());

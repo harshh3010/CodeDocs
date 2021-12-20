@@ -63,7 +63,11 @@ public class EditorController {
     }
 
     public void saveContent() {
+
+//        codeDoc.setFileContent(codeEditor.getTextArea().getText());
+
         codeDoc.setFileContent(codeEditor.getText());
+
         try {
             SaveCodeDocResponse response = EditorService.saveCodeDoc(codeDoc);
             if (response.getStatus() == Status.SUCCESS) {

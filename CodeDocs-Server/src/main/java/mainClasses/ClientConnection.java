@@ -2,10 +2,8 @@ package mainClasses;
 
 import requests.appRequests.*;
 import requests.editorRequests.*;
-import response.appResponse.FetchInviteResponse;
 import response.appResponse.GetMeResponse;
 import response.appResponse.LoginResponse;
-import response.editorResponse.SaveCodeDocResponse;
 import services.DestroyResources;
 import services.clientServices.*;
 import utilities.RequestType;
@@ -86,6 +84,18 @@ public class ClientConnection extends Thread {
                 } else if (request.getRequestType() == RequestType.INVITE_COLLABORATOR_REQUEST) {
                     System.out.println("Client wants to invite a collaborator!");
                     outputStream.writeObject(CollaborationService.inviteCollaborator((InviteCollaboratorRequest) request));
+                    outputStream.flush();
+                }else if (request.getRequestType() == RequestType.REMOVE_COLLABORATOR_REQUEST) {
+                    System.out.println("Client wants to remove a collaborator!");
+                    outputStream.writeObject(CollaborationService.removeCollaborator((RemoveCollaboratorRequest) request));
+                    outputStream.flush();
+                }else if (request.getRequestType() == RequestType.FETCH_COLLABORATOR_REQUEST) {
+                    System.out.println("Client wants to fetch collaborator!");
+                    outputStream.writeObject(CollaborationService.fetchCollaborators((FetchCollaboratorRequest) request));
+                    outputStream.flush();
+                }else if (request.getRequestType() == RequestType.CHANGE_COLLABORATOR_RIGHTS_REQUEST) {
+                    System.out.println("Client wants to change rights of a collaborator!");
+                    outputStream.writeObject(CollaborationService.changeCollaboratorRights((ChangeCollaboratorRightsRequest) request));
                     outputStream.flush();
                 }else if (request.getRequestType() == RequestType.ACCEPT_INVITE_REQUEST) {
                     System.out.println("Client wants to accept invite !");

@@ -39,4 +39,28 @@ public class DestroyResources {
         }
 
     }
+    public static void cleanDB(){
+        String updateQuery = "UPDATE " + DatabaseConstants.CODEDOC_ACCESS_TABLE_NAME +
+                " SET " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_IS_ACTIVE + " = FALSE;" ;
+
+
+        String deleteQuery = "DELETE FROM " + DatabaseConstants.ACTIVE_EDITORS_TABLE_NAME + ";";
+        try{
+            CodeDocsServer.databaseConnection.setAutoCommit(false);
+            try {
+                PreparedStatement preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(updateQuery);
+                preparedStatement.executeUpdate();
+
+                preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(deleteQuery);
+                preparedStatement.executeUpdate();
+
+                CodeDocsServer.databaseConnection.commit();
+            } catch (SQLException e) {
+                e.printStackTrace();
+                CodeDocsServer.databaseConnection.rollback();
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
 }
