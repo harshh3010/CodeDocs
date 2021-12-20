@@ -48,11 +48,12 @@ public class EditorService {
 
     public static SaveCodeDocResponse saveCodeDoc(CodeDoc codeDoc) throws IOException, ClassNotFoundException {
         SaveCodeDocRequest request = new SaveCodeDocRequest();
+        //System.out.println(codeDoc.getFileContent());
         request.setCodeDoc(codeDoc);
-        //System.out.println(request.getCodeDoc().getFileContent());
         request.setUserId(UserApi.getInstance().getId());
         outputStream.writeObject(request);
         outputStream.flush();
+        outputStream.reset();
         return (SaveCodeDocResponse) inputStream.readObject();
     }
 

@@ -245,6 +245,7 @@ public class EditorService {
     }
 
     public static SaveCodeDocResponse saveCodeDoc(SaveCodeDocRequest saveCodeDocRequest) {
+
         SaveCodeDocResponse saveCodeDocResponse = new SaveCodeDocResponse();
         String query = "SELECT " +
                 DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_USER_ID +
@@ -258,9 +259,9 @@ public class EditorService {
             preparedStatement.setString(1, saveCodeDocRequest.getCodeDoc().getCodeDocId());
             preparedStatement.setString(2, saveCodeDocRequest.getUserId());
             ResultSet resultSet = preparedStatement.executeQuery();
-            System.out.println("******");
+
             if (resultSet.next()) {
-                System.out.println(";;;;;");
+
                 Properties properties = new Properties();
                 FileReader fileReader = new FileReader("CodeDocs-Server/src/main/resources/configurations/db.properties");
                 properties.load(fileReader);
@@ -268,7 +269,7 @@ public class EditorService {
 
                 filePath += saveCodeDocRequest.getCodeDoc().getCodeDocId() + "/Solution" + saveCodeDocRequest.getCodeDoc().getLanguageType().getExtension();
                 BufferedWriter fileWriter = new BufferedWriter(new FileWriter(filePath));
-                //System.out.println(saveCodeDocRequest.getCodeDoc().getFileContent() );
+
                 fileWriter.write(saveCodeDocRequest.getCodeDoc().getFileContent());
                 fileWriter.close();
                 saveCodeDocResponse.setStatus(Status.SUCCESS);

@@ -78,9 +78,10 @@ public class ClientConnection extends Thread {
                     outputStream.writeObject(EditorService.loadEditor((LoadEditorRequest) request));
                     outputStream.flush();
                 }else if (request.getRequestType() == RequestType.SAVE_CODEDOC_REQUEST) {
-                    System.out.println("Client wants to save codedoc!");
+                    System.out.println("Client wants to save codeDoc!");
                     outputStream.writeObject(EditorService.saveCodeDoc((SaveCodeDocRequest) request));
                     outputStream.flush();
+                    outputStream.reset();
                 } else if (request.getRequestType() == RequestType.INVITE_COLLABORATOR_REQUEST) {
                     System.out.println("Client wants to invite a collaborator!");
                     outputStream.writeObject(CollaborationService.inviteCollaborator((InviteCollaboratorRequest) request));
