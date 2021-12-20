@@ -1,27 +1,19 @@
 package controllers;
 
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
-import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextArea;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import javafx.stage.Stage;
-import javafx.stage.WindowEvent;
 import mainClasses.EditorConnection;
 import models.CodeDoc;
-import models.CodeEditor;
 import models.Peer;
-import response.appResponse.CreateCodeDocResponse;
 import response.editorResponse.CompileCodeDocResponse;
 import response.editorResponse.LoadEditorResponse;
 import response.editorResponse.RunCodeDocResponse;
 import response.editorResponse.SaveCodeDocResponse;
-import services.CodeDocsService;
 import services.EditorService;
+import utilities.CodeEditor;
 import utilities.Status;
 import utilities.UserApi;
 
@@ -43,31 +35,18 @@ public class EditorController {
         try {
             editorConnection = new EditorConnection(codeDoc.getCodeDocId());
 
-            try {
+            // TODO: Fetch content from user in control
+            LoadEditorResponse response = EditorService.loadEditorContent(codeDoc.getCodeDocId(), codeDoc.getLanguageType());
+            if (response.getStatus() == Status.SUCCESS) {
 
-                System.out.println("Control: " + editorConnection.getUserInControl());
-                System.out.println("Current: " + UserApi.getInstance().getId());
+                codeEditor = new CodeEditor(codeDoc.getLanguageType(), editorConnection, response.getContent());
+                codeEditor.setEditable(editorConnection.getUserInControl().equals(UserApi.getInstance().getId()));
+                codeEditor.applyContentStyle(getClass().getResource("/css/test.css").toExternalForm(), "#690026");
+                editorConnection.setCodeEditor(codeEditor);
 
-                // TODO: Fetch content from user in control
-                LoadEditorResponse response = EditorService.loadEditorContent(codeDoc.getCodeDocId(), codeDoc.getLanguageType());
-                if (response.getStatus() == Status.SUCCESS) {
-                    codeEditor = new CodeEditor(response.getContent(),
-                            codeDoc.getLanguageType(),
-                            editorConnection.isHasWritePermissions(),
-                            editorConnection.getUserInControl().equals(UserApi.getInstance().getId()));
+                borderPane.setCenter(codeEditor);
 
-                    EditorConnection.textArea = codeEditor.getTextArea();
-                    borderPane.setCenter(codeEditor.getTextArea());
-
-                } else {
-                    alert.setContentText("Cannot load at the moment");
-                    alert.show();
-                    Stage stage = (Stage) borderPane.getScene().getWindow();
-                    stage.close();
-
-                }
-            } catch (IOException | ClassNotFoundException e) {
-                e.printStackTrace();
+            } else {
                 alert.setContentText("Cannot load at the moment");
                 alert.show();
                 Stage stage = (Stage) borderPane.getScene().getWindow();
@@ -76,11 +55,18 @@ public class EditorController {
 
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
+            alert.setContentText("Cannot load at the moment");
+            alert.show();
+            Stage stage = (Stage) borderPane.getScene().getWindow();
+            stage.close();
         }
     }
 
     public void saveContent() {
-        codeDoc.setFileContent(codeEditor.getTextArea().getText());
+
+//        codeDoc.setFileContent(codeEditor.getTextArea().getText());
+
+        codeDoc.setFileContent(codeEditor.getText());
 
         try {
             SaveCodeDocResponse response = EditorService.saveCodeDoc(codeDoc);
@@ -103,7 +89,7 @@ public class EditorController {
             String userInControl = editorConnection.getUserInControl();
             if (userInControl.equals(UserApi.getInstance().getId())) {
                 userInControl = null;
-                for (Peer peer : EditorConnection.connectedPeers.values()) {
+                for (Peer peer : editorConnection.getConnectedPeers().values()) {
                     if (peer.isHasWritePermissions()) {
                         userInControl = peer.getUser().getUserID();
                     }
@@ -112,6 +98,7 @@ public class EditorController {
                 System.out.println("User in control leaving... Control transfer to " + userInControl);
             }
             EditorService.destroyConnection(codeDoc.getCodeDocId(), userInControl);
+            editorConnection.closeConnection();
             Stage stage = (Stage) borderPane.getScene().getWindow();
             stage.close();
         } catch (IOException e) {
@@ -122,21 +109,21 @@ public class EditorController {
     private void compileCodeDoc() {
         try {
             saveContent();
-            CompileCodeDocResponse response = EditorService.compileCodeDoc(codeDoc.getCodeDocId(),codeDoc.getLanguageType());
-            if (response.getStatus() == Status.SUCCESS){
-                if(response.getError().isEmpty()){
+            CompileCodeDocResponse response = EditorService.compileCodeDoc(codeDoc.getCodeDocId(), codeDoc.getLanguageType());
+            if (response.getStatus() == Status.SUCCESS) {
+                if (response.getError().isEmpty()) {
                     outputTextArea.setStyle("-fx-text-fill: black;");
                     outputTextArea.setText("Your code compiled successfully!");
-                } else{
+                } else {
                     outputTextArea.setStyle("-fx-text-fill: red;");
-                    outputTextArea.setText("ERROR: "+response.getError());
+                    outputTextArea.setText("ERROR: " + response.getError());
                 }
-            }else{
+            } else {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setContentText("Cannot compile codedoc at the moment!");
                 alert.show();
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -145,23 +132,23 @@ public class EditorController {
         try {
             saveContent();
             String input = inputTextArea.getText();
-            RunCodeDocResponse response = EditorService.runCodeDoc(codeDoc.getCodeDocId(),codeDoc.getLanguageType(),input);
-            if (response.getStatus() == Status.SUCCESS){
-                if(response.getError().isEmpty()){
+            RunCodeDocResponse response = EditorService.runCodeDoc(codeDoc.getCodeDocId(), codeDoc.getLanguageType(), input);
+            if (response.getStatus() == Status.SUCCESS) {
+                if (response.getError().isEmpty()) {
                     outputTextArea.setStyle("-fx-text-fill: black;");
                     outputTextArea.setText(response.getOutput());
 
-                } else{
+                } else {
                     outputTextArea.setStyle("-fx-text-fill: red;");
-                    outputTextArea.setText("ERROR: "+response.getError());
+                    outputTextArea.setText("ERROR: " + response.getError());
 
                 }
-            }else{
+            } else {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setContentText("Cannot run codedoc at the moment!");
                 alert.show();
             }
-        }catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
