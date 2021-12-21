@@ -250,3 +250,6 @@
 .drawer {
     -fx-background-color: rgb(54, 0, 19);
 }
+.chat{
+    -fx-text-fill: black;
+}

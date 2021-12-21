@@ -32,31 +32,48 @@ public class EditorController implements Initializable {
     public BorderPane borderPane;
     public TextArea inputTextArea;
     public TextArea outputTextArea;
-    public JFXDrawer drawer;
+    public JFXDrawer activeUserDrawer;
+    public JFXDrawer chatDrawer;
     private CodeDoc codeDoc;
     private CodeEditor codeEditor;
     private EditorConnection editorConnection;
-    private FXMLLoader loader;
-    private ActiveUserTabController controller;
+    private ActiveUserTabController activeUserTabController;
+    private ChatTabController chatTabController;
+    private VBox activeUserBox, chatBox;
     Alert alert = new Alert(Alert.AlertType.ERROR);
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
-        drawer.setOnDrawerOpening(event ->
+        activeUserDrawer.setOnDrawerOpening(event ->
         {
-            AnchorPane.setRightAnchor(drawer, 0.0);
-            AnchorPane.setLeftAnchor(drawer, 0.0);
-            AnchorPane.setTopAnchor(drawer, 0.0);
-            AnchorPane.setBottomAnchor(drawer, 0.0);
+            AnchorPane.setRightAnchor(activeUserDrawer, 0.0);
+            AnchorPane.setLeftAnchor(activeUserDrawer, 0.0);
+            AnchorPane.setTopAnchor(activeUserDrawer, 0.0);
+            AnchorPane.setBottomAnchor(activeUserDrawer, 0.0);
         });
 
-        drawer.setOnDrawerClosed(event ->
+        activeUserDrawer.setOnDrawerClosed(event ->
         {
-            AnchorPane.clearConstraints(drawer);
-            AnchorPane.setLeftAnchor(drawer, -400.0);
-            AnchorPane.setTopAnchor(drawer, 0.0);
-            AnchorPane.setBottomAnchor(drawer, 0.0);
+            AnchorPane.clearConstraints(activeUserDrawer);
+            AnchorPane.setLeftAnchor(activeUserDrawer, -400.0);
+            AnchorPane.setTopAnchor(activeUserDrawer, 0.0);
+            AnchorPane.setBottomAnchor(activeUserDrawer, 0.0);
+        });
+        chatDrawer.setOnDrawerOpening(event ->
+        {
+            AnchorPane.setRightAnchor(chatDrawer, 0.0);
+            AnchorPane.setLeftAnchor(chatDrawer, 0.0);
+            AnchorPane.setTopAnchor(chatDrawer, 0.0);
+            AnchorPane.setBottomAnchor(chatDrawer, 0.0);
+        });
+
+        chatDrawer.setOnDrawerClosed(event ->
+        {
+            AnchorPane.clearConstraints(chatDrawer);
+            AnchorPane.setRightAnchor(chatDrawer, -400.0);
+            AnchorPane.setTopAnchor(chatDrawer, 0.0);
+            AnchorPane.setBottomAnchor(chatDrawer, 0.0);
         });
 
     }
@@ -68,15 +85,20 @@ public class EditorController implements Initializable {
             editorConnection = new EditorConnection(codeDoc);
 
             try {
-                loader = new FXMLLoader(getClass().getResource("/fxml/active_user_tab.fxml"));
-                VBox box = loader.load();
-                controller = loader.getController();
-                controller.setActiveUserTab(editorConnection);
-//                BackgroundFill myBF = new BackgroundFill(Color.BLACK, new CornerRadii(1),
-//                        new Insets(0.0,0.0,0.0,0.0));
-//                box.setBackground(new Background(myBF));
-                drawer.setSidePane(box);
-                drawer.close();
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/active_user_tab.fxml"));
+                activeUserBox = loader.load();
+                activeUserTabController = loader.getController();
+                activeUserTabController.setActiveUserTab(editorConnection);
+                activeUserDrawer.setSidePane(activeUserBox);
+
+                FXMLLoader loader2 = new FXMLLoader(getClass().getResource("/fxml/chat_tab.fxml"));
+                chatBox = loader2.load();
+                chatTabController = loader2.getController();
+                chatTabController.setEditorConnection(editorConnection);
+                chatDrawer.setSidePane(chatBox);
+                chatDrawer.setDirection(JFXDrawer.DrawerDirection.RIGHT);
+                activeUserDrawer.close();
+                chatDrawer.close();
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
@@ -110,7 +132,9 @@ public class EditorController implements Initializable {
     }
 
     public void saveContent() {
+
         codeDoc.setFileContent(codeEditor.getText());
+
         try {
             SaveCodeDocResponse response = EditorService.saveCodeDoc(codeDoc);
             if (response.getStatus() == Status.SUCCESS) {
@@ -204,11 +228,23 @@ public class EditorController implements Initializable {
     }
 
     public void onActiveUserClicked(ActionEvent actionEvent) {
-        if (drawer.isOpened()) {
-            drawer.close();
+
+        if (activeUserDrawer.isOpened()) {
+            activeUserDrawer.close();
         } else {
-            controller.setActiveUsers();
-            drawer.open();
+            activeUserTabController.setActiveUsers();
+            activeUserDrawer.open();
+        }
+    }
+
+    public void onChatClicked(ActionEvent actionEvent) {
+
+        if (chatDrawer.isOpened()) {
+            chatDrawer.close();
+        } else {
+            //TODO : already sent msg is to be added in th view ... ig u need to maintain a list there .. usmein iss naye msg ko add krdena
+           chatTabController.setChatDrawer();
+            chatDrawer.open();
         }
     }
 }
