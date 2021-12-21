@@ -2,19 +2,12 @@ package controllers;
 
 import com.jfoenix.controls.JFXListView;
 import javafx.collections.FXCollections;
-import javafx.event.EventHandler;
-import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
-import javafx.scene.control.DialogEvent;
 import mainClasses.EditorConnection;
-import models.CodeDoc;
 import models.Peer;
 import models.User;
-
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ResourceBundle;
 
 public class ActiveUserTabController{
     public JFXListView<Peer> activeUsersListView;

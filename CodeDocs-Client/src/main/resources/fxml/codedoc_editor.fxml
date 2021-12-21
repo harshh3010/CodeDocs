@@ -36,6 +36,9 @@
                                     <Button mnemonicParsing="false" onAction="#onActiveUserClicked"
                                             prefWidth="120.0" styleClass="button3"
                                             text="Active Users" AnchorPane.rightAnchor="20" AnchorPane.topAnchor="2"/>
+                                    <Button mnemonicParsing="false" onAction="#onChatClicked"
+                                            prefWidth="70.0" styleClass="button3"
+                                            text="Chat" AnchorPane.rightAnchor="120" AnchorPane.topAnchor="2"/>
                                 </AnchorPane>
                                 <BorderPane fx:id="borderPane" prefHeight="687.0" prefWidth="1280.0" VBox.vgrow="NEVER">
                                     <top>
@@ -86,7 +89,9 @@
                                 </BorderPane>
                             </children>
                         </VBox>
-                        <JFXDrawer fx:id="drawer" defaultDrawerSize="400.0" layoutY="-6.0" prefHeight="727.3"
+                        <JFXDrawer fx:id="activeUserDrawer" defaultDrawerSize="400.0" layoutY="-6.0" prefHeight="727.3"
+                                   prefWidth="400.0"/>
+                        <JFXDrawer fx:id="chatDrawer" defaultDrawerSize="400.0" layoutY="-6.0"  prefHeight="727.3"
                                    prefWidth="400.0"/>
                     </children>
                 </AnchorPane>

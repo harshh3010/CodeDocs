@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import com.jfoenix.controls.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox fx:id="drawer" prefHeight="736.0" prefWidth="400.0" styleClass="drawer" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.ChatTabController">
+    <children>
+        <JFXListView fx:id="chatListView" prefHeight="675.0" prefWidth="400.0" />
+      <HBox prefHeight="62.0" prefWidth="400.0">
+         <children>
+            <TextField fx:id="msg" prefHeight="66.0" prefWidth="334.0" />
+            <Button mnemonicParsing="false" onAction="#onSendClicked" prefHeight="62.0" prefWidth="66.0" text="Send" />
+         </children></HBox>
+    </children>
+</VBox>
