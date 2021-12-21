@@ -1,20 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.JFXDrawer?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Menu?>
-<?import javafx.scene.control.MenuBar?>
-<?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.TextArea?>
-<?import javafx.scene.control.TitledPane?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
+<?import com.jfoenix.controls.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
 <AnchorPane prefHeight="720" prefWidth="1280" styleClass="background" stylesheets="@../css/style.css"
-            xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+            xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="controllers.EditorController">
 
     <children>
@@ -22,9 +14,10 @@
             <children>
                 <AnchorPane styleClass="darkOverlay">
                     <children>
+
                         <VBox>
                             <children>
-                                <MenuBar prefHeight="26.0" prefWidth="599.0">
+                                <MenuBar prefHeight="26.0" prefWidth="800.0">
                                     <menus>
                                         <Menu mnemonicParsing="false" text="File">
                                             <items>
@@ -71,6 +64,10 @@
                                                 </TitledPane>
                                                 <VBox prefHeight="200.0" prefWidth="100.0" spacing="20.0">
                                                     <children>
+                                                        <Button mnemonicParsing="false" onAction="#onActiveUserClicked"
+                                                                prefWidth="240.0" styleClass="button1"
+                                                                text="Active Users"/>
+
                                                         <Button mnemonicParsing="false" onAction="#onCompileClicked"
                                                                 prefWidth="240.0" styleClass="button1" text="Compile"/>
                                                         <Button mnemonicParsing="false" onAction="#onRunClicked"
@@ -83,6 +80,8 @@
                                 </BorderPane>
                             </children>
                         </VBox>
+                        <JFXDrawer fx:id="drawer" defaultDrawerSize="400.0" layoutY="-6.0" prefHeight="727.3"
+                                   prefWidth="400.0"/>
                     </children>
                 </AnchorPane>
             </children>
