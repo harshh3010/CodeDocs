@@ -155,6 +155,7 @@ public class CodeDocService {
             CodeDoc codeDoc = null;
 
             while (resultSet.next()) {
+
                 codeDoc = new CodeDoc();
                 codeDoc.setCodeDocId(resultSet.getString(1));
                 codeDoc.setTitle(resultSet.getString(2));

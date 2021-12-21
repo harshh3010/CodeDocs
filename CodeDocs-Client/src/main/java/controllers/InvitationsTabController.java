@@ -2,9 +2,11 @@ package controllers;
 
 import com.jfoenix.controls.JFXListView;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.DialogEvent;
 import models.CodeDoc;
 import response.appResponse.FetchCodeDocResponse;
@@ -23,6 +25,11 @@ public class InvitationsTabController implements Initializable {
     public JFXListView<CodeDoc> invitesListView;
 
     private final Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+    public Button prevButton;
+    public Button nextButton;
+
+    private int offset;
+    private int rowCount;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -32,6 +39,17 @@ public class InvitationsTabController implements Initializable {
                 System.exit(1);
             }
         });
+
+        prevButton.setStyle("-fx-font-size: 14px;\n" +
+                "    -fx-text-fill: white;\n" +
+                "    -fx-background-color: rgba(214, 6, 77,0.25);");
+        nextButton.setStyle("-fx-font-size: 14px;\n" +
+                "    -fx-text-fill: white;\n" +
+                "    -fx-background-color: rgba(214, 6, 77,0.25);");
+
+        offset = 0;
+        rowCount = 10;
+
         fetchInvites();
     }
 
@@ -39,7 +57,7 @@ public class InvitationsTabController implements Initializable {
     private void fetchInvites() {
 
         try {
-            FetchInviteResponse response = CollaborationService.fetchInvites( 10, 0);
+            FetchInviteResponse response = CollaborationService.fetchInvites( rowCount, offset);
             if (response.getStatus() == Status.SUCCESS) {
                 invitesListView.setItems(FXCollections.observableArrayList(response.getInvites()));
                 invitesListView.setCellFactory(new InvitationCardFactory());
@@ -52,5 +70,23 @@ public class InvitationsTabController implements Initializable {
             errorAlert.show();
         }
 
+    }
+
+    public void onNextClicked(ActionEvent actionEvent) {
+
+        // Fetching the next batch only if current one is non-empty
+        if(invitesListView.getItems().size() == 5){
+            offset = offset + rowCount;
+            fetchInvites();
+        }
+    }
+
+    public void onPreviousClicked(ActionEvent actionEvent) {
+
+        // Fetching the previous batch only if offset is not 0 (Offset = 0 specifies first batch)
+        if (offset > 0) {
+            offset = offset - rowCount;
+            fetchInvites();
+        }
     }
 }

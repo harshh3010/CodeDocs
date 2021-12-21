@@ -302,6 +302,7 @@ public class CollaborationService {
                 DatabaseConstants.CODEDOC_ACCESS_TABLE_NAME+"." + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_CODEDOC_ID +"=?"+
                 " AND " +
                 DatabaseConstants.CODEDOC_ACCESS_TABLE_NAME+"." + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_ACCESS_RIGHT +"=?" +
+                " ORDER BY " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_CODEDOC_ID + " DESC "+
                 " LIMIT " + request.getOffset() +
                 " , " + request.getRowcount()
                 + ";";

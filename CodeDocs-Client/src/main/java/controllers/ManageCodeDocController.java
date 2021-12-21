@@ -34,11 +34,16 @@ public class ManageCodeDocController implements Initializable {
     private final Alert errorAlert = new Alert(Alert.AlertType.ERROR);
     public Button updateButton;
     public Button inviteButton;
+    public Button prevButton;
+    public Button nextButton;
+
+    private int offset;
+    private int rowCount;
 
     public static CodeDoc getCodeDoc() {
         return codeDoc;
     }
-    //ask if its correct or not :(
+
     public static void setCodeDoc(CodeDoc c) {
         codeDoc = c;
     }
@@ -51,11 +56,23 @@ public class ManageCodeDocController implements Initializable {
                 System.exit(1);
             }
         });
+
         titleLabel.setText(codeDoc.getTitle());
         if(!codeDoc.getOwnerID().equals(UserApi.getInstance().getId())){
             updateButton.setVisible(false);
             inviteButton.setVisible(false);
         }
+
+        prevButton.setStyle("-fx-font-size: 14px;\n" +
+                "    -fx-text-fill: white;\n" +
+                "    -fx-background-color: rgba(214, 6, 77,0.25);");
+        nextButton.setStyle("-fx-font-size: 14px;\n" +
+                "    -fx-text-fill: white;\n" +
+                "    -fx-background-color: rgba(214, 6, 77,0.25);");
+
+        offset = 0;
+        rowCount = 10;
+
         fetchCollaborators();
     }
 
@@ -179,5 +196,23 @@ public class ManageCodeDocController implements Initializable {
         });
 
 
+    }
+
+    public void onNextClicked(ActionEvent actionEvent) {
+
+        // Fetching the next batch only if current one is non-empty
+        if(collaboratorsListView.getItems().size() == 5){
+            offset = offset + rowCount;
+            fetchCollaborators();
+        }
+    }
+
+    public void onPreviousClicked(ActionEvent actionEvent) {
+
+        // Fetching the previous batch only if offset is not 0 (Offset = 0 specifies first batch)
+        if (offset > 0) {
+            offset = offset - rowCount;
+            fetchCollaborators();
+        }
     }
 }
