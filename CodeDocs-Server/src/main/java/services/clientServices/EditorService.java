@@ -3,10 +3,7 @@ package services.clientServices;
 import mainClasses.CodeDocsServer;
 import models.Peer;
 import models.User;
-import requests.editorRequests.EditorCloseRequest;
-import requests.editorRequests.EditorConnectionRequest;
-import requests.editorRequests.LoadEditorRequest;
-import requests.editorRequests.SaveCodeDocRequest;
+import requests.editorRequests.*;
 import response.editorResponse.EditorConnectionResponse;
 import response.editorResponse.LoadEditorResponse;
 import response.editorResponse.SaveCodeDocResponse;
@@ -58,7 +55,7 @@ public class EditorService {
                     if (resultSet.next()) {
                         response.setUserInControl(resultSet.getString(1));
                     } else {
-                        if(response.isHasWritePermissions()) {
+                        if (response.isHasWritePermissions()) {
                             activeQuery = "INSERT INTO " + DatabaseConstants.ACTIVE_EDITORS_TABLE_NAME
                                     + " (" + DatabaseConstants.ACTIVE_EDITORS_COL_CODEDOC_ID
                                     + ", " + DatabaseConstants.ACTIVE_EDITORS_COL_USER_IN_CONTROL
@@ -73,7 +70,7 @@ public class EditorService {
                         }
                     }
 
-                    String activeUsersQuery = "SELECT " + DatabaseConstants.USER_TABLE_NAME + "."+ DatabaseConstants.USER_TABLE_COL_USERID
+                    String activeUsersQuery = "SELECT " + DatabaseConstants.USER_TABLE_NAME + "." + DatabaseConstants.USER_TABLE_COL_USERID
                             + ", " + DatabaseConstants.USER_TABLE_COL_EMAIL
                             + ", " + DatabaseConstants.USER_TABLE_COL_FIRSTNAME
                             + ", " + DatabaseConstants.USER_TABLE_COL_LASTNAME
@@ -147,36 +144,35 @@ public class EditorService {
         return response;
     }
 
-    public static void destroyConnection(EditorCloseRequest request){
+    public static void destroyConnection(EditorCloseRequest request) {
 
         String updateQuery = "UPDATE " + DatabaseConstants.CODEDOC_ACCESS_TABLE_NAME
                 + " SET " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_IS_ACTIVE + " = FALSE " +
-                " WHERE " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_USER_ID+ " =? " +
+                " WHERE " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_USER_ID + " =? " +
                 " AND " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_CODEDOC_ID + " = ?;";
 
-        try{
+        try {
             CodeDocsServer.databaseConnection.setAutoCommit(false);
-            try{
+            try {
                 PreparedStatement preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(updateQuery);
                 preparedStatement.setString(1, request.getUserId());
                 preparedStatement.setString(2, request.getCodeDocId());
                 preparedStatement.executeUpdate();
 
                 String query = "";
-                if(request.getUserInControl() == null){
+                if (request.getUserInControl() == null) {
                     query = "DELETE FROM " + DatabaseConstants.ACTIVE_EDITORS_TABLE_NAME +
-                            " WHERE " + DatabaseConstants.ACTIVE_EDITORS_COL_CODEDOC_ID+ " = ?;";
+                            " WHERE " + DatabaseConstants.ACTIVE_EDITORS_COL_CODEDOC_ID + " = ?;";
                     preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(query);
-                    preparedStatement.setString(1,request.getCodeDocId());
+                    preparedStatement.setString(1, request.getCodeDocId());
 
-                }
-                else {
+                } else {
                     query = "UPDATE " + DatabaseConstants.ACTIVE_EDITORS_TABLE_NAME +
                             " SET " + DatabaseConstants.ACTIVE_EDITORS_COL_USER_IN_CONTROL + " =? " +
                             " WHERE " + DatabaseConstants.ACTIVE_EDITORS_COL_CODEDOC_ID + " = ?;";
                     preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(query);
-                    preparedStatement.setString(1,request.getUserInControl());
-                    preparedStatement.setString(1,request.getCodeDocId());
+                    preparedStatement.setString(1, request.getUserInControl());
+                    preparedStatement.setString(1, request.getCodeDocId());
                 }
                 preparedStatement.executeUpdate();
                 CodeDocsServer.databaseConnection.commit();
@@ -190,8 +186,6 @@ public class EditorService {
         }
 
     }
-
-
 
     public static LoadEditorResponse loadEditor(LoadEditorRequest loadEditorRequest) {
         LoadEditorResponse response = new LoadEditorResponse();
@@ -285,8 +279,44 @@ public class EditorService {
             e.printStackTrace();
         }
 
-
         return saveCodeDocResponse;
     }
 
+    public static void transferControl(TransferControlRequest request) {
+
+        String userId = request.getUserId();
+        String codeDocId = request.getCodeDocId();
+
+        try {
+            CodeDocsServer.databaseConnection.setAutoCommit(false);
+
+            try {
+                PreparedStatement preparedStatement;
+                if (userId == null) {
+                    String query = "DELETE FROM " + DatabaseConstants.ACTIVE_EDITORS_TABLE_NAME
+                            + " WHERE " + DatabaseConstants.ACTIVE_EDITORS_COL_CODEDOC_ID + " = ?;";
+                    preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(query);
+                    preparedStatement.setString(1, codeDocId);
+                } else {
+                    String query = "UPDATE " + DatabaseConstants.ACTIVE_EDITORS_TABLE_NAME
+                            + " SET " + DatabaseConstants.ACTIVE_EDITORS_COL_USER_IN_CONTROL
+                            + " = ? WHERE " + DatabaseConstants.ACTIVE_EDITORS_COL_CODEDOC_ID
+                            + " = ?;";
+                    preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(query);
+                    preparedStatement.setString(1, userId);
+                    preparedStatement.setString(2, codeDocId);
+                }
+
+                preparedStatement.executeUpdate();
+                CodeDocsServer.databaseConnection.commit();
+            }catch (SQLException e) {
+                CodeDocsServer.databaseConnection.rollback();
+                e.printStackTrace();
+            }
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+    }
 }

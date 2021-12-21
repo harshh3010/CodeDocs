@@ -2,12 +2,12 @@ package mainClasses;
 
 import javafx.application.Platform;
 import models.Peer;
+import models.User;
 import requests.appRequests.AppRequest;
-import requests.peerRequests.SendPeerConnectionRequest;
-import requests.peerRequests.StreamContentChangeRequest;
-import requests.peerRequests.StreamContentSelectionRequest;
-import requests.peerRequests.StreamCursorPositionRequest;
+import requests.peerRequests.*;
+import services.EditorService;
 import utilities.RequestType;
+import utilities.UserApi;
 
 import java.io.*;
 import java.net.Socket;
@@ -21,6 +21,8 @@ public class EditorBroadcastServerConnection extends Thread {
     private final Socket connection; // info of connected user
     private final ObjectOutputStream outputStream; // Output stream to send response to connected user
     private final ObjectInputStream inputStream; // Input stream to receive requests from connected user
+
+    private User connectedUser;
 
     private final EditorConnection editorConnection; // Reference to current editor connection
 
@@ -60,9 +62,18 @@ public class EditorBroadcastServerConnection extends Thread {
 
                     Socket socket = new Socket(peer.getIpAddress(), peer.getPort());
 
-                    peer.setSocket(connection);
                     peer.setOutputStream(new ObjectOutputStream(socket.getOutputStream()));
                     peer.setInputStream(new ObjectInputStream(socket.getInputStream()));
+
+                    SendPeerInfoRequest infoRequest = new SendPeerInfoRequest();
+                    User user = new User();
+                    user.setUserID(UserApi.getInstance().getId());
+                    user.setFirstName(UserApi.getInstance().getFirstName());
+                    user.setLastName(UserApi.getInstance().getLastName());
+                    user.setEmail(UserApi.getInstance().getEmail());
+                    infoRequest.setUser(user);
+                    peer.getOutputStream().writeObject(infoRequest);
+                    peer.getOutputStream().flush();
 
                     Socket audioSocket = new Socket(peer.getIpAddress(), peer.getAudioPort());
 
@@ -71,6 +82,8 @@ public class EditorBroadcastServerConnection extends Thread {
 
                     editorConnection.getConnectedPeers().put(peer.getUser().getUserID(), peer);
 
+                } else if (request.getRequestType() == RequestType.SEND_PEER_INFO_REQUEST) {
+                    connectedUser = ((SendPeerInfoRequest) request).getUser();
                 } else if (request.getRequestType() == RequestType.STREAM_CONTENT_CHANGES_REQUEST) {
                     StreamContentChangeRequest contentChangeRequest = (StreamContentChangeRequest) request;
                     Platform.runLater(() -> {
@@ -93,20 +106,59 @@ public class EditorBroadcastServerConnection extends Thread {
 //                    Platform.runLater(() -> editorConnection.getCodeEditor().moveCursor(cursorPositionRequest.getUserId(), cursorPositionRequest.getPosition()));
                 }
             }
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
+        } catch (ClassNotFoundException | IOException e) {
+            handleDisconnectedUser();
         }
+    }
 
-        // TODO: Free resources corresponding to disconnected user
+    /**
+     * This function handles all the changes that will take place after a user gets
+     * disconnected.
+     */
+    private void handleDisconnectedUser() {
 
-        try {
-            inputStream.close();
-            outputStream.close();
-            connection.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+        // Remove the user from list of active users
+        editorConnection.getConnectedPeers().remove(connectedUser.getUserID());
+
+        System.out.println(connectedUser.getFirstName() + " disconnected!");
+
+        // Check if the user who left was the user in control of CodeEditor
+        if (connectedUser.getUserID().equals(editorConnection.getUserInControl())) {
+
+            // If the user was in control of editor, then control needs
+            // to be transferred to some other user
+
+            // Finding the lexicographically smallest userId from active users with write permissions
+            String newUserInControl = editorConnection.isHasWritePermissions() ? UserApi.getInstance().getId() : null;
+            for (Peer peer : editorConnection.getConnectedPeers().values()) {
+                if (peer.isHasWritePermissions()) {
+                    if (newUserInControl == null) {
+                        newUserInControl = peer.getUser().getUserID();
+                    } else if (peer.getUser().getUserID().compareTo(newUserInControl) < 0) {
+                        newUserInControl = peer.getUser().getUserID();
+                    }
+                }
+            }
+
+            // Setting the new user in control of the code editor
+            editorConnection.setUserInControl(newUserInControl);
+
+            System.out.println(newUserInControl + " is taking control!");
+
+            // If current user is the new user in control then inform server and make ui changes
+            if (newUserInControl != null && newUserInControl.equals(UserApi.getInstance().getId())) {
+
+                // Inform the server of control transfer
+                try {
+                    EditorService.transferControl(editorConnection.getCodeDoc().getCodeDocId(), UserApi.getInstance().getId());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                // TODO: Make other UI changes
+                System.out.println("Taking control!");
+                editorConnection.getCodeEditor().setEditable(true);
+            }
         }
-
-
     }
 }

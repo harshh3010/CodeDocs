@@ -527,7 +527,7 @@ public class CodeEditor extends StackPane {
 
         // Setting up the code editor
         textArea.setEditable(isEditable);
-        setupLanguageParser();
+
         setupInputHandler();
         setupTextChangeHandler();
         setupTextSelectionHandler();

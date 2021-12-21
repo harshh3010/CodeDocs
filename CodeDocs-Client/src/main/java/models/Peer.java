@@ -11,10 +11,19 @@ public class Peer implements Serializable {
     private int port;
     private int audioPort;
     private Socket socket;
+    private Socket audioSocket;
     private ObjectOutputStream outputStream;
     private ObjectInputStream inputStream;
     private DataInputStream audioInputStream;
     private DataOutputStream audioOutputStream;
+
+    public Socket getAudioSocket() {
+        return audioSocket;
+    }
+
+    public void setAudioSocket(Socket audioSocket) {
+        this.audioSocket = audioSocket;
+    }
 
     public DataInputStream getAudioInputStream() {
         return audioInputStream;

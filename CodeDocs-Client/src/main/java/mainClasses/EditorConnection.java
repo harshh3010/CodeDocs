@@ -2,9 +2,11 @@ package mainClasses;
 
 import mainClasses.audioConnection.AudioReceiver;
 import mainClasses.audioConnection.AudioTransmitter;
+import models.CodeDoc;
 import models.Peer;
 import models.User;
 import requests.peerRequests.SendPeerConnectionRequest;
+import requests.peerRequests.SendPeerInfoRequest;
 import response.editorResponse.EditorConnectionResponse;
 import services.EditorService;
 import utilities.CodeEditor;
@@ -24,8 +26,10 @@ import java.util.HashMap;
  */
 public class EditorConnection {
 
+    private final CodeDoc codeDoc;
     private CodeEditor codeEditor;  // Reference to the CodeEditor corresponding to this connection
-    private final String userInControl; // User currently in control of the CodeEditor
+    private String userInControl; // User currently in control of the CodeEditor
+    private boolean hasWritePermissions;
 
     private final HashMap<String, Peer> connectedPeers = new HashMap<>(); // Collection of all connected users
 
@@ -34,34 +38,35 @@ public class EditorConnection {
     private final AudioTransmitter audioTransmitter;
 
     /**
-     * @param codeDocId of the CodeDoc to be edited
+     * @param codeDoc to be edited
      * @throws IOException if connection cannot be established
      */
-    public EditorConnection(String codeDocId) throws IOException, ClassNotFoundException {
+    public EditorConnection(CodeDoc codeDoc) throws IOException, ClassNotFoundException {
+
+        this.codeDoc = codeDoc;
 
         // Start editor broadcast server for broadcasting your changes
         server = new EditorBroadcastServer(this);
-        server.start();
-
         audioReceiver = new AudioReceiver(this);
-        audioReceiver.start();
-
         audioTransmitter = new AudioTransmitter(this);
-        audioTransmitter.start();
+
 
         // Send editor connection request to server
-        EditorConnectionResponse response = EditorService.establishConnection(codeDocId, server.getPort(), audioReceiver.getPort());
+        EditorConnectionResponse response = EditorService.establishConnection(codeDoc.getCodeDocId(), server.getPort(), audioReceiver.getPort());
         if (response.getStatus() == Status.FAILED) {
             // Stop the broadcasting server in case of failure
             server.stopServer();
             audioReceiver.stopServer();
-            audioTransmitter.stop();
             throw new IOException();
         }
 
+        server.start();
+        audioReceiver.start();
+        audioTransmitter.start();
+
         // Fetch the list of active users in current editor
         ArrayList<Peer> activePeers = response.getActivePeers();
-        boolean hasWritePermissions = response.isHasWritePermissions();
+        hasWritePermissions = response.isHasWritePermissions();
         userInControl = response.getUserInControl();
 
         // Connect to the broadcasting server of each active user
@@ -69,7 +74,6 @@ public class EditorConnection {
 
             // Connecting to the user's broadcast server
             Socket socket = new Socket(peer.getIpAddress(), peer.getPort());
-            peer.setSocket(socket);
 
             // Storing the IO streams for later use
             peer.setOutputStream(new ObjectOutputStream(socket.getOutputStream()));
@@ -98,6 +102,11 @@ public class EditorConnection {
             peer.getOutputStream().writeObject(request);
             peer.getOutputStream().flush();
 
+            SendPeerInfoRequest infoRequest = new SendPeerInfoRequest();
+            infoRequest.setUser(user);
+            peer.getOutputStream().writeObject(infoRequest);
+            peer.getOutputStream().flush();
+
             // Storing the p2p connection info in hashmap
             connectedPeers.put(peer.getUser().getUserID(), peer);
         }
@@ -109,7 +118,11 @@ public class EditorConnection {
      * @throws IOException in case of failure
      */
     public void closeConnection() throws IOException {
+        audioTransmitter.stop();
+        audioReceiver.stopServer();
+        audioReceiver.stop();
         server.stopServer();
+        server.stop();
     }
 
     /**
@@ -138,5 +151,28 @@ public class EditorConnection {
      */
     public String getUserInControl() {
         return userInControl;
+    }
+
+    /**
+     * Setter for user in control of the CodeEditor
+     */
+    public void setUserInControl(String userInControl) {
+        this.userInControl = userInControl;
+    }
+
+
+    /**
+     * Getter for the current codedoc
+     */
+    public CodeDoc getCodeDoc() {
+        return codeDoc;
+    }
+
+    public boolean isHasWritePermissions() {
+        return hasWritePermissions;
+    }
+
+    public void setHasWritePermissions(boolean hasWritePermissions) {
+        this.hasWritePermissions = hasWritePermissions;
     }
 }

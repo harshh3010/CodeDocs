@@ -6,7 +6,7 @@ import models.Peer;
 import javax.sound.sampled.*;
 import java.io.IOException;
 
-public class AudioTransmitter extends Thread{
+public class AudioTransmitter extends Thread {
 
     private final EditorConnection editorConnection;
 
@@ -30,15 +30,18 @@ public class AudioTransmitter extends Thread{
             microphone.start();
 
             while (true) {
-                numBytesRead = microphone.read(data, 0, CHUNK_SIZE);
-                for(Peer peer : editorConnection.getConnectedPeers().values())
-                {
-                    peer.getAudioOutputStream().write(data, 0, numBytesRead);
-                    peer.getAudioOutputStream().flush();
+                try {
+                    numBytesRead = microphone.read(data, 0, CHUNK_SIZE);
+                    for (Peer peer : editorConnection.getConnectedPeers().values()) {
+                        peer.getAudioOutputStream().write(data, 0, numBytesRead);
+                        peer.getAudioOutputStream().flush();
+                    }
+                } catch (IOException e) {
+//                    System.out.println("Could not transmit audio to a peer!");
                 }
             }
 
-        } catch (LineUnavailableException | IOException e) {
+        } catch (LineUnavailableException e) {
             e.printStackTrace();
         }
     }

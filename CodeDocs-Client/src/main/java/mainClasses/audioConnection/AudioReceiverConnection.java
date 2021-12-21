@@ -1,6 +1,8 @@
 package mainClasses.audioConnection;
 
 import mainClasses.EditorConnection;
+import models.Peer;
+import models.User;
 
 import javax.sound.sampled.*;
 import java.io.DataInputStream;
@@ -44,15 +46,7 @@ public class AudioReceiverConnection extends Thread {
                 speakers.write(data, 0, numBytesRead);
             }
         } catch (LineUnavailableException | IOException e) {
-            e.printStackTrace();
-        }
-
-        try {
-            inputStream.close();
-            outputStream.close();
-            connection.close();
-        } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println("Audio from a peer disconnected!");
         }
     }
 }

@@ -9,24 +9,19 @@ import java.sql.SQLException;
 
 public class DestroyResources {
 
-    public static void destroyAllocations(String userID){
+    public static void destroyAllocations(String userID) {
 
         String updateQuery = "UPDATE " + DatabaseConstants.CODEDOC_ACCESS_TABLE_NAME +
                 " SET " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_IS_ACTIVE + " = FALSE" +
                 " WHERE " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_USER_ID + "=?;";
 
-        String deleteQuery = "DELETE FROM " + DatabaseConstants.ACTIVE_EDITORS_TABLE_NAME+
-                " WHERE " + DatabaseConstants.ACTIVE_EDITORS_COL_USER_IN_CONTROL + " =?;";
-        try{
+        try {
             CodeDocsServer.databaseConnection.setAutoCommit(false);
             try {
                 PreparedStatement preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(updateQuery);
                 preparedStatement.setString(1, userID);
                 preparedStatement.executeUpdate();
 
-                preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(deleteQuery);
-                preparedStatement.setString(1, userID);
-                preparedStatement.executeUpdate();
                 CodeDocsServer.databaseConnection.commit();
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -35,15 +30,15 @@ public class DestroyResources {
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
-
     }
-    public static void cleanDB(){
+
+    public static void cleanDB() {
         String updateQuery = "UPDATE " + DatabaseConstants.CODEDOC_ACCESS_TABLE_NAME +
-                " SET " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_IS_ACTIVE + " = FALSE;" ;
+                " SET " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_IS_ACTIVE + " = FALSE;";
 
 
         String deleteQuery = "DELETE FROM " + DatabaseConstants.ACTIVE_EDITORS_TABLE_NAME + ";";
-        try{
+        try {
             CodeDocsServer.databaseConnection.setAutoCommit(false);
             try {
                 PreparedStatement preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(updateQuery);

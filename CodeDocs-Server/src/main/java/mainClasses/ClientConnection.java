@@ -19,7 +19,7 @@ public class ClientConnection extends Thread {
     private final Socket client;
     private final ObjectInputStream inputStream;
     private final ObjectOutputStream outputStream;
-    public  String clientUserID="" ;
+    public String clientUserID = "";
 
     public ClientConnection(Socket client) throws IOException {
 
@@ -66,18 +66,18 @@ public class ClientConnection extends Thread {
                     System.out.println("Client wants to fetch CodeDoc!");
                     outputStream.writeObject(CodeDocService.fetchCodeDoc((FetchCodeDocRequest) request));
                     outputStream.flush();
-                }else if(request.getRequestType() == RequestType.DELETE_CODEDOC_REQUEST) {
+                } else if (request.getRequestType() == RequestType.DELETE_CODEDOC_REQUEST) {
                     System.out.println("Client wants to delete CodeDoc!");
                     outputStream.writeObject(CodeDocService.deleteCodeDoc((DeleteCodeDocRequest) request));
                     outputStream.flush();
-                }else if(request.getRequestType() == RequestType.UPDATE_CODEDOC_REQUEST) {
+                } else if (request.getRequestType() == RequestType.UPDATE_CODEDOC_REQUEST) {
                     System.out.println("Client wants to update CodeDoc details!");
                     outputStream.writeObject(CodeDocService.updateCodeDoc((UpdateCodeDocRequest) request));
                 } else if (request.getRequestType() == RequestType.LOAD_EDITOR_REQUEST) {
                     System.out.println("Client wants to open editor!");
                     outputStream.writeObject(EditorService.loadEditor((LoadEditorRequest) request));
                     outputStream.flush();
-                }else if (request.getRequestType() == RequestType.SAVE_CODEDOC_REQUEST) {
+                } else if (request.getRequestType() == RequestType.SAVE_CODEDOC_REQUEST) {
                     System.out.println("Client wants to save codeDoc!");
                     outputStream.writeObject(EditorService.saveCodeDoc((SaveCodeDocRequest) request));
                     outputStream.flush();
@@ -86,64 +86,57 @@ public class ClientConnection extends Thread {
                     System.out.println("Client wants to invite a collaborator!");
                     outputStream.writeObject(CollaborationService.inviteCollaborator((InviteCollaboratorRequest) request));
                     outputStream.flush();
-                }else if (request.getRequestType() == RequestType.REMOVE_COLLABORATOR_REQUEST) {
+                } else if (request.getRequestType() == RequestType.REMOVE_COLLABORATOR_REQUEST) {
                     System.out.println("Client wants to remove a collaborator!");
                     outputStream.writeObject(CollaborationService.removeCollaborator((RemoveCollaboratorRequest) request));
                     outputStream.flush();
-                }else if (request.getRequestType() == RequestType.FETCH_COLLABORATOR_REQUEST) {
+                } else if (request.getRequestType() == RequestType.FETCH_COLLABORATOR_REQUEST) {
                     System.out.println("Client wants to fetch collaborator!");
                     outputStream.writeObject(CollaborationService.fetchCollaborators((FetchCollaboratorRequest) request));
                     outputStream.flush();
-                }else if (request.getRequestType() == RequestType.CHANGE_COLLABORATOR_RIGHTS_REQUEST) {
+                } else if (request.getRequestType() == RequestType.CHANGE_COLLABORATOR_RIGHTS_REQUEST) {
                     System.out.println("Client wants to change rights of a collaborator!");
                     outputStream.writeObject(CollaborationService.changeCollaboratorRights((ChangeCollaboratorRightsRequest) request));
                     outputStream.flush();
-                }else if (request.getRequestType() == RequestType.ACCEPT_INVITE_REQUEST) {
+                } else if (request.getRequestType() == RequestType.ACCEPT_INVITE_REQUEST) {
                     System.out.println("Client wants to accept invite !");
                     outputStream.writeObject(CollaborationService.acceptInvite((AcceptInviteRequest) request));
                     outputStream.flush();
-                }else if (request.getRequestType() == RequestType.REJECT_INVITE_REQUEST) {
+                } else if (request.getRequestType() == RequestType.REJECT_INVITE_REQUEST) {
                     System.out.println("Client wants to reject invite !");
                     outputStream.writeObject(CollaborationService.rejectInvite((RejectInviteRequest) request));
                     outputStream.flush();
-                }else if (request.getRequestType() == RequestType.FETCH_INVITE_REQUEST) {
+                } else if (request.getRequestType() == RequestType.FETCH_INVITE_REQUEST) {
                     System.out.println("Client wants to fetch his/her invite !");
-                    outputStream.writeObject(CollaborationService.fetchInvites( (FetchInviteRequest) request));
+                    outputStream.writeObject(CollaborationService.fetchInvites((FetchInviteRequest) request));
                     outputStream.flush();
-                }else if (request.getRequestType() == RequestType.RUN_CODEDOC_REQUEST) {
+                } else if (request.getRequestType() == RequestType.RUN_CODEDOC_REQUEST) {
                     System.out.println("Client wants to run codeDoc !");
-                    outputStream.writeObject(CompileService.runCodeDoc( (RunCodeDocRequest) request));
+                    outputStream.writeObject(CompileService.runCodeDoc((RunCodeDocRequest) request));
                     outputStream.flush();
-                }else if (request.getRequestType() == RequestType.COMPILE_CODEDOC_REQUEST) {
+                } else if (request.getRequestType() == RequestType.COMPILE_CODEDOC_REQUEST) {
                     System.out.println("Client wants to compile codeDoc !");
-                    outputStream.writeObject(CompileService.compileCodeDoc( (CompileCodeDocRequest) request));
+                    outputStream.writeObject(CompileService.compileCodeDoc((CompileCodeDocRequest) request));
                     outputStream.flush();
-                }else if(request.getRequestType() == RequestType.EDITOR_CONNECTION_REQUEST) {
+                } else if (request.getRequestType() == RequestType.EDITOR_CONNECTION_REQUEST) {
                     System.out.println("Client wants to start codedoc editor!");
                     outputStream.writeObject(EditorService.establishConnection((EditorConnectionRequest) request, client.getInetAddress().getHostAddress()));
                     outputStream.flush();
-                }else if(request.getRequestType() == RequestType.EDITOR_CLOSE_REQUEST) {
+                } else if (request.getRequestType() == RequestType.EDITOR_CLOSE_REQUEST) {
                     System.out.println("Client wants to close codedoc editor!");
                     EditorService.destroyConnection((EditorCloseRequest) request);
-
+                } else if (request.getRequestType() == RequestType.TRANSFER_CONTROL_REQUEST) {
+                    System.out.println("Client wants to transfer code editor control!");
+                    EditorService.transferControl((TransferControlRequest) request);
                 }
 
             } catch (IOException | ClassNotFoundException e) {
-                try {
-                    inputStream.close();
-                    outputStream.close();
-                    client.close();
-                } catch (IOException e1) {
-                    System.out.println("Error: Unable to close connection!");
-                    e1.printStackTrace();
-                }
-                if(clientUserID != ""){
+                if (!clientUserID.isEmpty()) {
 
-                    //destroy all codeDoc connections + along with entries in the active editor table if any
+                    // Mark the client as offline
                     DestroyResources.destroyAllocations(clientUserID);
-
                 }
-                System.out.println("Client disconnected!");
+                System.out.println("Client " + clientUserID + " disconnected!");
                 break;
             }
         }

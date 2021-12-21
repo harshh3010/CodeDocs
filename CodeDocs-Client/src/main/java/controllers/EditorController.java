@@ -1,7 +1,9 @@
 package controllers;
 
+import com.jfoenix.controls.JFXDrawer;
 import javafx.event.ActionEvent;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
@@ -33,7 +35,7 @@ public class EditorController {
         this.codeDoc = codeDoc;
 
         try {
-            editorConnection = new EditorConnection(codeDoc.getCodeDocId());
+            editorConnection = new EditorConnection(codeDoc);
 
             // TODO: Fetch content from user in control
             LoadEditorResponse response = EditorService.loadEditorContent(codeDoc.getCodeDocId(), codeDoc.getLanguageType());
@@ -60,6 +62,7 @@ public class EditorController {
             Stage stage = (Stage) borderPane.getScene().getWindow();
             stage.close();
         }
+
     }
 
     public void saveContent() {
@@ -67,7 +70,6 @@ public class EditorController {
         codeDoc.setFileContent(codeEditor.getText());
 
         try {
-
             SaveCodeDocResponse response = EditorService.saveCodeDoc(codeDoc);
             if (response.getStatus() == Status.SUCCESS) {
                 alert.setAlertType(Alert.AlertType.INFORMATION);
@@ -85,18 +87,6 @@ public class EditorController {
 
     public void exitEditor() {
         try {
-            String userInControl = editorConnection.getUserInControl();
-            if (userInControl.equals(UserApi.getInstance().getId())) {
-                userInControl = null;
-                for (Peer peer : editorConnection.getConnectedPeers().values()) {
-                    if (peer.isHasWritePermissions()) {
-                        userInControl = peer.getUser().getUserID();
-                    }
-                }
-                // TODO: Transfer control
-                System.out.println("User in control leaving... Control transfer to " + userInControl);
-            }
-            EditorService.destroyConnection(codeDoc.getCodeDocId(), userInControl);
             editorConnection.closeConnection();
             Stage stage = (Stage) borderPane.getScene().getWindow();
             stage.close();
@@ -136,7 +126,6 @@ public class EditorController {
                 if (response.getError().isEmpty()) {
                     outputTextArea.setStyle("-fx-text-fill: black;");
                     outputTextArea.setText(response.getOutput());
-
                 } else {
                     outputTextArea.setStyle("-fx-text-fill: red;");
                     outputTextArea.setText("ERROR: " + response.getError());

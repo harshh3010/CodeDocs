@@ -27,6 +27,7 @@ public class EditorService {
 
         return (EditorConnectionResponse) inputStream.readObject();
     }
+
     public static void destroyConnection(String codeDocID,String userInControl) throws IOException {
         EditorCloseRequest request = new EditorCloseRequest();
         request.setUserInControl(userInControl);
@@ -85,5 +86,12 @@ public class EditorService {
         return (RunCodeDocResponse) inputStream.readObject();
     }
 
+    public static void transferControl(String codeDocId, String userId) throws IOException {
+        TransferControlRequest request = new TransferControlRequest();
+        request.setCodeDocId(codeDocId);
+        request.setUserId(userId);
 
+        outputStream.writeObject(request);
+        outputStream.flush();
+    }
 }
