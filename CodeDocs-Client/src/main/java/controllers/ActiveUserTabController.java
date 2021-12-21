@@ -2,24 +2,15 @@ package controllers;
 
 import com.jfoenix.controls.JFXListView;
 import javafx.collections.FXCollections;
-import javafx.event.EventHandler;
-import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.DialogEvent;
 import mainClasses.EditorConnection;
-import models.CodeDoc;
+import models.ActiveUser;
 import models.Peer;
-import models.User;
 
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.ResourceBundle;
 
 public class ActiveUserTabController{
-    public JFXListView<Peer> activeUsersListView;
 
-    private final Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+    public JFXListView<ActiveUser> activeUsersListView;
     private EditorConnection editorConnection;
 
     public void setActiveUserTab(EditorConnection editorConnection) {
@@ -28,17 +19,21 @@ public class ActiveUserTabController{
 
     public void setActiveUsers() {
 
-        List<Peer>  peers = new ArrayList<>();
-        Peer peer = new Peer();
-        User user = new User();
-        user.setFirstName("HEllo");
-        user.setEmail("email@gmail.com");
-        peer.setUser(user);
-        peer.setHasWritePermissions(false);
-        peers.add(peer);
-        peers.add(peer);
-        activeUsersListView.setItems(FXCollections.observableArrayList(peers));
-        activeUsersListView.setCellFactory(new ActiveUserCardFactory());
+        ArrayList<ActiveUser> activeUsers = new ArrayList<>();
+        for (Peer peer: editorConnection.getConnectedPeers().values()) {
+            ActiveUser activeUser = new ActiveUser();
+
+            activeUser.setUserId(peer.getUser().getUserID());
+            activeUser.setEmail(peer.getUser().getEmail());
+            activeUser.setFirstName(peer.getUser().getFirstName());
+            activeUser.setLastName(peer.getUser().getLastName());
+            activeUser.setHasWritePermissions(peer.isHasWritePermissions());
+
+            activeUsers.add(activeUser);
+        }
+
+        activeUsersListView.setItems(FXCollections.observableArrayList(activeUsers));
+        activeUsersListView.setCellFactory(new ActiveUserCardFactory(editorConnection));
     }
 
 }

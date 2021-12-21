@@ -1,15 +1,11 @@
 package mainClasses.audioConnection;
 
-import com.sun.media.jfxmedia.control.VideoFormat;
 import mainClasses.EditorConnection;
-import models.Peer;
-import models.User;
 
 import javax.sound.sampled.*;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 
 public class AudioReceiverConnection extends Thread {
 
@@ -42,6 +38,7 @@ public class AudioReceiverConnection extends Thread {
             int CHUNK_SIZE = 1024;
             byte[] data = new byte[CHUNK_SIZE];
             int numBytesRead;
+
             while (true) {
                 numBytesRead = inputStream.read(data, 0, CHUNK_SIZE);
                 speakers.write(data, 0, numBytesRead);

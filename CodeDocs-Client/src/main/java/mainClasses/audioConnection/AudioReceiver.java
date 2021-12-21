@@ -24,12 +24,14 @@ public class AudioReceiver extends Thread{
 
     @Override
     public void run() {
+
         while(serverSocket.isBound() && !serverSocket.isClosed()) {
             try {
                 Socket socket = serverSocket.accept();
                 AudioReceiverConnection connection = new AudioReceiverConnection(socket, editorConnection);
                 connection.start();
             } catch (IOException e) {
+                e.printStackTrace();
                 System.out.println("Client disconnected!");
             }
         }

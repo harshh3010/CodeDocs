@@ -5,6 +5,8 @@ import models.Peer;
 
 import javax.sound.sampled.*;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 public class AudioTransmitter extends Thread {
 

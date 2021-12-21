@@ -71,44 +71,48 @@ public class EditorConnection {
 
         // Connect to the broadcasting server of each active user
         for (Peer peer : activePeers) {
+            try {
+                // Connecting to the user's broadcast server
+                Socket socket = new Socket(peer.getIpAddress(), peer.getPort());
 
-            // Connecting to the user's broadcast server
-            Socket socket = new Socket(peer.getIpAddress(), peer.getPort());
+                // Storing the IO streams for later use
+                peer.setOutputStream(new ObjectOutputStream(socket.getOutputStream()));
+                peer.setInputStream(new ObjectInputStream(socket.getInputStream()));
 
-            // Storing the IO streams for later use
-            peer.setOutputStream(new ObjectOutputStream(socket.getOutputStream()));
-            peer.setInputStream(new ObjectInputStream(socket.getInputStream()));
+                Socket audioSocket = new Socket(peer.getIpAddress(), peer.getAudioPort());
 
-            Socket audioSocket = new Socket(peer.getIpAddress(), peer.getAudioPort());
+                peer.setAudioOutputStream(new DataOutputStream(audioSocket.getOutputStream()));
+                peer.setAudioInputStream(new DataInputStream(audioSocket.getInputStream()));
+                peer.setMuted(false);
 
-            peer.setAudioOutputStream(new DataOutputStream(audioSocket.getOutputStream()));
-            peer.setAudioInputStream(new DataInputStream(audioSocket.getInputStream()));
+                // Sending port to the peer to allow him to connect to current user's broadcast server
+                // Creating a new connection request to connect to the user's server
+                SendPeerConnectionRequest request = new SendPeerConnectionRequest();
 
-            // Sending port to the peer to allow him to connect to current user's broadcast server
-            // Creating a new connection request to connect to the user's server
-            SendPeerConnectionRequest request = new SendPeerConnectionRequest();
+                User user = new User();
+                user.setUserID(UserApi.getInstance().getId());
+                user.setFirstName(UserApi.getInstance().getFirstName());
+                user.setLastName(UserApi.getInstance().getLastName());
+                user.setEmail(UserApi.getInstance().getEmail());
 
-            User user = new User();
-            user.setUserID(UserApi.getInstance().getId());
-            user.setFirstName(UserApi.getInstance().getFirstName());
-            user.setLastName(UserApi.getInstance().getLastName());
-            user.setEmail(UserApi.getInstance().getEmail());
+                request.setUser(user);
+                request.setPort(server.getPort());
+                request.setAudioPort(audioReceiver.getPort());
+                request.setHasWritePermissions(hasWritePermissions);
 
-            request.setUser(user);
-            request.setPort(server.getPort());
-            request.setAudioPort(audioReceiver.getPort());
-            request.setHasWritePermissions(hasWritePermissions);
+                peer.getOutputStream().writeObject(request);
+                peer.getOutputStream().flush();
 
-            peer.getOutputStream().writeObject(request);
-            peer.getOutputStream().flush();
+                SendPeerInfoRequest infoRequest = new SendPeerInfoRequest();
+                infoRequest.setUser(user);
+                peer.getOutputStream().writeObject(infoRequest);
+                peer.getOutputStream().flush();
 
-            SendPeerInfoRequest infoRequest = new SendPeerInfoRequest();
-            infoRequest.setUser(user);
-            peer.getOutputStream().writeObject(infoRequest);
-            peer.getOutputStream().flush();
-
-            // Storing the p2p connection info in hashmap
-            connectedPeers.put(peer.getUser().getUserID(), peer);
+                // Storing the p2p connection info in hashmap
+                connectedPeers.put(peer.getUser().getUserID(), peer);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -158,8 +162,24 @@ public class EditorConnection {
      */
     public void setUserInControl(String userInControl) {
         this.userInControl = userInControl;
-    }
 
+        // If current user is the new user in control then inform server and make ui changes
+        if (userInControl != null && userInControl.equals(UserApi.getInstance().getId())) {
+
+            // Inform the server of control transfer
+            try {
+                EditorService.transferControl(getCodeDoc().getCodeDocId(), UserApi.getInstance().getId());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            // TODO: Make other UI changes
+            System.out.println("Taking control!");
+            getCodeEditor().setEditable(true);
+        } else {
+            getCodeEditor().setEditable(false);
+        }
+    }
 
     /**
      * Getter for the current codedoc

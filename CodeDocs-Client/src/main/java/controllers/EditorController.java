@@ -110,18 +110,18 @@ public class EditorController implements Initializable {
     }
 
     public void saveContent() {
-
         codeDoc.setFileContent(codeEditor.getText());
-
         try {
             SaveCodeDocResponse response = EditorService.saveCodeDoc(codeDoc);
             if (response.getStatus() == Status.SUCCESS) {
                 alert.setAlertType(Alert.AlertType.INFORMATION);
+                codeEditor.setDirty(false);
                 alert.setContentText("Saved successfully");
             } else {
                 alert.setContentText("Cannot save at the moment");
             }
             alert.show();
+
         } catch (IOException | ClassNotFoundException e) {
             alert.setContentText("Cannot load at the moment");
             alert.show();
@@ -141,7 +141,6 @@ public class EditorController implements Initializable {
 
     private void compileCodeDoc() {
         try {
-            saveContent();
             CompileCodeDocResponse response = EditorService.compileCodeDoc(codeDoc.getCodeDocId(), codeDoc.getLanguageType());
             if (response.getStatus() == Status.SUCCESS) {
                 if (response.getError().isEmpty()) {
@@ -163,7 +162,6 @@ public class EditorController implements Initializable {
 
     private void runCodeDoc() {
         try {
-            saveContent();
             String input = inputTextArea.getText();
             RunCodeDocResponse response = EditorService.runCodeDoc(codeDoc.getCodeDocId(), codeDoc.getLanguageType(), input);
             if (response.getStatus() == Status.SUCCESS) {
@@ -186,15 +184,26 @@ public class EditorController implements Initializable {
     }
 
     public void onCompileClicked(ActionEvent actionEvent) {
-        compileCodeDoc();
+        if(codeEditor.isDirty()){
+            alert.setAlertType(Alert.AlertType.WARNING);
+            alert.setContentText("You have unsaved changes, please save the CodeDoc first!");
+            alert.show();
+        }else{
+            compileCodeDoc();
+        }
     }
 
     public void onRunClicked(ActionEvent actionEvent) {
-        runCodeDoc();
+        if(codeEditor.isDirty()){
+            alert.setAlertType(Alert.AlertType.WARNING);
+            alert.setContentText("You have unsaved changes, please save the CodeDoc first!");
+            alert.show();
+        }else{
+            runCodeDoc();
+        }
     }
 
     public void onActiveUserClicked(ActionEvent actionEvent) {
-
         if (drawer.isOpened()) {
             drawer.close();
         } else {

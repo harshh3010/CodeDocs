@@ -44,9 +44,10 @@ public class CodeEditor extends StackPane {
     private final HashMap<String, CaretNode> userCursors = new HashMap<>(); // Cursors for connected users
     private final HashMap<String, Label> userLabels = new HashMap<>();  // Labels for connected users
 
-    private boolean isEditable = true; // Editing mode of current code editor instance
+    private boolean isEditable; // Editing mode of current code editor instance
     private boolean syntaxHighlightingOn = true; // Syntax highlighting status
     private boolean autocompleteOn = true; // Code auto-complete status
+    private boolean isDirty;
 
 
     /**
@@ -78,6 +79,8 @@ public class CodeEditor extends StackPane {
 
         // Adding initial text to be displayed
         textArea.appendText(initialContent);
+
+        isDirty = false;
     }
 
     /**
@@ -132,6 +135,8 @@ public class CodeEditor extends StackPane {
      */
     private void setupTextChangeHandler() {
         textArea.plainTextChanges().subscribe(plainTextChange -> {
+
+            isDirty = true;
 
             // Highlighting the syntax
             highlightCode();
@@ -539,5 +544,13 @@ public class CodeEditor extends StackPane {
      */
     public String getText() {
         return textArea.getText();
+    }
+
+    public boolean isDirty() {
+        return isDirty;
+    }
+
+    public void setDirty(boolean dirty) {
+        isDirty = dirty;
     }
 }

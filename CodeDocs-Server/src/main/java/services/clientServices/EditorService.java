@@ -43,6 +43,7 @@ public class EditorService {
                 if (resultSet.next()) {
                     response.setHasWritePermissions(resultSet.getBoolean(1));
 
+                    // TODO: Check is_active also
                     String activeQuery = "SELECT " + DatabaseConstants.ACTIVE_EDITORS_COL_USER_IN_CONTROL
                             + " FROM " + DatabaseConstants.ACTIVE_EDITORS_TABLE_NAME
                             + " WHERE " + DatabaseConstants.ACTIVE_EDITORS_COL_CODEDOC_ID
@@ -172,7 +173,7 @@ public class EditorService {
                             " WHERE " + DatabaseConstants.ACTIVE_EDITORS_COL_CODEDOC_ID + " = ?;";
                     preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(query);
                     preparedStatement.setString(1, request.getUserInControl());
-                    preparedStatement.setString(1, request.getCodeDocId());
+                    preparedStatement.setString(2, request.getCodeDocId());
                 }
                 preparedStatement.executeUpdate();
                 CodeDocsServer.databaseConnection.commit();

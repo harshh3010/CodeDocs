@@ -1,16 +1,18 @@
 package mainClasses;
 
 import javafx.application.Platform;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import models.Peer;
 import models.User;
 import requests.appRequests.AppRequest;
 import requests.peerRequests.*;
-import services.EditorService;
 import utilities.RequestType;
 import utilities.UserApi;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.Optional;
 
 /**
  * This class represents the connection between current user and a single online user editing
@@ -79,6 +81,7 @@ public class EditorBroadcastServerConnection extends Thread {
 
                     peer.setAudioOutputStream(new DataOutputStream(audioSocket.getOutputStream()));
                     peer.setAudioInputStream(new DataInputStream(audioSocket.getInputStream()));
+                    peer.setMuted(false);
 
                     editorConnection.getConnectedPeers().put(peer.getUser().getUserID(), peer);
 
@@ -104,6 +107,44 @@ public class EditorBroadcastServerConnection extends Thread {
                 } else if (request.getRequestType() == RequestType.STREAM_CURSOR_POSITION_REQUEST) {
                     StreamCursorPositionRequest cursorPositionRequest = (StreamCursorPositionRequest) request;
 //                    Platform.runLater(() -> editorConnection.getCodeEditor().moveCursor(cursorPositionRequest.getUserId(), cursorPositionRequest.getPosition()));
+                } else if (request.getRequestType() == RequestType.SEND_MESSAGE_REQUEST) {
+                    SendMessageRequest messageRequest = (SendMessageRequest) request;
+                    String content = messageRequest.getContent();
+                    boolean isPrivate = messageRequest.isPrivate();
+                    System.out.println(content + " to " + (isPrivate ? " you." : " everyone."));
+                } else if (request.getRequestType() == RequestType.TAKE_CONTROL_REQUEST) {
+
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
+                            String name = connectedUser.getFirstName() + " " + connectedUser.getLastName();
+                            confirmationAlert.setContentText(name + " is requesting control!");
+                            Optional<ButtonType> pressedButton = confirmationAlert.showAndWait();
+
+                            if (pressedButton.get() == ButtonType.OK) {
+
+                                editorConnection.setUserInControl(connectedUser.getUserID());
+
+                                ControlSwitchRequest switchRequest = new ControlSwitchRequest();
+                                switchRequest.setUserId(connectedUser.getUserID());
+
+                                for (Peer peer : editorConnection.getConnectedPeers().values()) {
+                                    try {
+                                        peer.getOutputStream().writeObject(switchRequest);
+                                        peer.getOutputStream().flush();
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+
+                            }
+                        }
+                    });
+
+                } else if (request.getRequestType() == RequestType.CONTROL_SWITCH_REQUEST) {
+                    ControlSwitchRequest switchRequest = (ControlSwitchRequest) request;
+                    editorConnection.setUserInControl(switchRequest.getUserId());
                 }
             }
         } catch (ClassNotFoundException | IOException e) {
@@ -142,23 +183,6 @@ public class EditorBroadcastServerConnection extends Thread {
 
             // Setting the new user in control of the code editor
             editorConnection.setUserInControl(newUserInControl);
-
-            System.out.println(newUserInControl + " is taking control!");
-
-            // If current user is the new user in control then inform server and make ui changes
-            if (newUserInControl != null && newUserInControl.equals(UserApi.getInstance().getId())) {
-
-                // Inform the server of control transfer
-                try {
-                    EditorService.transferControl(editorConnection.getCodeDoc().getCodeDocId(), UserApi.getInstance().getId());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                // TODO: Make other UI changes
-                System.out.println("Taking control!");
-                editorConnection.getCodeEditor().setEditable(true);
-            }
         }
     }
 }
