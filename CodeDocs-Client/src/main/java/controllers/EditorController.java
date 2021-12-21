@@ -43,7 +43,21 @@ public class EditorController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
 
+        drawer.setOnDrawerOpening(event ->
+        {
+            AnchorPane.setRightAnchor(drawer, 0.0);
+            AnchorPane.setLeftAnchor(drawer, 0.0);
+            AnchorPane.setTopAnchor(drawer, 0.0);
+            AnchorPane.setBottomAnchor(drawer, 0.0);
+        });
 
+        drawer.setOnDrawerClosed(event ->
+        {
+            AnchorPane.clearConstraints(drawer);
+            AnchorPane.setLeftAnchor(drawer, -400.0);
+            AnchorPane.setTopAnchor(drawer, 0.0);
+            AnchorPane.setBottomAnchor(drawer, 0.0);
+        });
 
     }
 
@@ -58,10 +72,11 @@ public class EditorController implements Initializable {
                 VBox box = loader.load();
                 controller = loader.getController();
                 controller.setActiveUserTab(editorConnection);
-                BackgroundFill myBF = new BackgroundFill(Color.BLACK, new CornerRadii(1),
-                        new Insets(0.0,0.0,0.0,0.0));
-                box.setBackground(new Background(myBF));
+//                BackgroundFill myBF = new BackgroundFill(Color.BLACK, new CornerRadii(1),
+//                        new Insets(0.0,0.0,0.0,0.0));
+//                box.setBackground(new Background(myBF));
                 drawer.setSidePane(box);
+                drawer.close();
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
@@ -179,7 +194,7 @@ public class EditorController implements Initializable {
     }
 
     public void onActiveUserClicked(ActionEvent actionEvent) {
-        System.out.println(":::");
+
         if (drawer.isOpened()) {
             drawer.close();
         } else {

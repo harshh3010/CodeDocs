@@ -32,10 +32,11 @@ public class ActiveUserTabController{
         Peer peer = new Peer();
         User user = new User();
         user.setFirstName("HEllo");
+        user.setEmail("email@gmail.com");
         peer.setUser(user);
         peer.setHasWritePermissions(false);
         peers.add(peer);
-        System.out.println("[[[[[[[[[");
+        peers.add(peer);
         activeUsersListView.setItems(FXCollections.observableArrayList(peers));
         activeUsersListView.setCellFactory(new ActiveUserCardFactory());
     }

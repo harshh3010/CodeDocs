@@ -2,13 +2,18 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="70.0" prefWidth="300.0" stylesheets="@../css/style.css" type="javafx.scene.control.ListCell" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1">
+<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="69.0" prefWidth="400.0" stylesheets="@../css/style.css" type="javafx.scene.control.ListCell" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1">
    <graphic>
-      <AnchorPane prefHeight="200.0" prefWidth="200.0">
+      <AnchorPane prefHeight="200.0" prefWidth="400.0">
          <children>
-             <Label fx:id="nameLabel" alignment="CENTER_RIGHT" layoutX="14.0" layoutY="7.0" prefHeight="45.0" prefWidth="260.0"  text="Name" textAlignment="RIGHT" AnchorPane.bottomAnchor="9.0" AnchorPane.leftAnchor="13.0" AnchorPane.rightAnchor="13.0" AnchorPane.topAnchor="9.0" />
-             
+             <Label fx:id="nameLabel" contentDisplay="CENTER" layoutY="14.0" prefHeight="35.0" prefWidth="300.0" text="Name" textAlignment="RIGHT" AnchorPane.bottomAnchor="39.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="86.0" AnchorPane.topAnchor="14.0">
+               <font>
+                  <Font size="24.0" />
+               </font></Label>
+            <Label fx:id="emailLabel" layoutY="45.0" prefHeight="22.0" prefWidth="300.0" text="email@email.com" AnchorPane.bottomAnchor="21.0" />
+            <Button fx:id="menuButton" alignment="CENTER" contentDisplay="CENTER" layoutX="322.0" layoutY="13.0" prefHeight="35.0" styleClass="button3" text="Menu" textFill="WHITE" AnchorPane.bottomAnchor="30.0" AnchorPane.topAnchor="30.0" />
          </children>
       </AnchorPane>
    </graphic>
