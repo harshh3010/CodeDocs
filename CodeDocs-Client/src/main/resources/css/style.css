@@ -138,8 +138,18 @@
     -fx-background-color: rgba(255,255,255,0.1);
 }
 
+
 .list-view .list-cell:selected {
     -fx-background-color: rgba(255,255,255,0.2);
+}
+
+.chatList .list-cell:hover {
+    -fx-background-color: transparent;
+}
+
+
+.chatList .list-cell:selected {
+    -fx-background-color: transparent;
 }
 
 .list-view .list-cell {
@@ -250,6 +260,59 @@
 .drawer {
     -fx-background-color: rgb(54, 0, 19);
 }
+
 .chat{
     -fx-text-fill: black;
 }
+
+
+.sendImg{
+    -fx-background-color: black;
+    -fx-background-radius: 70px;
+
+}
+
+.chatMsg{
+    -fx-text-fill: white;
+    -fx-padding: 10px;
+    -fx-font-size: 16px;
+    -fx-background-radius:25;
+}
+.text-area .content{
+    -fx-background-color: rgb(54, 0, 19);
+    -fx-text-fill: white;
+}
+.text-area   {
+
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+
+}
+.combo-box{
+    -fx-border-color: white;
+    -fx-border-width: 0.02em;
+}
+.combo-box .list-cell {
+
+    -fx-background-color: rgb(54, 0, 19);
+    -fx-text-fill: white;
+}
+
+.combo-box-popup .list-view
+{
+    -fx-background-color: rgb(54, 0, 19);
+    -fx-background-insets: 0, 1;
+    -fx-effect: dropshadow( three-pass-box , rgba(0,0,0,0.6) , 8, 0.0 , 0 , 0 );
+}
+
+
+.combo-box-popup .list-view .list-cell:filled:selected, .combo-box-popup .list-view .list-cell:filled:selected:hover
+{
+    -fx-background-color:  rgba(255,255,255,0.4);
+}
+
+.combo-box-popup .list-view .list-cell:filled:hover
+{
+    -fx-background-color: rgba(255,255,255,0.25);
+}
+
