@@ -190,7 +190,7 @@ public class EditorController implements Initializable {
             RunCodeDocResponse response = EditorService.runCodeDoc(codeDoc.getCodeDocId(), codeDoc.getLanguageType(), input);
             if (response.getStatus() == Status.SUCCESS) {
                 if (response.getError().isEmpty()) {
-                    outputTextArea.setStyle("-fx-text-fill: black;");
+                    outputTextArea.setStyle("-fx-text-fill: white;");
                     outputTextArea.setText(response.getOutput());
                 } else {
                     outputTextArea.setStyle("-fx-text-fill: red;");
@@ -243,7 +243,7 @@ public class EditorController implements Initializable {
             chatDrawer.close();
         } else {
             //TODO : already sent msg is to be added in th view ... ig u need to maintain a list there .. usmein iss naye msg ko add krdena
-           chatTabController.setChatDrawer();
+
             chatDrawer.open();
         }
     }

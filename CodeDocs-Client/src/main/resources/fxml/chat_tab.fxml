@@ -2,15 +2,21 @@
 
 <?import com.jfoenix.controls.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
 <VBox fx:id="drawer" prefHeight="736.0" prefWidth="400.0" styleClass="drawer" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.ChatTabController">
     <children>
-        <JFXListView fx:id="chatListView" prefHeight="675.0" prefWidth="400.0" />
-      <HBox prefHeight="62.0" prefWidth="400.0">
+        <JFXListView fx:id="chatListView" prefHeight="655.0" prefWidth="400.0" styleClass="chatList" />
+      <HBox prefHeight="41.0" prefWidth="400.0">
          <children>
-            <TextField fx:id="msg" prefHeight="66.0" prefWidth="334.0" />
-            <Button mnemonicParsing="false" onAction="#onSendClicked" prefHeight="62.0" prefWidth="66.0" text="Send" />
+             <TextArea fx:id="msg" prefHeight="45.0" prefWidth="350.0" promptText="Type message" styleClass="msg" />
+             <ImageView fitHeight="45.0" fitWidth="76.0" onMouseClicked="#onSendClicked" pickOnBounds="true" preserveRatio="true" styleClass="sendImg">
+                 <image>
+                     <Image url="@../images/send.png" />
+                 </image>
+             </ImageView>
          </children></HBox>
+      <ComboBox fx:id="receiverComboBox" prefHeight="38.0" prefWidth="404.0" />
     </children>
 </VBox>

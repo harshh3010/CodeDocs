@@ -17,7 +17,7 @@
 
                         <VBox>
                             <children>
-                                <AnchorPane prefHeight="48.0" prefWidth="1280.0" >
+                                <AnchorPane prefHeight="48.0" prefWidth="1280.0">
                                     <MenuBar prefHeight="26.0" prefWidth="800.0">
                                         <menus>
                                             <Menu mnemonicParsing="false" text="File">
@@ -33,16 +33,24 @@
                                             </Menu>
                                         </menus>
                                     </MenuBar>
-                                    <Button mnemonicParsing="false" onAction="#onActiveUserClicked"
-                                            prefWidth="120.0" styleClass="button3"
-                                            text="Active Users" AnchorPane.rightAnchor="20" AnchorPane.topAnchor="2"/>
-                                    <Button mnemonicParsing="false" onAction="#onChatClicked"
-                                            prefWidth="70.0" styleClass="button3"
-                                            text="Chat" AnchorPane.rightAnchor="120" AnchorPane.topAnchor="2"/>
+                                    <HBox spacing="30.0" layoutY="5.0" prefHeight="50.0" AnchorPane.rightAnchor="10">
+                                        <children>
+                                            <Button mnemonicParsing="false" onAction="#onChatClicked"
+                                                    prefWidth="70.0" styleClass="button3"
+                                                    text="Chat" />
+                                            <Button mnemonicParsing="false" onAction="#onActiveUserClicked"
+                                                    prefWidth="120.0" styleClass="button3"
+                                                    text="Active Users" />
+                                            <Button mnemonicParsing="false" onAction="#onCompileClicked"
+                                                    prefWidth="100.0" styleClass="button3" text="Compile"/>
+                                            <Button mnemonicParsing="false" onAction="#onRunClicked"
+                                                    prefWidth="70.0" styleClass="button3" text="Run"/>
+                                        </children>
+                                    </HBox>
                                 </AnchorPane>
                                 <BorderPane fx:id="borderPane" prefHeight="687.0" prefWidth="1280.0" VBox.vgrow="NEVER">
                                     <top>
-                                        <AnchorPane prefHeight="48.0" prefWidth="1280.0" BorderPane.alignment="CENTER">
+                                        <AnchorPane prefHeight="20.0" prefWidth="1280.0" BorderPane.alignment="CENTER">
                                             <children>
                                                 <HBox alignment="CENTER_RIGHT" layoutX="1015.0" layoutY="-4.0"
                                                       prefHeight="100.0" prefWidth="232.0" spacing="20.0"
@@ -58,7 +66,7 @@
                                     </top>
                                     <bottom>
                                         <HBox alignment="BOTTOM_CENTER" nodeOrientation="LEFT_TO_RIGHT"
-                                              prefHeight="100.0" prefWidth="200.0" spacing="50.0"
+                                              prefHeight="140.0" prefWidth="200.0" spacing="50.0"
                                               BorderPane.alignment="CENTER">
                                             <children>
                                                 <TitledPane prefHeight="200.0" prefWidth="500.0" text="Input">
@@ -73,16 +81,7 @@
                                                                   prefHeight="200.0" prefWidth="200.0"/>
                                                     </content>
                                                 </TitledPane>
-                                                <VBox prefHeight="200.0" prefWidth="100.0" spacing="20.0">
-                                                    <children>
 
-
-                                                        <Button mnemonicParsing="false" onAction="#onCompileClicked"
-                                                                prefWidth="240.0" styleClass="button1" text="Compile"/>
-                                                        <Button mnemonicParsing="false" onAction="#onRunClicked"
-                                                                prefWidth="240.0" styleClass="button1" text="Run"/>
-                                                    </children>
-                                                </VBox>
                                             </children>
                                         </HBox>
                                     </bottom>
@@ -91,7 +90,7 @@
                         </VBox>
                         <JFXDrawer fx:id="activeUserDrawer" defaultDrawerSize="400.0" layoutY="-6.0" prefHeight="727.3"
                                    prefWidth="400.0"/>
-                        <JFXDrawer fx:id="chatDrawer" defaultDrawerSize="400.0" layoutY="-6.0"  prefHeight="727.3"
+                        <JFXDrawer fx:id="chatDrawer" defaultDrawerSize="400.0" layoutY="-6.0" prefHeight="727.3"
                                    prefWidth="400.0"/>
                     </children>
                 </AnchorPane>
