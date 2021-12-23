@@ -46,7 +46,10 @@
     -fx-font-size: 12px;
 
 }
-
+.headingLabel6 {
+    -fx-font-size: 13px;
+    -fx-text-fill: #ffffff;
+}
 
 .paragraph {
     -fx-font-size: 16px;
@@ -314,5 +317,19 @@
 .combo-box-popup .list-view .list-cell:filled:hover
 {
     -fx-background-color: rgba(255,255,255,0.25);
+}
+
+.notesPane {
+    -fx-background-color: rgba(54, 0, 19,0.8);
+    -fx-background-radius: 10px;
+    -fx-text-fill: white;
+}
+.notesPane:hover {
+    -fx-background-color: rgba(255,255,255,0.1);
+}
+
+
+.notesPane:selected {
+    -fx-background-color: rgba(255,255,255,0.2);
 }
 

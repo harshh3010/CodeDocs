@@ -38,6 +38,9 @@
                                             <Button fx:id="muteButton" mnemonicParsing="false" onAction="#onMuteClicked"
                                                     prefWidth="70.0" styleClass="button3"
                                                     text="Mute" />
+                                            <Button mnemonicParsing="false" onAction="#onScreenshotClicked"
+                                                    prefWidth="110.0" styleClass="button3"
+                                                    text="Take Notes" />
                                             <Button mnemonicParsing="false" onAction="#onChatClicked"
                                                     prefWidth="70.0" styleClass="button3"
                                                     text="Chat" />
@@ -84,6 +87,7 @@
                                                                   prefHeight="200.0" prefWidth="200.0"/>
                                                     </content>
                                                 </TitledPane>
+
                                             </children>
                                         </HBox>
                                     </bottom>

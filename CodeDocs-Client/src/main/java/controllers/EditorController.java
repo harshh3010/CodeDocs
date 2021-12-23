@@ -8,6 +8,7 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -20,10 +21,16 @@ import response.editorResponse.LoadEditorResponse;
 import response.editorResponse.RunCodeDocResponse;
 import response.editorResponse.SaveCodeDocResponse;
 import services.EditorService;
+import services.ScreenshotService;
 import utilities.CodeEditor;
 import utilities.Status;
 import utilities.UserApi;
-
+import javafx.embed.swing.SwingFXUtils;
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -62,7 +69,6 @@ public class EditorController implements Initializable {
             AnchorPane.setTopAnchor(activeUserDrawer, 0.0);
             AnchorPane.setBottomAnchor(activeUserDrawer, 0.0);
         });
-
         chatDrawer.setOnDrawerOpening(event ->
         {
             AnchorPane.setRightAnchor(chatDrawer, 0.0);
@@ -78,6 +84,7 @@ public class EditorController implements Initializable {
             AnchorPane.setTopAnchor(chatDrawer, 0.0);
             AnchorPane.setBottomAnchor(chatDrawer, 0.0);
         });
+
 
     }
 
@@ -157,7 +164,6 @@ public class EditorController implements Initializable {
                 alert.setContentText("Cannot save at the moment");
             }
             alert.show();
-
         } catch (IOException | ClassNotFoundException e) {
             alert.setContentText("Cannot load at the moment");
             alert.show();
@@ -266,5 +272,19 @@ public class EditorController implements Initializable {
             editorConnection.setMute(true);
             muteButton.setText("Un-mute");
         }
+    }
+
+    public void onScreenshotClicked(ActionEvent actionEvent) {
+        Status status = ScreenshotService.takeScreenshot(codeEditor);
+        if(status == Status.SUCCESS){
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setContentText("Notes taken");
+            alert.show();
+        }else {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setContentText("Cannot take notes at the moment. Try again later");
+            alert.show();
+        }
+
     }
 }

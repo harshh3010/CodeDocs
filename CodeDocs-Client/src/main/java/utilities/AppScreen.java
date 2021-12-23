@@ -8,4 +8,5 @@ public class AppScreen {
     public static String createCodedocScreen = "create_codedoc_screen.fxml";
     public static String editorScreen = "editor_screen.fxml";
     public static String manageCodeDocScreen = "manage_codedoc.fxml";
+    public static String notesScreen = "notes_screen.fxml";
 }
