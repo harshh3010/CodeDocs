@@ -7,7 +7,7 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane styleClass="background" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.CreateCodeDocController">
+<AnchorPane styleClass="background" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.codeDocs.CreateCodeDocController">
     <children>
         <AnchorPane prefHeight="500.0" prefWidth="700.0" styleClass="darkOverlay">
             <AnchorPane prefHeight="500.0" prefWidth="700.0" styleClass="headingLabel3">

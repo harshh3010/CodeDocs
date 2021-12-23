@@ -1,16 +1,13 @@
 package utilities;
 
-import javafx.event.EventHandler;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
-import mainClasses.EditorConnection;
+import mainClasses.editor.EditorConnection;
 import models.Peer;
 import org.fxmisc.richtext.CaretNode;
 import org.fxmisc.richtext.LineNumberFactory;

@@ -14,25 +14,25 @@
             <children>
                <JFXTabPane layoutX="302.0" layoutY="7.0" prefHeight="710.0" prefWidth="972.0">
                   <tabs>
-                      <Tab text="My Library">
-                          <content>
-                              <fx:include fx:id="myLibraryTabPage" source="my_library_tab.fxml"/>
-                          </content>
+                      <Tab fx:id="myLibraryTab" text="My Library">
+<!--                          <content>-->
+<!--                              <fx:include fx:id="myLibraryTabPage" source="my_library_tab.fxml"/>-->
+<!--                          </content>-->
                       </Tab>
-                      <Tab text="Personal CodeDocs">
-                          <content>
-                              <fx:include fx:id="personalCodeDocsTabPage" source="personal_codedocs_tab.fxml"/>
-                          </content>
+                      <Tab fx:id="personalCodeDocsTab" text="Personal CodeDocs">
+<!--                          <content>-->
+<!--                              <fx:include fx:id="personalCodeDocsTabPage" source="personal_codedocs_tab.fxml"/>-->
+<!--                          </content>-->
                       </Tab>
-                     <Tab text="Invitations">
-                         <content>
-                             <fx:include fx:id="invitationsTabPage" source="invitations_tab.fxml"/>
-                         </content>
+                     <Tab fx:id="invitationsTab" text="Invitations">
+<!--                         <content>-->
+<!--                             <fx:include fx:id="invitationsTabPage" source="invitations_tab.fxml"/>-->
+<!--                         </content>-->
                      </Tab>
-                      <Tab text="My Notes">
-                          <content>
-                              <fx:include fx:id="myNotesTabPage" source="my_notes_tab.fxml"/>
-                          </content>
+                      <Tab fx:id="notesTab" text="My Notes">
+<!--                          <content>-->
+<!--                              <fx:include fx:id="myNotesTabPage" source="my_notes_tab.fxml"/>-->
+<!--                          </content>-->
                       </Tab>
                   </tabs>
                </JFXTabPane>

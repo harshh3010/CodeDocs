@@ -1,18 +1,17 @@
 package controllers;
 
 import com.jfoenix.controls.JFXDrawer;
+import controllers.activeUsers.ActiveUserTabController;
+import controllers.chat.ChatTabController;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
-import javafx.scene.image.WritableImage;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import mainClasses.EditorConnection;
+import mainClasses.editor.EditorConnection;
 import models.CodeDoc;
 import models.Peer;
 import requests.peerRequests.SyncContentRequest;
@@ -25,12 +24,7 @@ import services.ScreenshotService;
 import utilities.CodeEditor;
 import utilities.Status;
 import utilities.UserApi;
-import javafx.embed.swing.SwingFXUtils;
-import javax.imageio.ImageIO;
-import javax.swing.*;
-import java.awt.*;
-import java.awt.image.BufferedImage;
-import java.io.File;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -69,6 +63,7 @@ public class EditorController implements Initializable {
             AnchorPane.setTopAnchor(activeUserDrawer, 0.0);
             AnchorPane.setBottomAnchor(activeUserDrawer, 0.0);
         });
+
         chatDrawer.setOnDrawerOpening(event ->
         {
             AnchorPane.setRightAnchor(chatDrawer, 0.0);
@@ -95,6 +90,7 @@ public class EditorController implements Initializable {
             editorConnection = new EditorConnection(codeDoc);
 
             try {
+
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/active_user_tab.fxml"));
                 activeUserBox = loader.load();
                 activeUserTabController = loader.getController();
@@ -110,6 +106,7 @@ public class EditorController implements Initializable {
                 chatDrawer.setDirection(JFXDrawer.DrawerDirection.RIGHT);
                 activeUserDrawer.close();
                 chatDrawer.close();
+
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
@@ -151,9 +148,7 @@ public class EditorController implements Initializable {
     }
 
     public void saveContent() {
-
         codeDoc.setFileContent(codeEditor.getText());
-
         try {
             SaveCodeDocResponse response = EditorService.saveCodeDoc(codeDoc);
             if (response.getStatus() == Status.SUCCESS) {
@@ -213,7 +208,6 @@ public class EditorController implements Initializable {
                 } else {
                     outputTextArea.setStyle("-fx-text-fill: red;");
                     outputTextArea.setText("ERROR: " + response.getError());
-
                 }
             } else {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -246,7 +240,6 @@ public class EditorController implements Initializable {
     }
 
     public void onActiveUserClicked(ActionEvent actionEvent) {
-
         if (activeUserDrawer.isOpened()) {
             activeUserDrawer.close();
         } else {

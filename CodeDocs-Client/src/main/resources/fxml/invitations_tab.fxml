@@ -6,7 +6,7 @@
 <?import javafx.scene.control.Button?>
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="controllers.InvitationsTabController"
+            fx:controller="controllers.invitations.InvitationsTabController"
             prefHeight="668.0" prefWidth="941.0">
     <children>
         <VBox>

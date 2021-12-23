@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 
 <AnchorPane prefHeight="668.0" prefWidth="941.0" xmlns="http://javafx.com/javafx/11.0.2"
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.MyLibraryTabController">
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.codeDocs.MyLibraryTabController" >
     <children>
         <VBox>
             <children>
