@@ -32,6 +32,8 @@ public class CodeDocsClient extends Application {
     public static ObjectInputStream inputStream;
     public static ObjectOutputStream outputStream;
     public static Stage appStage;
+    public static String screenshotDirectory;
+    public static String notesDirectory;
 
     public static void main(String[] args) {
 
@@ -45,6 +47,8 @@ public class CodeDocsClient extends Application {
 
             hostname = properties.getProperty("HOSTNAME");
             port = Integer.parseInt(properties.getProperty("PORT"));
+            screenshotDirectory = properties.getProperty("FILEPATH");
+            notesDirectory = properties.getProperty("FILEPATH2");
 
         } catch (IOException e) {
             System.out.println("Unable to load server config file!");

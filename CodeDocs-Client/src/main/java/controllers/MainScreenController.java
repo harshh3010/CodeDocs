@@ -10,11 +10,13 @@ import javafx.scene.Scene;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import mainClasses.CodeDocsClient;
 import models.CodeDoc;
 import javafx.scene.control.Alert;
 import services.UserService;
 import utilities.UserApi;
 
+import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -33,6 +35,17 @@ public class MainScreenController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         firstNameLabel.setText(UserApi.getInstance().getFirstName());
         emailLabel.setText(UserApi.getInstance().getEmail());
+        File file =new File(CodeDocsClient.screenshotDirectory);
+        if (!file.exists()) {
+            file.mkdir();
+            System.out.print("SS Folder created");
+        }
+        file = new File(CodeDocsClient.notesDirectory);
+        if (!file.exists()) {
+            file.mkdir();
+            System.out.print("Notes Folder created");
+        }
+
     }
     public void onClickCreate(ActionEvent actionEvent){
         try{

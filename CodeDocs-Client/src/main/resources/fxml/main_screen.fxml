@@ -29,6 +29,11 @@
                              <fx:include fx:id="invitationsTabPage" source="invitations_tab.fxml"/>
                          </content>
                      </Tab>
+                      <Tab text="My Notes">
+                          <content>
+                              <fx:include fx:id="myNotesTabPage" source="my_notes_tab.fxml"/>
+                          </content>
+                      </Tab>
                   </tabs>
                </JFXTabPane>
                <Text fx:id="firstNameLabel" fill="WHITE" layoutX="20.0" layoutY="60.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="headingLabel2" text="First Name" wrappingWidth="274.93668365478516" />

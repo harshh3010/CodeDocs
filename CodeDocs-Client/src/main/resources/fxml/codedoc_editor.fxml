@@ -35,6 +35,9 @@
                                     </MenuBar>
                                     <HBox spacing="30.0" layoutY="5.0" prefHeight="50.0" AnchorPane.rightAnchor="10">
                                         <children>
+                                            <Button mnemonicParsing="false" onAction="#onScreenshotClicked"
+                                                    prefWidth="110.0" styleClass="button3"
+                                                    text="Take Notes" />
                                             <Button mnemonicParsing="false" onAction="#onChatClicked"
                                                     prefWidth="70.0" styleClass="button3"
                                                     text="Chat" />

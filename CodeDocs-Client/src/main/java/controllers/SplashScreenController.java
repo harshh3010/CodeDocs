@@ -14,6 +14,7 @@ import services.UserService;
 import utilities.AppScreen;
 import utilities.Status;
 
+import java.io.File;
 import java.io.IOException;
 
 public class SplashScreenController {
@@ -36,6 +37,7 @@ public class SplashScreenController {
                                 GetMeResponse response = UserService.loadMyData(token);
                                 if (response.getStatus() == Status.SUCCESS) {
                                     SceneService.setScene(AppScreen.mainScreen);
+
                                 } else {
                                     SceneService.setScene(AppScreen.loginScreen);
                                 }

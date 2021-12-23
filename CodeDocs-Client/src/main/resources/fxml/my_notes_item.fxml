@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane fx:id="cardPane" styleClass="notesPane" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/11.0.2" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.MyNotesItemController">
+    <children>
+        <VBox alignment="TOP_CENTER" layoutX="63.0" layoutY="8.0" prefHeight="215.0" prefWidth="225.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+            <children>
+                <HBox prefHeight="51.0" prefWidth="185.0">
+                    <children>
+                        <Label fx:id="titleLabel" prefHeight="49.0" prefWidth="137.0" styleClass="headingLabel3" text="Notes 1">
+                            <font>
+                                <Font size="22.0" />
+                            </font>
+                        </Label>
+                        <Label fx:id="dateLabel" prefHeight="49.0" prefWidth="101.0" styleClass="headingLabel6" text="2021-10-01">
+
+                        </Label>
+                    </children>
+                    <VBox.margin>
+                        <Insets left="20.0" top="20.0" />
+                    </VBox.margin>
+                </HBox>
+                <ImageView fx:id="img" fitHeight="137.0" fitWidth="150.0" pickOnBounds="true">
+                    <image>
+                        <Image url="@../images/file3.png" />
+                    </image>
+                </ImageView>
+            </children>
+        </VBox>
+    </children>
+</AnchorPane>

@@ -13,7 +13,6 @@ import models.Chat;
 import models.Peer;
 import utilities.UserApi;
 import java.util.ArrayList;
-import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.List;
 
