@@ -1,5 +1,6 @@
 package mainClasses;
 
+import controllers.ChatTabController;
 import mainClasses.audioConnection.AudioReceiver;
 import mainClasses.audioConnection.AudioTransmitter;
 import models.CodeDoc;
@@ -26,10 +27,12 @@ import java.util.HashMap;
  */
 public class EditorConnection {
 
+    private ChatTabController chatController;
     private final CodeDoc codeDoc;
     private CodeEditor codeEditor;  // Reference to the CodeEditor corresponding to this connection
     private String userInControl; // User currently in control of the CodeEditor
     private boolean hasWritePermissions;
+    private boolean isMute = false;
 
     private final HashMap<String, Peer> connectedPeers = new HashMap<>(); // Collection of all connected users
 
@@ -194,5 +197,21 @@ public class EditorConnection {
 
     public void setHasWritePermissions(boolean hasWritePermissions) {
         this.hasWritePermissions = hasWritePermissions;
+    }
+
+    public ChatTabController getChatController() {
+        return chatController;
+    }
+
+    public void setChatController(ChatTabController chatController) {
+        this.chatController = chatController;
+    }
+
+    public boolean isMute() {
+        return isMute;
+    }
+
+    public void setMute(boolean mute) {
+        isMute = mute;
     }
 }

@@ -14,6 +14,7 @@ import javafx.stage.Stage;
 import mainClasses.EditorConnection;
 import models.CodeDoc;
 import models.Peer;
+import requests.peerRequests.SyncContentRequest;
 import response.editorResponse.CompileCodeDocResponse;
 import response.editorResponse.LoadEditorResponse;
 import response.editorResponse.RunCodeDocResponse;
@@ -34,6 +35,7 @@ public class EditorController implements Initializable {
     public TextArea outputTextArea;
     public JFXDrawer activeUserDrawer;
     public JFXDrawer chatDrawer;
+    public Button muteButton;
     private CodeDoc codeDoc;
     private CodeEditor codeEditor;
     private EditorConnection editorConnection;
@@ -60,6 +62,7 @@ public class EditorController implements Initializable {
             AnchorPane.setTopAnchor(activeUserDrawer, 0.0);
             AnchorPane.setBottomAnchor(activeUserDrawer, 0.0);
         });
+
         chatDrawer.setOnDrawerOpening(event ->
         {
             AnchorPane.setRightAnchor(chatDrawer, 0.0);
@@ -95,6 +98,7 @@ public class EditorController implements Initializable {
                 chatBox = loader2.load();
                 chatTabController = loader2.getController();
                 chatTabController.setEditorConnection(editorConnection);
+                editorConnection.setChatController(chatTabController);
                 chatDrawer.setSidePane(chatBox);
                 chatDrawer.setDirection(JFXDrawer.DrawerDirection.RIGHT);
                 activeUserDrawer.close();
@@ -103,23 +107,31 @@ public class EditorController implements Initializable {
                 ex.printStackTrace();
             }
 
-            // TODO: Fetch content from user in control
-            LoadEditorResponse response = EditorService.loadEditorContent(codeDoc.getCodeDocId(), codeDoc.getLanguageType());
-            if (response.getStatus() == Status.SUCCESS) {
-
-                boolean isEditable = editorConnection.getUserInControl().equals(UserApi.getInstance().getId());
-                codeEditor = new CodeEditor(codeDoc.getLanguageType(), editorConnection, response.getContent(), isEditable);
-                codeEditor.applyContentStyle(getClass().getResource("/css/test.css").toExternalForm(), "#690026");
-                editorConnection.setCodeEditor(codeEditor);
-
-                borderPane.setCenter(codeEditor);
-
+            String initialContent = "";
+            boolean isEditable = false;
+            if (editorConnection.getUserInControl() == null || editorConnection.getUserInControl().equals(UserApi.getInstance().getId())) {
+                LoadEditorResponse response = EditorService.loadEditorContent(codeDoc.getCodeDocId(), codeDoc.getLanguageType());
+                if (response.getStatus() == Status.SUCCESS) {
+                    isEditable = editorConnection.getUserInControl() != null;
+                    initialContent = response.getContent();
+                } else {
+                    alert.setContentText("Cannot load at the moment");
+                    alert.show();
+                    Stage stage = (Stage) borderPane.getScene().getWindow();
+                    stage.close();
+                }
             } else {
-                alert.setContentText("Cannot load at the moment");
-                alert.show();
-                Stage stage = (Stage) borderPane.getScene().getWindow();
-                stage.close();
+                SyncContentRequest request = new SyncContentRequest();
+                Peer peer = editorConnection.getConnectedPeers().get(editorConnection.getUserInControl());
+                peer.getOutputStream().writeObject(request);
+                peer.getOutputStream().flush();
             }
+
+            codeEditor = new CodeEditor(codeDoc.getLanguageType(), editorConnection, initialContent, isEditable);
+            codeEditor.applyContentStyle(getClass().getResource("/css/test.css").toExternalForm(), "#690026");
+            editorConnection.setCodeEditor(codeEditor);
+
+            borderPane.setCenter(codeEditor);
 
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
@@ -208,21 +220,21 @@ public class EditorController implements Initializable {
     }
 
     public void onCompileClicked(ActionEvent actionEvent) {
-        if(codeEditor.isDirty()){
+        if (codeEditor.isDirty()) {
             alert.setAlertType(Alert.AlertType.WARNING);
             alert.setContentText("You have unsaved changes, please save the CodeDoc first!");
             alert.show();
-        }else{
+        } else {
             compileCodeDoc();
         }
     }
 
     public void onRunClicked(ActionEvent actionEvent) {
-        if(codeEditor.isDirty()){
+        if (codeEditor.isDirty()) {
             alert.setAlertType(Alert.AlertType.WARNING);
             alert.setContentText("You have unsaved changes, please save the CodeDoc first!");
             alert.show();
-        }else{
+        } else {
             runCodeDoc();
         }
     }
@@ -242,9 +254,17 @@ public class EditorController implements Initializable {
         if (chatDrawer.isOpened()) {
             chatDrawer.close();
         } else {
-            //TODO : already sent msg is to be added in th view ... ig u need to maintain a list there .. usmein iss naye msg ko add krdena
-
             chatDrawer.open();
+        }
+    }
+
+    public void onMuteClicked(ActionEvent actionEvent) {
+        if (editorConnection.isMute()) {
+            editorConnection.setMute(false);
+            muteButton.setText("Mute");
+        } else {
+            editorConnection.setMute(true);
+            muteButton.setText("Un-mute");
         }
     }
 }

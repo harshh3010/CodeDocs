@@ -3,6 +3,7 @@ package mainClasses;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import models.Chat;
 import models.Peer;
 import models.User;
 import requests.appRequests.AppRequest;
@@ -12,6 +13,7 @@ import utilities.UserApi;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.Date;
 import java.util.Optional;
 
 /**
@@ -85,8 +87,15 @@ public class EditorBroadcastServerConnection extends Thread {
 
                     editorConnection.getConnectedPeers().put(peer.getUser().getUserID(), peer);
 
+
                 } else if (request.getRequestType() == RequestType.SEND_PEER_INFO_REQUEST) {
                     connectedUser = ((SendPeerInfoRequest) request).getUser();
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            editorConnection.getChatController().updateActiveUsers();
+                        }
+                    });
                 } else if (request.getRequestType() == RequestType.STREAM_CONTENT_CHANGES_REQUEST) {
                     StreamContentChangeRequest contentChangeRequest = (StreamContentChangeRequest) request;
                     Platform.runLater(() -> {
@@ -108,10 +117,22 @@ public class EditorBroadcastServerConnection extends Thread {
                     StreamCursorPositionRequest cursorPositionRequest = (StreamCursorPositionRequest) request;
 //                    Platform.runLater(() -> editorConnection.getCodeEditor().moveCursor(cursorPositionRequest.getUserId(), cursorPositionRequest.getPosition()));
                 } else if (request.getRequestType() == RequestType.SEND_MESSAGE_REQUEST) {
-                    SendMessageRequest messageRequest = (SendMessageRequest) request;
-                    String content = messageRequest.getContent();
-                    boolean isPrivate = messageRequest.isPrivate();
-                    System.out.println(content + " to " + (isPrivate ? " you." : " everyone."));
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            SendMessageRequest messageRequest = (SendMessageRequest) request;
+
+                            Chat chat = new Chat();
+                            chat.setFirstName(connectedUser.getFirstName());
+                            chat.setDate(new Date());
+                            chat.setMessage(messageRequest.getContent());
+                            chat.setUserID(connectedUser.getUserID());
+                            chat.setPrivate(messageRequest.isPrivate());
+
+                            editorConnection.getChatController().addNewMessage(chat);
+                        }
+                    });
+
                 } else if (request.getRequestType() == RequestType.TAKE_CONTROL_REQUEST) {
 
                     Platform.runLater(new Runnable() {
@@ -145,6 +166,22 @@ public class EditorBroadcastServerConnection extends Thread {
                 } else if (request.getRequestType() == RequestType.CONTROL_SWITCH_REQUEST) {
                     ControlSwitchRequest switchRequest = (ControlSwitchRequest) request;
                     editorConnection.setUserInControl(switchRequest.getUserId());
+                } else if (request.getRequestType() == RequestType.SYNC_CONTENT_REQUEST) {
+                    SyncContentRequest syncContentRequest = (SyncContentRequest) request;
+
+                    UpdateContentRequest updateContentRequest = new UpdateContentRequest();
+                    updateContentRequest.setContent(editorConnection.getCodeEditor().getText());
+                    Peer peer = editorConnection.getConnectedPeers().get(connectedUser.getUserID());
+                    peer.getOutputStream().writeObject(updateContentRequest);
+                    peer.getOutputStream().flush();
+                } else if (request.getRequestType() == RequestType.UPDATE_CONTENT_REQUEST) {
+                    UpdateContentRequest contentRequest = (UpdateContentRequest) request;
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            editorConnection.getCodeEditor().insertContent(0, contentRequest.getContent());
+                        }
+                    });
                 }
             }
         } catch (ClassNotFoundException | IOException e) {

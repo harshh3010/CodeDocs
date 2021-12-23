@@ -34,9 +34,11 @@ public class AudioTransmitter extends Thread {
             while (true) {
                 try {
                     numBytesRead = microphone.read(data, 0, CHUNK_SIZE);
-                    for (Peer peer : editorConnection.getConnectedPeers().values()) {
-                        peer.getAudioOutputStream().write(data, 0, numBytesRead);
-                        peer.getAudioOutputStream().flush();
+                    if(!editorConnection.isMute()){
+                        for (Peer peer : editorConnection.getConnectedPeers().values()) {
+                            peer.getAudioOutputStream().write(data, 0, numBytesRead);
+                            peer.getAudioOutputStream().flush();
+                        }
                     }
                 } catch (IOException e) {
 //                    System.out.println("Could not transmit audio to a peer!");
