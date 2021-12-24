@@ -5,8 +5,11 @@ import mainClasses.editor.EditorConnection;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 
 public class AudioReceiver extends Thread{
+
+    private volatile boolean isActive = true;
 
     private final EditorConnection editorConnection;
 
@@ -25,20 +28,23 @@ public class AudioReceiver extends Thread{
     @Override
     public void run() {
 
+        System.out.println("Audio receiver started!");
+
         while(serverSocket.isBound() && !serverSocket.isClosed()) {
             try {
                 Socket socket = serverSocket.accept();
                 AudioReceiverConnection connection = new AudioReceiverConnection(socket, editorConnection);
                 connection.start();
             } catch (IOException e) {
-                e.printStackTrace();
-                System.out.println("Client disconnected!");
+                System.out.println("Unable to connect to a user's audio transmitter.");
             }
         }
+
+        System.out.println("Audio receiver closed!");
     }
 
     public void stopServer() throws IOException {
-        this.serverSocket.close();
+        serverSocket.close();
     }
 
     public int getPort() {

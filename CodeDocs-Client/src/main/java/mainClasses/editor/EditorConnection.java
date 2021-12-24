@@ -53,13 +53,13 @@ public class EditorConnection {
         audioReceiver = new AudioReceiver(this);
         audioTransmitter = new AudioTransmitter(this);
 
-
         // Send editor connection request to server
         EditorConnectionResponse response = EditorService.establishConnection(codeDoc.getCodeDocId(), server.getPort(), audioReceiver.getPort());
         if (response.getStatus() == Status.FAILED) {
             // Stop the broadcasting server in case of failure
             server.stopServer();
             audioReceiver.stopServer();
+            audioTransmitter.stopTransmission();
             throw new IOException();
         }
 
@@ -125,11 +125,23 @@ public class EditorConnection {
      * @throws IOException in case of failure
      */
     public void closeConnection() throws IOException {
-        audioTransmitter.stop();
+
+        EditorService.destroyConnection(codeDoc.getCodeDocId());
+
+        for(Peer peer : connectedPeers.values()) {
+            peer.getInputStream().close();
+            peer.getOutputStream().close();
+            peer.getAudioOutputStream().close();
+            peer.getAudioInputStream().close();
+
+            peer = null;
+        }
+
+        connectedPeers.clear();
+
+        audioTransmitter.stopTransmission();
         audioReceiver.stopServer();
-        audioReceiver.stop();
         server.stopServer();
-        server.stop();
     }
 
     /**

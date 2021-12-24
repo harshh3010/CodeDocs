@@ -22,6 +22,7 @@ import java.util.Optional;
  */
 public class EditorServerConnection extends Thread {
 
+    private volatile boolean isActive = true;
     private final Socket connection; // info of connected user
     private final ObjectOutputStream outputStream; // Output stream to send response to connected user
     private final ObjectInputStream inputStream; // Input stream to receive requests from connected user
@@ -51,7 +52,7 @@ public class EditorServerConnection extends Thread {
     public void run() {
 
         try {
-            while (true) {
+            while (isActive) {
                 AppRequest request = (AppRequest) inputStream.readObject();
                 if (request.getRequestType() == RequestType.SEND_PEER_CONNECTION_REQUEST) {
 
@@ -178,9 +179,13 @@ public class EditorServerConnection extends Thread {
                     });
                 }
             }
+
         } catch (ClassNotFoundException | IOException e) {
-            handleDisconnectedUser();
+            System.out.println("A user got disconnected!");
         }
+
+        handleDisconnectedUser();
+        editorConnection.getChatController().updateActiveUsers();
     }
 
     /**
@@ -191,8 +196,6 @@ public class EditorServerConnection extends Thread {
 
         // Remove the user from list of active users
         editorConnection.getConnectedPeers().remove(connectedUser.getUserID());
-
-        System.out.println(connectedUser.getFirstName() + " disconnected!");
 
         // Check if the user who left was the user in control of CodeEditor
         if (connectedUser.getUserID().equals(editorConnection.getUserInControl())) {
@@ -215,5 +218,9 @@ public class EditorServerConnection extends Thread {
             // Setting the new user in control of the code editor
             editorConnection.setUserInControl(newUserInControl);
         }
+    }
+
+    public void closeConnection() {
+        isActive = false;
     }
 }

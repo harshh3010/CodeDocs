@@ -8,6 +8,7 @@ import java.net.Socket;
 
 public class AudioReceiverConnection extends Thread {
 
+    private volatile boolean isActive = true;
     private final Socket connection;
     private final DataInputStream inputStream;
     private final DataOutputStream outputStream;
@@ -38,12 +39,29 @@ public class AudioReceiverConnection extends Thread {
             byte[] data = new byte[CHUNK_SIZE];
             int numBytesRead;
 
-            while (true) {
-                numBytesRead = inputStream.read(data, 0, CHUNK_SIZE);
-                speakers.write(data, 0, numBytesRead);
+            try {
+                while (isActive) {
+                    numBytesRead = inputStream.read(data, 0, CHUNK_SIZE);
+                    if (numBytesRead > 0)
+                        speakers.write(data, 0, numBytesRead);
+                }
+            } catch (IOException e) {
+                System.out.println("Audio receiving line disconnected!");
+            } finally {
+                speakers.stop();
+                speakers.close();
+
+                inputStream.close();
+                outputStream.close();
+                connection.close();
             }
+
         } catch (LineUnavailableException | IOException e) {
-            System.out.println("Audio from a peer disconnected!");
+            e.printStackTrace();
         }
+    }
+
+    public void closeConnection() {
+        isActive = false;
     }
 }
