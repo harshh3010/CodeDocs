@@ -3,9 +3,8 @@ package controllers;
 import com.jfoenix.controls.JFXDrawer;
 import controllers.activeUsers.ActiveUserTabController;
 import controllers.chat.ChatTabController;
-import javafx.event.ActionEvent;
+
 import javafx.fxml.FXMLLoader;
-import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextArea;
@@ -26,28 +25,95 @@ import utilities.Status;
 import utilities.UserApi;
 
 import java.io.IOException;
-import java.net.URL;
-import java.util.ResourceBundle;
+import java.util.Objects;
 
-public class EditorController implements Initializable {
+/**
+ * Controller class for the main code editing screen
+ */
+public class EditorController {
 
-    public BorderPane borderPane;
-    public TextArea inputTextArea;
-    public TextArea outputTextArea;
-    public JFXDrawer activeUserDrawer;
-    public JFXDrawer chatDrawer;
-    public Button muteButton;
-    private CodeDoc codeDoc;
-    private CodeEditor codeEditor;
-    private EditorConnection editorConnection;
-    private ActiveUserTabController activeUserTabController;
-    private ChatTabController chatTabController;
-    private VBox activeUserBox, chatBox;
-    Alert alert = new Alert(Alert.AlertType.ERROR);
+    public BorderPane borderPane; // Root pane
+    public TextArea inputTextArea; // To provide input
+    public TextArea outputTextArea; // To receive output
+    public JFXDrawer activeUserDrawer; // Drawer to display active users in same codedoc
+    public JFXDrawer chatDrawer; // Drawer for private and group chat
+    public Button muteButton; // To mute ourselves
 
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {
+    private CodeDoc codeDoc; // Current CodeDoc
+    private CodeEditor codeEditor; // The main code editing region (Text area)
+    private EditorConnection editorConnection; // Reference to current editor connection
 
+    private ActiveUserTabController activeUserTabController; // Controller to manage active users drawer
+    private ChatTabController chatTabController; // Controller to manage chat drawer
+
+    private final Alert alert = new Alert(Alert.AlertType.ERROR);
+
+    /**
+     * This function initializes the UI
+     *
+     * @param codeDoc is the CodeDoc object currently being edited
+     */
+    public void setCodeDoc(CodeDoc codeDoc) throws IOException, ClassNotFoundException {
+        this.codeDoc = codeDoc;
+
+        // Start a new editor connection for specified CodeDoc
+        editorConnection = new EditorConnection(codeDoc);
+
+        // Set up the drawers
+        setupActiveUsersDrawer();
+        setupChatDrawer();
+
+        // Initial state of the code editor
+        String initialContent = "";
+        boolean isEditable = false;
+
+        if (editorConnection.getUserInControl() == null
+                || editorConnection.getUserInControl().equals(UserApi.getInstance().getId())) {
+
+            // If current user is the user in control of editor or there is no user in control
+            // then the initial content needs to be loaded from the server
+
+            // Send a request to the server
+            LoadEditorResponse response = EditorService.loadEditorContent(codeDoc.getCodeDocId(), codeDoc.getLanguageType());
+
+            if (response.getStatus() == Status.SUCCESS) {
+
+                // Codedoc will be editable if the current user has control
+                isEditable = editorConnection.getUserInControl() != null;
+                initialContent = response.getContent();
+            } else {
+                throw new IOException();
+            }
+
+        } else {
+
+            // If there is some user in control, then fetch initial content from that user
+
+            // Sending synchronization request to user in control
+            SyncContentRequest request = new SyncContentRequest();
+            Peer peer = editorConnection.getConnectedPeers().get(editorConnection.getUserInControl());
+            peer.getOutputStream().writeObject(request);
+            peer.getOutputStream().flush();
+        }
+
+        // Setting up the code editor
+        codeEditor = new CodeEditor(codeDoc.getLanguageType(), editorConnection, initialContent, isEditable);
+        codeEditor.applyContentStyle(Objects.requireNonNull(getClass().getResource("/css/test.css")).toExternalForm(), "#690026");
+
+        // Sending the reference of code editor to editor connection for updating changes by other
+        // users
+        editorConnection.setCodeEditor(codeEditor);
+
+        // Displaying the code editor
+        borderPane.setCenter(codeEditor);
+    }
+
+    /**
+     * Function to set up the active users drawer
+     */
+    private void setupActiveUsersDrawer() throws IOException {
+
+        // Positioning the drawer when in closed state
         activeUserDrawer.setOnDrawerOpening(event ->
         {
             AnchorPane.setRightAnchor(activeUserDrawer, 0.0);
@@ -56,6 +122,7 @@ public class EditorController implements Initializable {
             AnchorPane.setBottomAnchor(activeUserDrawer, 0.0);
         });
 
+        // Positioning the drawer when in opened state
         activeUserDrawer.setOnDrawerClosed(event ->
         {
             AnchorPane.clearConstraints(activeUserDrawer);
@@ -64,6 +131,21 @@ public class EditorController implements Initializable {
             AnchorPane.setBottomAnchor(activeUserDrawer, 0.0);
         });
 
+        // Loading the contents of the drawer from fxml resource
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/active_user_tab.fxml"));
+        VBox activeUserBox = loader.load();
+        activeUserTabController = loader.getController();
+        activeUserTabController.setActiveUserTab(editorConnection);
+        activeUserDrawer.setSidePane(activeUserBox);
+        activeUserDrawer.close();
+    }
+
+    /**
+     * Function to set up the chat drawer
+     */
+    private void setupChatDrawer() throws IOException {
+
+        // Positioning the drawer when in closed state
         chatDrawer.setOnDrawerOpening(event ->
         {
             AnchorPane.setRightAnchor(chatDrawer, 0.0);
@@ -72,6 +154,7 @@ public class EditorController implements Initializable {
             AnchorPane.setBottomAnchor(chatDrawer, 0.0);
         });
 
+        // Positioning the drawer when in opened state
         chatDrawer.setOnDrawerClosed(event ->
         {
             AnchorPane.clearConstraints(chatDrawer);
@@ -80,128 +163,106 @@ public class EditorController implements Initializable {
             AnchorPane.setBottomAnchor(chatDrawer, 0.0);
         });
 
+        // Loading the contents of the drawer from fxml resource
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/chat_tab.fxml"));
+        VBox chatBox = loader.load();
+        chatTabController = loader.getController();
+        chatTabController.setEditorConnection(editorConnection);
+        chatDrawer.setSidePane(chatBox);
+        chatDrawer.setDirection(JFXDrawer.DrawerDirection.RIGHT);
+        chatDrawer.close();
 
+        // Passing the reference of chat controller to editor connection for updating chats
+        editorConnection.setChatController(chatTabController);
     }
 
-    public void setCodeDoc(CodeDoc codeDoc) throws IOException {
-        this.codeDoc = codeDoc;
-
-        try {
-            editorConnection = new EditorConnection(codeDoc);
-
-            try {
-
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/active_user_tab.fxml"));
-                activeUserBox = loader.load();
-                activeUserTabController = loader.getController();
-                activeUserTabController.setActiveUserTab(editorConnection);
-                activeUserDrawer.setSidePane(activeUserBox);
-
-                FXMLLoader loader2 = new FXMLLoader(getClass().getResource("/fxml/chat_tab.fxml"));
-                chatBox = loader2.load();
-                chatTabController = loader2.getController();
-                chatTabController.setEditorConnection(editorConnection);
-                editorConnection.setChatController(chatTabController);
-                chatDrawer.setSidePane(chatBox);
-                chatDrawer.setDirection(JFXDrawer.DrawerDirection.RIGHT);
-                activeUserDrawer.close();
-                chatDrawer.close();
-
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-
-            String initialContent = "";
-            boolean isEditable = false;
-            if (editorConnection.getUserInControl() == null || editorConnection.getUserInControl().equals(UserApi.getInstance().getId())) {
-                LoadEditorResponse response = EditorService.loadEditorContent(codeDoc.getCodeDocId(), codeDoc.getLanguageType());
-                if (response.getStatus() == Status.SUCCESS) {
-                    isEditable = editorConnection.getUserInControl() != null;
-                    initialContent = response.getContent();
-                } else {
-                    alert.setContentText("Cannot load at the moment");
-                    alert.show();
-                    Stage stage = (Stage) borderPane.getScene().getWindow();
-                    stage.close();
-                }
-            } else {
-                SyncContentRequest request = new SyncContentRequest();
-                Peer peer = editorConnection.getConnectedPeers().get(editorConnection.getUserInControl());
-                peer.getOutputStream().writeObject(request);
-                peer.getOutputStream().flush();
-            }
-
-            codeEditor = new CodeEditor(codeDoc.getLanguageType(), editorConnection, initialContent, isEditable);
-            codeEditor.applyContentStyle(getClass().getResource("/css/test.css").toExternalForm(), "#690026");
-            editorConnection.setCodeEditor(codeEditor);
-
-            borderPane.setCenter(codeEditor);
-
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-            alert.setContentText("Cannot load at the moment");
-            alert.show();
-            Stage stage = (Stage) borderPane.getScene().getWindow();
-            stage.close();
-        }
-
-    }
-
+    /**
+     * Function to save the CodeDoc content on the server
+     */
     public void saveContent() {
+
+        // Setting the file content from code editor
         codeDoc.setFileContent(codeEditor.getText());
+
         try {
+
+            // Sending a save request to the server
             SaveCodeDocResponse response = EditorService.saveCodeDoc(codeDoc);
             if (response.getStatus() == Status.SUCCESS) {
                 alert.setAlertType(Alert.AlertType.INFORMATION);
                 codeEditor.setDirty(false);
                 alert.setContentText("Saved successfully");
+                alert.show();
             } else {
-                alert.setContentText("Cannot save at the moment");
+                throw new IOException();
             }
-            alert.show();
         } catch (IOException | ClassNotFoundException e) {
-            alert.setContentText("Cannot load at the moment");
+            alert.setContentText("Cannot save at the moment! Please try later.");
             alert.show();
-            e.printStackTrace();
         }
     }
 
+    /**
+     * Function to exit the editor
+     */
     public void exitEditor() {
         try {
+
+            // Close the editor connection
             editorConnection.closeConnection();
+
+            // Close the editor window
             Stage stage = (Stage) borderPane.getScene().getWindow();
             stage.close();
+
         } catch (IOException e) {
-            e.printStackTrace();
+            alert.setContentText("Some problem occurred! Please restart the application.");
+            alert.show();
         }
     }
 
+    /**
+     * Function to compile the codedoc
+     */
     private void compileCodeDoc() {
         try {
+
+            // Send compile request to server and fetch response
             CompileCodeDocResponse response = EditorService.compileCodeDoc(codeDoc.getCodeDocId(), codeDoc.getLanguageType());
+
             if (response.getStatus() == Status.SUCCESS) {
+
+                // Display error or output of compilation
                 if (response.getError().isEmpty()) {
-                    outputTextArea.setStyle("-fx-text-fill: black;");
+                    outputTextArea.setStyle("-fx-text-fill: white;");
                     outputTextArea.setText("Your code compiled successfully!");
                 } else {
                     outputTextArea.setStyle("-fx-text-fill: red;");
                     outputTextArea.setText("ERROR: " + response.getError());
                 }
             } else {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setContentText("Cannot compile codedoc at the moment!");
-                alert.show();
+                throw new IOException();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (IOException | ClassNotFoundException e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setContentText("Cannot compile codedoc at the moment!");
+            alert.show();
         }
     }
 
+    /**
+     * Function to run the codedoc code
+     */
     private void runCodeDoc() {
         try {
+
+            // Fetch the input and send run request to the server
             String input = inputTextArea.getText();
             RunCodeDocResponse response = EditorService.runCodeDoc(codeDoc.getCodeDocId(), codeDoc.getLanguageType(), input);
+
             if (response.getStatus() == Status.SUCCESS) {
+
+                // Display the output of run
                 if (response.getError().isEmpty()) {
                     outputTextArea.setStyle("-fx-text-fill: white;");
                     outputTextArea.setText(response.getOutput());
@@ -210,16 +271,21 @@ public class EditorController implements Initializable {
                     outputTextArea.setText("ERROR: " + response.getError());
                 }
             } else {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setContentText("Cannot run codedoc at the moment!");
-                alert.show();
+                throw new IOException();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (IOException | ClassNotFoundException e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setContentText("Cannot run codedoc at the moment!");
+            alert.show();
         }
     }
 
-    public void onCompileClicked(ActionEvent actionEvent) {
+    /**
+     * Action to be performed when compile button is clicked
+     */
+    public void onCompileClicked() {
+
+        // Display warning if there are unsaved changes
         if (codeEditor.isDirty()) {
             alert.setAlertType(Alert.AlertType.WARNING);
             alert.setContentText("You have unsaved changes, please save the CodeDoc first!");
@@ -229,7 +295,12 @@ public class EditorController implements Initializable {
         }
     }
 
-    public void onRunClicked(ActionEvent actionEvent) {
+    /**
+     * Action to be performed when run button is clicked
+     */
+    public void onRunClicked() {
+
+        // Display warning if there are unsaved changes
         if (codeEditor.isDirty()) {
             alert.setAlertType(Alert.AlertType.WARNING);
             alert.setContentText("You have unsaved changes, please save the CodeDoc first!");
@@ -239,7 +310,10 @@ public class EditorController implements Initializable {
         }
     }
 
-    public void onActiveUserClicked(ActionEvent actionEvent) {
+    /**
+     * Action to be performed when active users button is clicked
+     */
+    public void onActiveUserClicked() {
         if (activeUserDrawer.isOpened()) {
             activeUserDrawer.close();
         } else {
@@ -248,7 +322,10 @@ public class EditorController implements Initializable {
         }
     }
 
-    public void onChatClicked(ActionEvent actionEvent) {
+    /**
+     * Action to be performed when chat button is clicked
+     */
+    public void onChatClicked() {
 
         if (chatDrawer.isOpened()) {
             chatDrawer.close();
@@ -257,7 +334,10 @@ public class EditorController implements Initializable {
         }
     }
 
-    public void onMuteClicked(ActionEvent actionEvent) {
+    /**
+     * Action to be performed when mute button is clicked
+     */
+    public void onMuteClicked() {
         if (editorConnection.isMute()) {
             editorConnection.setMute(false);
             muteButton.setText("Mute");
@@ -267,17 +347,19 @@ public class EditorController implements Initializable {
         }
     }
 
-    public void onScreenshotClicked(ActionEvent actionEvent) {
+    /**
+     * Action to be performed when screenshot button is clicked
+     */
+    public void onScreenshotClicked() {
         Status status = ScreenshotService.takeScreenshot(codeEditor);
-        if(status == Status.SUCCESS){
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        Alert alert;
+        if (status == Status.SUCCESS) {
+            alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setContentText("Notes taken");
-            alert.show();
-        }else {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
+        } else {
+            alert = new Alert(Alert.AlertType.ERROR);
             alert.setContentText("Cannot take notes at the moment. Try again later");
-            alert.show();
         }
-
+        alert.show();
     }
 }

@@ -34,6 +34,7 @@ public class ChatTabController {
     }
 
     private void setReceiverComboBox() {
+
         ArrayList<User> users = new ArrayList<>();
         User user = new User();
         user.setFirstName("Everyone");
@@ -43,8 +44,9 @@ public class ChatTabController {
             users.add(peer.getUser());
         }
 
-        receiverComboBox.setConverter(new StringConverter<User>() {
+        receiverComboBox.setItems(FXCollections.observableArrayList(users));
 
+        receiverComboBox.setConverter(new StringConverter<>() {
             @Override
             public String toString(User object) {
                 return object.getFirstName() + " " + object.getLastName();
@@ -56,9 +58,6 @@ public class ChatTabController {
                         (user.getFirstName() + " " + user.getLastName()).equals(string)).findFirst().orElse(null);
             }
         });
-
-        receiverComboBox.setItems(FXCollections.observableArrayList(users));
-        receiverComboBox.getSelectionModel().selectFirst();
     }
 
     //to set the current message in chat drawer
@@ -121,6 +120,10 @@ public class ChatTabController {
         chat.setFirstName(UserApi.getInstance().getFirstName());
 
         User receiver = receiverComboBox.getValue();
+        if (receiver == null) {
+            receiverComboBox.getSelectionModel().selectFirst();
+        }
+        receiver = receiverComboBox.getValue();
 
         if (receiver.getUserID() == null) {
             chat.setPrivate(false);

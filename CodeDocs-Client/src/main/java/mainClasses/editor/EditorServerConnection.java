@@ -87,15 +87,9 @@ public class EditorServerConnection extends Thread {
 
                     editorConnection.getConnectedPeers().put(peer.getUser().getUserID(), peer);
 
-
                 } else if (request.getRequestType() == RequestType.SEND_PEER_INFO_REQUEST) {
                     connectedUser = ((SendPeerInfoRequest) request).getUser();
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            editorConnection.getChatController().updateActiveUsers();
-                        }
-                    });
+                    Platform.runLater(() -> editorConnection.getChatController().updateActiveUsers());
                 } else if (request.getRequestType() == RequestType.STREAM_CONTENT_CHANGES_REQUEST) {
                     StreamContentChangeRequest contentChangeRequest = (StreamContentChangeRequest) request;
                     Platform.runLater(() -> {
@@ -115,7 +109,7 @@ public class EditorServerConnection extends Thread {
                     Platform.runLater(() -> editorConnection.getCodeEditor().selectContent(contentSelectionRequest.getStart(), contentSelectionRequest.getEnd()));
                 } else if (request.getRequestType() == RequestType.STREAM_CURSOR_POSITION_REQUEST) {
                     StreamCursorPositionRequest cursorPositionRequest = (StreamCursorPositionRequest) request;
-//                    Platform.runLater(() -> editorConnection.getCodeEditor().moveCursor(cursorPositionRequest.getUserId(), cursorPositionRequest.getPosition()));
+                    Platform.runLater(() -> editorConnection.getCodeEditor().moveCursor(cursorPositionRequest.getUserId(), cursorPositionRequest.getPosition()));
                 } else if (request.getRequestType() == RequestType.SEND_MESSAGE_REQUEST) {
                     Platform.runLater(new Runnable() {
                         @Override

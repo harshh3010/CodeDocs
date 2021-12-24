@@ -9,6 +9,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
 import mainClasses.editor.EditorConnection;
 import models.Peer;
+import org.fxmisc.richtext.Caret;
 import org.fxmisc.richtext.CaretNode;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.StyleClassedTextArea;
@@ -38,6 +39,7 @@ public class CodeEditor extends StackPane {
 
     private final EditorConnection editorConnection; // Reference to current editor connection for streaming info to other users
 
+    private final CaretNode myCursor;
     private final HashMap<String, CaretNode> userCursors = new HashMap<>(); // Cursors for connected users
     private final HashMap<String, Label> userLabels = new HashMap<>();  // Labels for connected users
 
@@ -69,13 +71,21 @@ public class CodeEditor extends StackPane {
         this.isEditable = isEditable;
         textArea.setEditable(isEditable);
         setupLanguageParser();
+
+        // Adding initial text to be displayed
+        textArea.appendText(initialContent);
+        highlightCode();
+
         setupInputHandler();
         setupTextChangeHandler();
         setupTextSelectionHandler();
         setupCursorPositionHandler();
 
-        // Adding initial text to be displayed
-        textArea.appendText(initialContent);
+        myCursor = new CaretNode(UserApi.getInstance().getId(), textArea, 0);
+        if(!isEditable) {
+            myCursor.setVisible(true);
+            textArea.addCaret(myCursor);
+        }
 
         isDirty = false;
     }
@@ -165,19 +175,10 @@ public class CodeEditor extends StackPane {
      * specified actions are performed when cursor position changes
      */
     private void setupCursorPositionHandler() {
-//        textArea.caretPositionProperty().addListener((observableValue, integer, t1) -> {
-//
-//            // If the editor is opened in write mode then stream the new position to other users
-//            if (isEditable) {
-//                streamCursorPosition();
-//            }
-//        });
-
         textArea.setOnMouseClicked(mouseEvent -> {
             if (mouseEvent.getButton() == MouseButton.PRIMARY) {
-                if (isEditable) {
-                    streamCursorPosition();
-                }
+                myCursor.moveTo(textArea.getCaretPosition());
+                streamCursorPosition();
             }
         });
     }
@@ -243,7 +244,11 @@ public class CodeEditor extends StackPane {
             request.setUserId(UserApi.getInstance().getId());
 
             // Setting the current caret position
-            request.setPosition(textArea.getCaretPosition());
+            if (isEditable) {
+                request.setPosition(textArea.getCaretPosition());
+            } else {
+                request.setPosition(myCursor.getPosition());
+            }
 
             // Writing the request to all online users
             for (Peer peer : editorConnection.getConnectedPeers().values()) {
@@ -529,7 +534,9 @@ public class CodeEditor extends StackPane {
 
         // Setting up the code editor
         textArea.setEditable(isEditable);
-
+        if(!isEditable) {
+            myCursor.setVisible(true);
+        }
         setupInputHandler();
         setupTextChangeHandler();
         setupTextSelectionHandler();

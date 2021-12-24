@@ -3,21 +3,16 @@ package controllers;
 import controllers.codeDocs.MyLibraryTabController;
 import controllers.codeDocs.PersonalCodeDocsTabController;
 import controllers.invitations.InvitationsTabController;
-import controllers.notes.MyNotesTabController;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Tab;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
-import javafx.stage.Stage;
 import javafx.scene.control.Alert;
 import response.appResponse.CreateCodeDocResponse;
 import services.CodeDocsService;
 import services.UserService;
 import utilities.Status;
-import utilities.TabController;
 import utilities.UserApi;
 
 import java.io.IOException;
@@ -57,39 +52,24 @@ public class MainScreenController implements Initializable {
     private void setupMyLibrary() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/my_library_tab.fxml"));
         AnchorPane pane = loader.load();
-        if (TabController.getInstance().getMyLibraryTabController() == null) {
-            TabController.getInstance().setMyLibraryTabController(loader.getController());
-            TabController.getInstance().getMyLibraryTabController().setupTab();
-        } else {
-            MyLibraryTabController controller = loader.getController();
-            controller.setupTab(TabController.getInstance().getMyLibraryTabController());
-        }
+        MyLibraryTabController controller = loader.getController();
+        controller.setupTab();
         myLibraryTab.setContent(pane);
     }
 
     private void setupPersonalCodeDocs() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/personal_codedocs_tab.fxml"));
         AnchorPane pane = loader.load();
-        if (TabController.getInstance().getPersonalCodeDocsTabController() == null) {
-            TabController.getInstance().setPersonalCodeDocsTabController(loader.getController());
-            TabController.getInstance().getPersonalCodeDocsTabController().setupTab();
-        } else {
-            PersonalCodeDocsTabController controller = loader.getController();
-            controller.setupTab(TabController.getInstance().getPersonalCodeDocsTabController());
-        }
+        PersonalCodeDocsTabController controller = loader.getController();
+        controller.setupTab();
         personalCodeDocsTab.setContent(pane);
     }
 
     private void setupInvitations() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/invitations_tab.fxml"));
         AnchorPane pane = loader.load();
-        if (TabController.getInstance().getInvitationsTabController() == null) {
-            TabController.getInstance().setInvitationsTabController(loader.getController());
-            TabController.getInstance().getInvitationsTabController().setupTab();
-        } else {
-            InvitationsTabController controller = loader.getController();
-            controller.setupTab(TabController.getInstance().getInvitationsTabController());
-        }
+        InvitationsTabController controller = loader.getController();
+        controller.setupTab();
         invitationsTab.setContent(pane);
     }
 

@@ -83,8 +83,7 @@ public class CodeDocsService {
         TextArea descTA = new TextArea("Description");
         descTA.setPromptText("Enter description of CodeDoc");
 
-        ObservableList<LanguageType> options =
-                FXCollections.observableArrayList(LanguageType.values());
+        ObservableList<LanguageType> options = FXCollections.observableArrayList(LanguageType.values());
         ComboBox<LanguageType> comboBox = new ComboBox<>(options);
         comboBox.getSelectionModel().selectFirst();
 
@@ -96,8 +95,8 @@ public class CodeDocsService {
         gridPane.add(new Label("Description"), 0, 1);
         gridPane.add(descTA, 1, 1);
 
-        gridPane.add(new Label("Language"),0,2);
-        gridPane.add(comboBox,1,2);
+        gridPane.add(new Label("Language"), 0, 2);
+        gridPane.add(comboBox, 1, 2);
 
         gridPane.setVgap(10);
 
@@ -106,21 +105,22 @@ public class CodeDocsService {
         //Platform.runLater(titleTF::requestFocus);
         dialog.setResultConverter((ButtonType button) -> {
             if (button == ButtonType.OK) {
-                return new CreateCodeDocResult(titleTF.getText(),
-                        descTA.getText(), comboBox.getValue());
+                return new CreateCodeDocResult(titleTF.getText(), descTA.getText(), comboBox.getValue());
             }
             return null;
         });
+
         final String[] title = {""};
         final String[] description = {""};
         final LanguageType[] languageType = new LanguageType[1];
         final boolean[] isCancelled = {true};
+
         Optional<CreateCodeDocResult> optionalResult = dialog.showAndWait();
         optionalResult.ifPresent((CreateCodeDocResult results) -> {
             title[0] = results.title;
             description[0] = results.description;
             languageType[0] = results.languageType;
-            isCancelled[0] = true;
+            isCancelled[0] = false;
         });
 
         if (isCancelled[0]) {
@@ -144,12 +144,13 @@ public class CodeDocsService {
         codeDoc.setTitle(title[0]);
         codeDoc.setLanguageType(languageType[0]);
         codeDoc.setDescription(description[0]);
+        codeDoc.setOwnerID(UserApi.getInstance().getId());
+        codeDoc.setFileContent("");
         CreateCodeDocRequest request = new CreateCodeDocRequest(codeDoc);
         outputStream.writeObject(request);
         outputStream.flush();
 
-        return (CreateCodeDocResponse)inputStream.readObject();
-
+        return (CreateCodeDocResponse) inputStream.readObject();
     }
 
     public static UpdateCodeDocResponse updateCodeDoc(String codeDocId) throws IOException, ClassNotFoundException {
@@ -218,6 +219,7 @@ public class CodeDocsService {
 
         return (UpdateCodeDocResponse) inputStream.readObject();
     }
+
     private static class CreateCodeDocResult {
 
         String title;

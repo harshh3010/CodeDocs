@@ -14,6 +14,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import models.CodeDoc;
 import response.appResponse.DeleteCodeDocResponse;
 import services.CodeDocsService;
@@ -70,7 +71,7 @@ public class CodeDocCardController extends ListCell<CodeDoc> {
             titleLabel.setText(codeDoc.getTitle());
             descText.setText(codeDoc.getDescription());
             dateLabel.setText(codeDoc.getCreatedAt().toString());
-            
+
             Image image = new Image(getClass().getResource("/images/" + codeDoc.getLanguageType().getLanguage() + ".png").toExternalForm());//Creating the image viewImageView
             imageView.setImage(image);//Setting the image view parameters
             imageView.setPreserveRatio(false);
@@ -119,16 +120,22 @@ public class CodeDocCardController extends ListCell<CodeDoc> {
                 public void handle(MouseEvent mouseEvent) {
                     if (mouseEvent.getButton() == MouseButton.PRIMARY && mouseEvent.getClickCount() == 2) {
                         try {
+
                             FXMLLoader loader = new FXMLLoader(Objects.requireNonNull(getClass().getResource("/fxml/codedoc_editor.fxml")));
                             Scene scene = new Scene(loader.load());
                             EditorController editorController = loader.getController();
                             editorController.setCodeDoc(codeDoc);
+
                             Stage stage = new Stage();
                             stage.setTitle("CodeDoc Editor - " + codeDoc.getTitle());
                             stage.setScene(scene);
+                            stage.setOnCloseRequest(windowEvent -> editorController.exitEditor());
                             stage.show();
-                        } catch (IOException e) {
-                            e.printStackTrace();
+
+                        } catch (IOException | ClassNotFoundException e) {
+                            alert.setAlertType(Alert.AlertType.ERROR);
+                            alert.setContentText("Cannot load CodeDoc! Please try again later.");
+                            alert.show();
                         }
                     }
                 }
