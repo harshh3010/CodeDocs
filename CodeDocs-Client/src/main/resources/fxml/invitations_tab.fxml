@@ -5,7 +5,7 @@
 <?import com.jfoenix.controls.JFXListView?>
 <?import javafx.scene.control.Button?>
 <AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
+            xmlns:fx="http://javafx.com/fxml" stylesheets="@../css/style.css"
             fx:controller="controllers.invitations.InvitationsTabController"
             prefHeight="668.0" prefWidth="941.0">
     <children>
@@ -14,10 +14,10 @@
                 <JFXListView fx:id="invitesListView" prefHeight="620.0" prefWidth="974.0"/>
                 <AnchorPane prefHeight="48.0" prefWidth="974.0">
                     <children>
-                        <Button fx:id="prevButton" layoutX="14.0" layoutY="10.0" mnemonicParsing="false"
+                        <Button styleClass="prevButton" fx:id="prevButton" layoutX="14.0" layoutY="10.0" mnemonicParsing="false"
                                 onAction="#onPreviousClicked" prefHeight="26.0" prefWidth="84.0" text="Previous" AnchorPane.leftAnchor="14.0"
                                 AnchorPane.rightAnchor="876.0" AnchorPane.topAnchor="10.0"/>
-                        <Button fx:id="nextButton" layoutX="893.0" layoutY="10.0" mnemonicParsing="false"
+                        <Button styleClass="prevButton" fx:id="nextButton" layoutX="893.0" layoutY="10.0" mnemonicParsing="false"
                                 onAction="#onNextClicked" prefHeight="26.0" prefWidth="59.0" text="Next" AnchorPane.rightAnchor="14.0"
                                 AnchorPane.topAnchor="10.0"/>
                     </children>

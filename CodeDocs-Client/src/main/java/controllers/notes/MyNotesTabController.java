@@ -24,9 +24,9 @@ public class MyNotesTabController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
-        // notesGrid.setPadding(new Insets(,10,10,10));
-        notesGrid.setVgap(10);
-        notesGrid.setHgap(20);
+        notesGrid.setPadding(new Insets(10,10,10,20));
+        notesGrid.setVgap(20);
+        notesGrid.setHgap(28);
         fetchScreenshots();
         int column = 0;
         int row = 1;

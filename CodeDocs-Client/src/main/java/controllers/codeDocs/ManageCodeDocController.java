@@ -35,6 +35,7 @@ public class ManageCodeDocController implements Initializable {
     public Button inviteButton;
     public Button prevButton;
     public Button nextButton;
+    public Button backButton;
 
     private int offset;
     private int rowCount;
@@ -61,13 +62,6 @@ public class ManageCodeDocController implements Initializable {
             updateButton.setVisible(false);
             inviteButton.setVisible(false);
         }
-
-        prevButton.setStyle("-fx-font-size: 14px;\n" +
-                "    -fx-text-fill: white;\n" +
-                "    -fx-background-color: rgba(214, 6, 77,0.25);");
-        nextButton.setStyle("-fx-font-size: 14px;\n" +
-                "    -fx-text-fill: white;\n" +
-                "    -fx-background-color: rgba(214, 6, 77,0.25);");
 
         offset = 0;
         rowCount = 10;

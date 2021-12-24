@@ -13,7 +13,10 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.scene.control.Alert;
+import response.appResponse.CreateCodeDocResponse;
+import services.CodeDocsService;
 import services.UserService;
+import utilities.Status;
 import utilities.TabController;
 import utilities.UserApi;
 
@@ -97,16 +100,24 @@ public class MainScreenController implements Initializable {
     }
 
     public void onClickCreate() {
-        // TODO: Do in dialog
+
         try {
-            Parent root = (new FXMLLoader(getClass().getResource("/fxml/create_codedoc.fxml"))).load();
-            Stage stage = new Stage();
-            stage.setTitle("Create CodeDoc");
-            stage.setScene(new Scene(root));
-            stage.show();
-        } catch (IOException e) {
-            errorAlert.setContentText("An error occurred! Please try again later.");
-            errorAlert.show();
+            CreateCodeDocResponse response = CodeDocsService.createCodeDoc();
+            if (response == null) {
+                return;
+            }
+            Alert alert;
+            if (response.getStatus() == Status.SUCCESS){
+                alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setContentText("Codedoc created successfully!");
+            }else{
+                alert = new Alert(Alert.AlertType.ERROR);
+                alert.setContentText("Cannot create codedoc at the moment!");
+            }
+            alert.show();
+        }catch (Exception e) {
+
+            e.printStackTrace();
         }
     }
 

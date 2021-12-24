@@ -4,6 +4,7 @@
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.shape.*?>
 
 <AnchorPane styleClass="background" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/11.0.2"
             xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.codeDocs.ManageCodeDocController">
@@ -34,17 +35,16 @@
                                                      prefWidth="974.0"/>
                                         <AnchorPane prefHeight="48.0" prefWidth="974.0">
                                             <children>
-                                                <Button fx:id="prevButton" layoutX="14.0" layoutY="10.0"
+                                                <Button styleClass="prevButton" fx:id="prevButton" layoutX="14.0" layoutY="10.0"
                                                         mnemonicParsing="false" onAction="#onPreviousClicked"
-                                                        prefHeight="26.0" prefWidth="84.0"
-                                                        text="Previous" AnchorPane.bottomAnchor="10.0"
-                                                        AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="876.0"
-                                                        AnchorPane.topAnchor="10.0"/>
-                                                <Button fx:id="nextButton" layoutX="893.0" layoutY="10.0"
+                                                        prefHeight="26.0" prefWidth="84.0" text="Previous"
+                                                        AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="14.0"
+                                                        AnchorPane.rightAnchor="876.0" AnchorPane.topAnchor="10.0"/>
+                                                <Button styleClass="prevButton" fx:id="nextButton" layoutX="893.0" layoutY="10.0"
                                                         mnemonicParsing="false" onAction="#onNextClicked"
-                                                        prefHeight="26.0" prefWidth="59.0"
-                                                        text="Next" AnchorPane.bottomAnchor="10.0"
-                                                        AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="10.0"/>
+                                                        prefHeight="26.0" prefWidth="59.0" text="Next"
+                                                        AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="14.0"
+                                                        AnchorPane.topAnchor="10.0"/>
                                             </children>
                                         </AnchorPane>
                                     </children>
@@ -61,7 +61,7 @@
                                 prefHeight="38.0" prefWidth="220.0" styleClass="button1" text="Update"/>
                         <Button fx:id="inviteButton" layoutX="21.0" mnemonicParsing="false" onAction="#onInviteClicked"
                                 prefHeight="38.0" prefWidth="220.0" styleClass="button1" text="Invite"/>
-                        <Button layoutX="21.0" mnemonicParsing="false" onAction="#onBackClicked" prefHeight="38.0"
+                        <Button fx:id="backButton" layoutX="21.0" mnemonicParsing="false" onAction="#onBackClicked" prefHeight="38.0"
                                 prefWidth="220.0" styleClass="button1" text="Back"/>
                         <BorderPane.margin>
                             <Insets bottom="20.0" left="20.0"/>

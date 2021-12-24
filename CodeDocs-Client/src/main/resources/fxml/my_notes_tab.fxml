@@ -5,13 +5,13 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.geometry.Insets?>
 <AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
+            xmlns:fx="http://javafx.com/fxml" stylesheets="@../css/style.css"
             fx:controller="controllers.notes.MyNotesTabController"
             prefHeight="668.0" prefWidth="941.0">
     <children>
         <HBox alignment="CENTER" prefHeight="668.0" prefWidth="941.0" VBox.vgrow="ALWAYS">
             <children>
-                <ScrollPane fx:id="scroll" prefHeight="570.0" prefWidth="785.0" styleClass="transparent"
+                <ScrollPane fx:id="scroll" prefHeight="570.0" prefWidth="900.0" styleClass="transparent"
                             stylesheets="@../css/style.css">
                     <content>
                         <GridPane fx:id="notesGrid" prefHeight="0.0" prefWidth="0.0">
