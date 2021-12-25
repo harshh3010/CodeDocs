@@ -3,6 +3,7 @@ package mainClasses.editor;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 
 /**
  * EditorServer is for starting a server for current user on a separate thread,
@@ -19,9 +20,7 @@ public class EditorServer extends Thread {
 
         // Starting the server socket on system allocated port
         serverSocket = new ServerSocket(0);
-
         port = serverSocket.getLocalPort();
-
         this.editorConnection = editorConnection;
     }
 
@@ -30,6 +29,8 @@ public class EditorServer extends Thread {
      */
     @Override
     public void run() {
+
+        System.out.println("Editor server started!");
 
         // Listening for editor connections after current user has connected
         while (serverSocket.isBound() && !serverSocket.isClosed()) {
@@ -41,12 +42,12 @@ public class EditorServer extends Thread {
                 // Starting a new connection handler thread to listen to all requests from newly connected user
                 EditorServerConnection connection = new EditorServerConnection(newlyConnectedClient, editorConnection);
                 connection.start();
-
             } catch (IOException e) {
-                System.out.println("Editor connection destroyed!");
+                System.out.println("Unable to connect to a user!");
             }
         }
 
+        System.out.println("Editor server closed!");
     }
 
     /**

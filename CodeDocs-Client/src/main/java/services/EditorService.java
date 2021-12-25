@@ -28,9 +28,8 @@ public class EditorService {
         return (EditorConnectionResponse) inputStream.readObject();
     }
 
-    public static void destroyConnection(String codeDocID,String userInControl) throws IOException {
+    public static void destroyConnection(String codeDocID) throws IOException {
         EditorCloseRequest request = new EditorCloseRequest();
-        request.setUserInControl(userInControl);
         request.setCodeDocId(codeDocID);
         request.setUserId(UserApi.getInstance().getId());
 
