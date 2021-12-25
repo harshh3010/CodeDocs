@@ -14,11 +14,17 @@ import java.util.Properties;
 
 public class CodeDocsServer {
 
-    private static int port;
-    private static ServerSocket serverSocket;
+    private static int port; //port on which server is running
+    private static ServerSocket serverSocket; //
     private static Socket client;
     public static Connection databaseConnection;
 
+    /**
+     * This function reads the port and tries to connect with the database
+     * Once connected with database the server starts at the specified port and listens for clients
+     * @param args
+     * @throws IOException
+     */
     public static void main(String[] args) throws IOException {
         try {
             Properties properties = new Properties();

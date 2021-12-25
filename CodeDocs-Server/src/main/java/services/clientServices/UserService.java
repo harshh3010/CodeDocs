@@ -16,6 +16,11 @@ import java.sql.SQLException;
 
 public class UserService {
 
+    /**
+     * Method to fetch details of a user from database
+     * @param request
+     * @return
+     */
     public static GetMeResponse getUserData(GetMeRequest request) {
 
         GetMeResponse response = new GetMeResponse();

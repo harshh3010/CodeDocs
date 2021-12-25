@@ -4,6 +4,7 @@ import java.io.*;
 
 public class CompileUtility {
 
+    //utility to read stream and return the corresponding result
     public static String getStreamResult(InputStream ins) throws Exception {
         String line = null;
         String streamText ="";
@@ -17,6 +18,8 @@ public class CompileUtility {
         return streamText;
     }
 
+    // utility used to run a program ... It executes specified command using process class
+    //  writes input to the outputStream and returns error/result (if any)
     public static ExecuteResponse runProcess(String command, String inputArguments) throws Exception {
 
         Process p = Runtime.getRuntime().exec("cmd /c "+command);
@@ -34,6 +37,8 @@ public class CompileUtility {
 
     }
 
+    // utility used to compile ... It executes specified command using process class
+    // and returns error if it occurs
     public static ExecuteResponse compileProcess(String command) throws Exception {
 
         Process p = Runtime.getRuntime().exec("cmd /c "+command);

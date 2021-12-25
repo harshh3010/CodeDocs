@@ -23,6 +23,11 @@ import java.util.*;
 
 public class CodeDocService {
 
+    /**
+     * method to create a codeDoc for user
+     * @param createCodedocRequest
+     * @return
+     */
     public static CreateCodeDocResponse createCodeDoc(CreateCodeDocRequest createCodedocRequest) {
 
         CreateCodeDocResponse codedocResponse = new CreateCodeDocResponse();
@@ -107,7 +112,15 @@ public class CodeDocService {
         return codedocResponse;
     }
 
-
+    /**
+     * method to fetch codeDoc for user
+     * Result depends on whether user wants to fetch
+     *      Personal codeDocs
+     *      Any particular codeDOc
+     *      All codeDocs including his personal and accessible
+     * @param fetchCodeDocRequest
+     * @return
+     */
     public static FetchCodeDocResponse fetchCodeDoc(FetchCodeDocRequest fetchCodeDocRequest) {
 
         FetchCodeDocResponse fetchCodeDocResponse = new FetchCodeDocResponse();
@@ -176,7 +189,12 @@ public class CodeDocService {
         return fetchCodeDocResponse;
     }
 
-
+    /**
+     * Method to delete a codeDoc
+     * Only owner is allowed to delete codeDoc
+     * @param deleteCodeDocRequest
+     * @return
+     */
     public static DeleteCodeDocResponse deleteCodeDoc(DeleteCodeDocRequest deleteCodeDocRequest){
 
         DeleteCodeDocResponse deleteCodeDocResponse = new DeleteCodeDocResponse();
@@ -220,6 +238,13 @@ public class CodeDocService {
         return deleteCodeDocResponse;
     }
 
+    /**
+     * mwthod to update title, description of codeDoc
+     * only owner can update meta data of codeDoc
+     * Cannot update LanguageType
+     * @param updateCodeDocRequest
+     * @return
+     */
     public static UpdateCodeDocResponse updateCodeDoc(UpdateCodeDocRequest updateCodeDocRequest) {
 
         UpdateCodeDocResponse updateCodeDocResponse = new UpdateCodeDocResponse();

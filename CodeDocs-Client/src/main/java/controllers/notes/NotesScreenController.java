@@ -7,9 +7,12 @@ import javafx.scene.control.DialogEvent;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.text.Text;
 import services.SceneService;
 import services.UserService;
 import utilities.AppScreen;
+import utilities.UserApi;
+
 import java.io.*;
 import java.net.URL;
 import java.util.ResourceBundle;
@@ -21,6 +24,8 @@ public class NotesScreenController implements Initializable {
     public TextArea notesTA;
     private static String notes;
     private static Image image;
+    public Text firstNameLabel;
+    public Text emailLabel;
 
     public static String getNotes() {
         return notes;
@@ -51,6 +56,8 @@ public class NotesScreenController implements Initializable {
 
     //setting up controls in notes_screen.fxml
     private void setNotesScreen(){
+        firstNameLabel.setText("Welcome " + UserApi.getInstance().getFirstName());
+        emailLabel.setText(UserApi.getInstance().getEmail());
         imageView.setImage(getImage());
         notesTA.setText(getNotes());
         notesTA.setEditable(false);

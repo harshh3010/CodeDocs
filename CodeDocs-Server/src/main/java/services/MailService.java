@@ -8,6 +8,13 @@ import java.util.Properties;
 
 public class MailService {
 
+    /**
+     * this method is used for sending email to specified email
+     * @param recipientEmail
+     * @param subject
+     * @param messageText
+     * @throws IOException
+     */
     public static void sendEmail(String recipientEmail, String subject, String messageText) throws IOException {
 
         Properties properties = new Properties();

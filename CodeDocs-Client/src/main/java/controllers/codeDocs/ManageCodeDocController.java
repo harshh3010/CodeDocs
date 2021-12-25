@@ -125,31 +125,30 @@ public class ManageCodeDocController implements Initializable {
         ButtonType inviteButtonType = new ButtonType("Invite", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(inviteButtonType, ButtonType.CANCEL);
 
-        // Create the userID and password labels and fields.
         GridPane grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);
         grid.setPadding(new Insets(20, 150, 10, 10));
 
-        TextField userID = new TextField();
-        userID.setPromptText("user id");
+        TextField userEmail = new TextField();
+        userEmail.setPromptText("user email");
 
         ChoiceBox choiceBox = new ChoiceBox();
         choiceBox.getItems().add("Give write permissions");
         choiceBox.getItems().add("Do not give write permissions");
 
-        grid.add(new Label("User ID:"), 0, 0);
-        grid.add(userID, 1, 0);
+        grid.add(new Label("User Email:"), 0, 0);
+        grid.add(userEmail, 1, 0);
         grid.add(new Label("write access:"), 0, 1);
         grid.add(choiceBox, 1, 1);
 
         dialog.getDialogPane().setContent(grid);
 
-        Platform.runLater(() -> userID.requestFocus());
+        Platform.runLater(() -> userEmail.requestFocus());
 
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == inviteButtonType) {
-                return new Pair<>(userID.getText(), (String) choiceBox.getValue());
+                return new Pair<>(userEmail.getText(), (String) choiceBox.getValue());
             }
             return null;
         });
@@ -164,7 +163,7 @@ public class ManageCodeDocController implements Initializable {
 
             if(idChoice.getKey() == ""){
                 alert.setAlertType(Alert.AlertType.ERROR);
-                alert.setContentText("Please provide a user id");
+                alert.setContentText("Please provide user email");
                 alert.show();
             }
             else{

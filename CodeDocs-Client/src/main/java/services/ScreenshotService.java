@@ -51,6 +51,7 @@ public class ScreenshotService {
         gridPane.add(new Label("Description"), 0, 1);
         gridPane.add(notesTA, 1, 1);
 
+        gridPane.setVgap(8);
         dialog.getDialogPane().setContent(gridPane);
 
         dialog.setResultConverter(dialogButton -> {

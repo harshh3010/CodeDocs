@@ -3,13 +3,11 @@ package controllers;
 import com.jfoenix.controls.JFXDrawer;
 import controllers.activeUsers.ActiveUserTabController;
 import controllers.chat.ChatTabController;
-
 import javafx.fxml.FXMLLoader;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextArea;
+import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
+import javafx.util.converter.DoubleStringConverter;
 import mainClasses.editor.EditorConnection;
 import models.CodeDoc;
 import models.Peer;
@@ -23,9 +21,11 @@ import services.ScreenshotService;
 import utilities.CodeEditor;
 import utilities.Status;
 import utilities.UserApi;
-
 import java.io.IOException;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Controller class for the main code editing screen
@@ -353,6 +353,9 @@ public class EditorController {
     public void onScreenshotClicked() {
         Status status = ScreenshotService.takeScreenshot(codeEditor);
         Alert alert;
+        if(status == null){
+            return;
+        }
         if (status == Status.SUCCESS) {
             alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setContentText("Notes taken");
@@ -361,5 +364,34 @@ public class EditorController {
             alert.setContentText("Cannot take notes at the moment. Try again later");
         }
         alert.show();
+    }
+
+    /**
+     * Action to be performed when font size from preferences menu clicked
+     */
+    public void onFontSizeClicked() {
+        final double[] fontSize = new double[1];
+
+        TextInputDialog inputDialog = new TextInputDialog();
+        inputDialog.getEditor().setPromptText("font size");
+        inputDialog.setHeaderText("Set font size");
+
+        // force the field to be numeric only
+        final Pattern pattern = Pattern.compile("^(?:[1-9]\\d*|0)?(?:\\.\\d+)?$");
+        inputDialog.getEditor().setTextFormatter(new TextFormatter<>(new DoubleStringConverter(), 0.0, change -> {
+            final Matcher matcher = pattern.matcher(change.getControlNewText());
+            return (matcher.matches() || matcher.hitEnd()) ? change : null;
+        }));
+
+        Optional<String> result = inputDialog.showAndWait();
+
+        result.ifPresent(size -> {
+            if(size!=""){
+                fontSize[0] = Double.parseDouble(size);
+                codeEditor.setStyle("-fx-font-size: " + fontSize[0] + "px;");
+            }
+        });
+
+
     }
 }

@@ -9,6 +9,11 @@ import java.sql.SQLException;
 
 public class DestroyResources {
 
+    /**
+     * This method deletes all active connections of user in any codeDoc if any remains
+     * It is called only when connection of server is destroyed with main server
+     * @param userID
+     */
     public static void destroyAllocations(String userID) {
 
         String updateQuery = "UPDATE " + DatabaseConstants.CODEDOC_ACCESS_TABLE_NAME +
@@ -32,6 +37,10 @@ public class DestroyResources {
         }
     }
 
+    /**
+     * once server restarts due to some reasons .. some checks need to be performed to have databse in
+     * consistent state
+     */
     public static void cleanDB() {
         String updateQuery = "UPDATE " + DatabaseConstants.CODEDOC_ACCESS_TABLE_NAME +
                 " SET " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_IS_ACTIVE + " = FALSE;";

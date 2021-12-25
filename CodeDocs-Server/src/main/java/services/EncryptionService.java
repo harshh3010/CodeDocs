@@ -5,6 +5,11 @@ import java.security.NoSuchAlgorithmException;
 
 public class EncryptionService {
 
+    /**
+     * method for encrypting the password
+     * @param str
+     * @return
+     */
     public static String encrypt(String str) {
 
         String encryptedString = null;

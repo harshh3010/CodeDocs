@@ -7,7 +7,7 @@ import java.io.Serializable;
 public class InviteCollaboratorRequest extends AppRequest implements Serializable {
 
     private String senderID;
-    private String receiverID;
+    private String receiverEmail;
     private String codeDocID;
     // 0 - no write permissions ;  1 - has write permissions
     private int writePermissions;
@@ -32,12 +32,12 @@ public class InviteCollaboratorRequest extends AppRequest implements Serializabl
         this.senderID = senderID;
     }
 
-    public String getReceiverID() {
-        return receiverID;
+    public String getReceiverEmail() {
+        return receiverEmail;
     }
 
-    public void setReceiverID(String receiverID) {
-        this.receiverID = receiverID;
+    public void setReceiverEmail(String receiverEmail) {
+        this.receiverEmail = receiverEmail;
     }
 
     public String getCodeDocID() {

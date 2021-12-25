@@ -26,6 +26,12 @@ import java.util.UUID;
 
 public class AuthenticationService {
 
+    /**
+     * method to create account for client requesting it.
+     * after ensuring any account with same eamil doesn't exist
+     * @param signupRequest
+     * @return
+     */
     public static SignupResponse registerUser(SignupRequest signupRequest) {
 
         SignupResponse signupResponse = new SignupResponse();
@@ -82,7 +88,12 @@ public class AuthenticationService {
         return signupResponse;
     }
 
-
+    /**
+     * method to login client requesting it.
+     * after password match, check for verified account is made and thereafter corresponding result is returned
+     * @param loginRequest
+     * @return
+     */
     public static LoginResponse loginUser(LoginRequest loginRequest) {
 
         LoginResponse loginResponse = new LoginResponse();
@@ -153,7 +164,11 @@ public class AuthenticationService {
         return loginResponse;
     }
 
-
+    /** method to verify account of user if verification token is valid
+     * and the same as sent on his email
+     * @param verifyUserRequest
+     * @return
+     */
     public static Status verifyUser(VerifyUserRequest verifyUserRequest) {
         //TODO: add trigger for deleting
         //TODO : delete verification entry on success.. maybe its not needed if event is working

@@ -17,15 +17,23 @@ import java.util.List;
 
 public class CollaborationService {
 
-
+    /**
+     * Method to invite a user to be a collaborator in a codeDoc
+     * @param inviteCollaboratorRequest
+     * @return
+     */
     public static InviteCollaboratorResponse inviteCollaborator(InviteCollaboratorRequest inviteCollaboratorRequest){
 
         InviteCollaboratorResponse inviteCollaboratorResponse = new InviteCollaboratorResponse();
         //sender cannot send request to himself
-        if(inviteCollaboratorRequest.getSenderID() == inviteCollaboratorRequest.getReceiverID()){
-            inviteCollaboratorResponse.setStatus(Status.FAILED);
-            return inviteCollaboratorResponse;
-        }
+//        if(inviteCollaboratorRequest.getSenderID().equals(inviteCollaboratorRequest.getReceiverEmail())){
+//            inviteCollaboratorResponse.setStatus(Status.FAILED);
+//            return inviteCollaboratorResponse;
+//        }
+        String getReceiverIDQuery = "SELECT "+ DatabaseConstants.USER_TABLE_COL_USERID +
+                " FROM " + DatabaseConstants.USER_TABLE_NAME +
+                " WHERE " + DatabaseConstants.USER_TABLE_COL_EMAIL + " =?;";
+
        //TODO: check performance
         String checkAccessRightQuery = "SELECT " +DatabaseConstants.CODEDOC_TABLE_COL_CODEDOCID +
                 " FROM " + DatabaseConstants.CODEDOC_TABLE_NAME +
@@ -41,36 +49,46 @@ public class CollaborationService {
         try {
             CodeDocsServer.databaseConnection.setAutoCommit(false);
             try {
-                PreparedStatement preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(checkAccessRightQuery);
-                preparedStatement.setString(1, inviteCollaboratorRequest.getSenderID());
-                preparedStatement.setString(2, inviteCollaboratorRequest.getCodeDocID());
+                PreparedStatement preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(getReceiverIDQuery);
+                preparedStatement.setString(1,inviteCollaboratorRequest.getReceiverEmail());
                 ResultSet resultSet = preparedStatement.executeQuery();
 
-                if (resultSet.next()) {
+                if(resultSet.next()){
+                    String receiverID = resultSet.getString(1);
+                    preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(checkAccessRightQuery);
+                    preparedStatement.setString(1, inviteCollaboratorRequest.getSenderID());
+                    preparedStatement.setString(2, inviteCollaboratorRequest.getCodeDocID());
+                    resultSet = preparedStatement.executeQuery();
 
-                    preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(insertInviteQuery);
-                    preparedStatement.setString(1, inviteCollaboratorRequest.getCodeDocID());
-                    preparedStatement.setString(2, inviteCollaboratorRequest.getReceiverID());
-                    preparedStatement.setString(3, "PENDING");
-                    preparedStatement.setInt(4, inviteCollaboratorRequest.getWritePermissions());
-                    preparedStatement.executeUpdate();
-                    CodeDocsServer.databaseConnection.commit();
-                    inviteCollaboratorResponse.setStatus(Status.SUCCESS);
+                    if (resultSet.next()) {
+
+                        preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(insertInviteQuery);
+                        preparedStatement.setString(1, inviteCollaboratorRequest.getCodeDocID());
+                        preparedStatement.setString(2, receiverID);
+                        preparedStatement.setString(3, "PENDING");
+                        preparedStatement.setInt(4, inviteCollaboratorRequest.getWritePermissions());
+                        preparedStatement.executeUpdate();
+                        CodeDocsServer.databaseConnection.commit();
+                        inviteCollaboratorResponse.setStatus(Status.SUCCESS);
+                        return inviteCollaboratorResponse;
+                    }
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
                 CodeDocsServer.databaseConnection.rollback();
-                inviteCollaboratorResponse.setStatus(Status.FAILED);
             }
-
         }catch (SQLException throwables) {
             throwables.printStackTrace();
         }
+        inviteCollaboratorResponse.setStatus(Status.FAILED);
         return inviteCollaboratorResponse;
     }
 
-
-
+    /**
+     * Method to accept invite
+     * @param acceptInviteRequest
+     * @return
+     */
     public static AcceptInviteResponse acceptInvite(AcceptInviteRequest acceptInviteRequest){
         AcceptInviteResponse acceptInviteResponse = new AcceptInviteResponse();
 
@@ -104,6 +122,11 @@ public class CollaborationService {
         return acceptInviteResponse;
     }
 
+    /**
+     * method to reject invite
+     * @param rejectInviteRequest
+     * @return
+     */
     public static RejectInviteResponse rejectInvite(RejectInviteRequest rejectInviteRequest){
 
         RejectInviteResponse rejectInviteResponse= new RejectInviteResponse();
@@ -123,17 +146,23 @@ public class CollaborationService {
                 preparedStatement.executeUpdate();
                 CodeDocsServer.databaseConnection.commit();
                 rejectInviteResponse.setStatus(Status.SUCCESS);
+                return rejectInviteResponse;
             } catch (SQLException e) {
-                rejectInviteResponse.setStatus(Status.FAILED);
                 CodeDocsServer.databaseConnection.rollback();
                 e.printStackTrace();
             }
         }catch (SQLException throwables) {
             throwables.printStackTrace();
         }
+        rejectInviteResponse.setStatus(Status.FAILED);
         return rejectInviteResponse;
     }
 
+    /**
+     * Method to display all inc=vite requests user has received
+     * @param fetchInviteRequest
+     * @return
+     */
     public static FetchInviteResponse fetchInvites(FetchInviteRequest fetchInviteRequest){
         FetchInviteResponse fetchInviteResponse = new FetchInviteResponse();
 
@@ -189,6 +218,11 @@ public class CollaborationService {
         return fetchInviteResponse;
     }
 
+    /**
+     * Method to allow owner to remove a collaborator from his codeDoc
+     * @param request
+     * @return
+     */
     public static RemoveCollaboratorResponse removeCollaborator(RemoveCollaboratorRequest request){
 
         RemoveCollaboratorResponse response = new RemoveCollaboratorResponse();
@@ -218,20 +252,26 @@ public class CollaborationService {
                     preparedStatement.executeUpdate();
                     CodeDocsServer.databaseConnection.commit();
                     response.setStatus(Status.SUCCESS);
+                    return response;
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
                 CodeDocsServer.databaseConnection.rollback();
-                response.setStatus(Status.FAILED);
             }
 
         }catch (SQLException throwables) {
             throwables.printStackTrace();
         }
+        response.setStatus(Status.FAILED);
         return response;
 
     }
 
+    /**
+     * Method to change permissions of a collaborator
+     * @param request
+     * @return
+     */
     public static ChangeCollaboratorRightsResponse changeCollaboratorRights(ChangeCollaboratorRightsRequest request){
 
         ChangeCollaboratorRightsResponse response = new ChangeCollaboratorRightsResponse();
@@ -253,9 +293,7 @@ public class CollaborationService {
                 preparedStatement.setString(1, request.getOwnerID());
                 preparedStatement.setString(2, request.getCodeDocID());
                 ResultSet resultSet = preparedStatement.executeQuery();
-                System.out.println("{{{{{{{{");
                 if (resultSet.next()) {
-                    System.out.println("hiiiii");
                     preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(updateQuery);
                     preparedStatement.setInt(1,request.getWritePermissions());
                     preparedStatement.setString(2, request.getCodeDocID());
@@ -280,6 +318,11 @@ public class CollaborationService {
         return response;
     }
 
+    /**
+     * Method to fetch users who are collaborator in a particular codeDoc
+     * @param request
+     * @return
+     */
     public static FetchCollaboratorResponse fetchCollaborators(FetchCollaboratorRequest request){
 
         FetchCollaboratorResponse response = new FetchCollaboratorResponse();

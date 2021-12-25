@@ -33,9 +33,10 @@ public class ClientConnection extends Thread {
 
     @Override
     public void run() {
-
+        //all requests from a client are handled here
         while (true) {
             try {
+                //reading request made by client and performing action accordingly
                 AppRequest request = (AppRequest) inputStream.readObject();
 
                 if (request.getRequestType() == RequestType.SIGNUP_REQUEST) {
