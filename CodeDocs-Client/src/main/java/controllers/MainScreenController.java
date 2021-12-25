@@ -80,7 +80,6 @@ public class MainScreenController implements Initializable {
     }
 
     public void onClickCreate() {
-
         try {
             CreateCodeDocResponse response = CodeDocsService.createCodeDoc();
             if (response == null) {
@@ -96,7 +95,6 @@ public class MainScreenController implements Initializable {
             }
             alert.show();
         }catch (Exception e) {
-
             e.printStackTrace();
         }
     }

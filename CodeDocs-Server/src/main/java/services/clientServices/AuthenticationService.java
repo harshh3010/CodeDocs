@@ -167,11 +167,9 @@ public class AuthenticationService {
     /** method to verify account of user if verification token is valid
      * and the same as sent on his email
      * @param verifyUserRequest
-     * @return
      */
     public static Status verifyUser(VerifyUserRequest verifyUserRequest) {
-        //TODO: add trigger for deleting
-        //TODO : delete verification entry on success.. maybe its not needed if event is working
+
         String selectQuery = "Select * from " + DatabaseConstants.USER_VERIFICATION_TABLE_NAME +
                 " where " + DatabaseConstants.USER_VERIFICATION_TABLE_COL_USER_EMAIL +
                 " = ?  AND " + DatabaseConstants.USER_VERIFICATION_TABLE_COL_VERIFICATION_TOKEN +

@@ -19,19 +19,30 @@ import java.util.Properties;
 
 public class CompileService {
 
-    public static String compileCommand[] = {"javac ","g++ -o Solution ","IDK","gcc -o Solution "};
-    public static String runCommand[] = {"java Solution "," Solution.exe ","IDK","Solution "};
+    public static String compileCommand[] = {
+            "javac ./Solution.java",
+            "python -m compileall ./Solution.py",
+            "gcc Solution.c -o Solution.exe",
+            "g++ Solution.cpp -o Solution.exe"
+    };
+
+    public static String runCommand[] = {
+            "java Solution",
+            "python Solution.pyc",
+            "Solution.exe",
+            "Solution.exe"
+    };
 
 
-    public static RunCodeDocResponse runCodeDoc(RunCodeDocRequest runCodeDocRequest){
+    public static RunCodeDocResponse runCodeDoc(RunCodeDocRequest runCodeDocRequest) {
 
         RunCodeDocResponse runCodeDocResponse = new RunCodeDocResponse();
 
         String checkAccessQuery = " SELECT * " +
                 " FROM " + DatabaseConstants.CODEDOC_ACCESS_TABLE_NAME +
                 " WHERE " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_CODEDOC_ID + " =?" +
-                " AND " +DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_USER_ID+ " =?" +
-                " AND " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_ACCESS_RIGHT + "!=?;" ;
+                " AND " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_USER_ID + " =?" +
+                " AND " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_ACCESS_RIGHT + "!=?;";
         try {
             PreparedStatement preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(checkAccessQuery);
             preparedStatement.setString(1, runCodeDocRequest.getCodeDocID());
@@ -46,43 +57,44 @@ public class CompileService {
                 properties.load(fileReader);
                 String filePath = properties.getProperty("FILEPATH");
                 filePath += runCodeDocRequest.getCodeDocID() + "\\";
-                String fileName = "Solution" + runCodeDocRequest.getLanguageType().getExtension();
+
                 int index = runCodeDocRequest.getLanguageType().getIndex();
+
                 ExecuteResponse executeResponse = CompileUtility.runProcess(
-                        "cd /d "+filePath
-                                +" && " + compileCommand[index]
-                                + " " + fileName
+                        "cd /d " + filePath
+                                + " && " + compileCommand[index]
                                 + " && " + runCommand[index],
                         runCodeDocRequest.getInput()
-
                 );
+
                 runCodeDocResponse.setOutput(executeResponse.getOutput());
                 runCodeDocResponse.setError(executeResponse.getError());
                 runCodeDocResponse.setStatus(Status.SUCCESS);
                 return runCodeDocResponse;
             }
 
-        } catch (SQLException | IOException e) {
-            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         runCodeDocResponse.setOutput("");
         runCodeDocResponse.setError("");
         runCodeDocResponse.setStatus(Status.FAILED);
+
         return runCodeDocResponse;
     }
 
-    public static CompileCodeDocResponse compileCodeDoc(CompileCodeDocRequest request){
+    public static CompileCodeDocResponse compileCodeDoc(CompileCodeDocRequest request) {
 
         CompileCodeDocResponse response = new CompileCodeDocResponse();
 
         String checkAccessQuery = " SELECT * " +
                 " FROM " + DatabaseConstants.CODEDOC_ACCESS_TABLE_NAME +
                 " WHERE " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_CODEDOC_ID + " =?" +
-                " AND " +DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_USER_ID+ " =?" +
-                " AND " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_ACCESS_RIGHT + "!=?;" ;
+                " AND " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_USER_ID + " =?" +
+                " AND " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_ACCESS_RIGHT + "!=?;";
         try {
+
             PreparedStatement preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(checkAccessQuery);
             preparedStatement.setString(1, request.getCodeDocID());
             preparedStatement.setString(2, request.getUserID());
@@ -96,13 +108,12 @@ public class CompileService {
                 properties.load(fileReader);
                 String filePath = properties.getProperty("FILEPATH");
                 filePath += request.getCodeDocID() + "\\";
-                String fileName = "Solution" + request.getLanguageType().getExtension();
+
                 int index = request.getLanguageType().getIndex();
 
                 ExecuteResponse executeResponse = CompileUtility.compileProcess(
-                        "cd /d "+filePath
-                                +" && " + compileCommand[index]
-                                + " " + fileName
+                        "cd /d " + filePath
+                                + " && " + compileCommand[index]
                 );
                 response.setError(executeResponse.getError());
                 response.setStatus(Status.SUCCESS);

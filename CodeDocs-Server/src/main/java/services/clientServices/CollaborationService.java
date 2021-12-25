@@ -34,7 +34,6 @@ public class CollaborationService {
                 " FROM " + DatabaseConstants.USER_TABLE_NAME +
                 " WHERE " + DatabaseConstants.USER_TABLE_COL_EMAIL + " =?;";
 
-       //TODO: check performance
         String checkAccessRightQuery = "SELECT " +DatabaseConstants.CODEDOC_TABLE_COL_CODEDOCID +
                 " FROM " + DatabaseConstants.CODEDOC_TABLE_NAME +
                 " WHERE " + DatabaseConstants.CODEDOC_TABLE_COL_OWNERID + " =? " +
@@ -326,8 +325,6 @@ public class CollaborationService {
     public static FetchCollaboratorResponse fetchCollaborators(FetchCollaboratorRequest request){
 
         FetchCollaboratorResponse response = new FetchCollaboratorResponse();
-        //TODO: allow only accessor to fetch collaborators
-
 
         String fetchQuery = " SELECT " +
                 DatabaseConstants.USER_TABLE_NAME+ "." +DatabaseConstants.USER_TABLE_COL_FIRSTNAME + ", " +

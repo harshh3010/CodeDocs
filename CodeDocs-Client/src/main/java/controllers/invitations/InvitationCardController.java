@@ -12,6 +12,7 @@ import response.appResponse.AcceptInviteResponse;
 import response.appResponse.RejectInviteResponse;
 import services.CollaborationService;
 import utilities.Status;
+
 import java.io.IOException;
 
 public class InvitationCardController extends ListCell<CodeDoc> {
@@ -28,6 +29,7 @@ public class InvitationCardController extends ListCell<CodeDoc> {
     private Button acceptButton;
     @FXML
     private Button rejectButton;
+
     public InvitationCardController() {
         loadFXML();
     }
@@ -53,20 +55,20 @@ public class InvitationCardController extends ListCell<CodeDoc> {
             setContentDisplay(ContentDisplay.TEXT_ONLY);
         } else {
 
-            titleLabel.setText(codeDoc.getTitle());
-            descText.setText(codeDoc.getDescription());
-            ownerLabel.setText(codeDoc.getOwnerName());
+            titleLabel.setText(codeDoc.getOwnerName() + " invited you!");
+            descText.setText(codeDoc.getOwnerName() + " invited you to join the CodeDoc: " + codeDoc.getTitle() + "\n" + codeDoc.getDescription());
+            ownerLabel.setText("");
 
             acceptButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent actionEvent) {
                     try {
                         AcceptInviteResponse response = CollaborationService.acceptInvite(codeDoc.getCodeDocId());
-                        if(response == null){
+                        if (response == null) {
                             return;
                         }
                         Alert alert;
-                        if(response.getStatus() == Status.SUCCESS) {
+                        if (response.getStatus() == Status.SUCCESS) {
                             alert = new Alert(Alert.AlertType.INFORMATION);
                             alert.setContentText("You are added as a collaborator to this CodeDoc!");
                         } else {
@@ -87,7 +89,7 @@ public class InvitationCardController extends ListCell<CodeDoc> {
                 public void handle(ActionEvent actionEvent) {
                     try {
                         RejectInviteResponse response = CollaborationService.rejectInvite(codeDoc.getCodeDocId());
-                        if(response == null){
+                        if (response == null) {
                             return;
                         }
                         Alert alert;
@@ -102,7 +104,8 @@ public class InvitationCardController extends ListCell<CodeDoc> {
                     } catch (IOException | ClassNotFoundException e) {
                         Alert alert = new Alert(Alert.AlertType.WARNING);
                         alert.setContentText("Cannot reject the invitation at the moment. Try again later!");
-                        alert.show();;
+                        alert.show();
+                        ;
                     }
                 }
             });

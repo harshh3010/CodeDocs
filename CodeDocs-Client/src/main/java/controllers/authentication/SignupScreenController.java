@@ -90,7 +90,7 @@ public class SignupScreenController {
                 Optional<String> result = inputDialog.showAndWait();
 
                 result.ifPresent(verificationCode -> {
-                    // TODO: Send verification request
+
                     try {
                         Status status = AuthenticationService.verifyUser(verificationCode,email);
                         if(status == Status.SUCCESS){

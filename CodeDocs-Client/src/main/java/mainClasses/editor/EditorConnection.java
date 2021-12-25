@@ -1,6 +1,7 @@
 package mainClasses.editor;
 
 import controllers.chat.ChatTabController;
+import javafx.scene.control.Alert;
 import mainClasses.audio.AudioReceiver;
 import mainClasses.audio.AudioTransmitter;
 import models.CodeDoc;
@@ -188,8 +189,10 @@ public class EditorConnection {
                 e.printStackTrace();
             }
 
-            // TODO: Make other UI changes
-            System.out.println("Taking control!");
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setContentText("You are in control of the CodeEditor! :)");
+            alert.show();
+
             getCodeEditor().setEditable(true);
         } else {
             getCodeEditor().setEditable(false);

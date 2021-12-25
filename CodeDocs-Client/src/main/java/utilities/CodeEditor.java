@@ -234,8 +234,6 @@ public class CodeEditor extends StackPane {
      */
     private void streamCursorPosition() {
 
-        // TODO: Suppress streaming on text change
-
         try {
             // Creating a new cursor position streaming request
             StreamCursorPositionRequest request = new StreamCursorPositionRequest();

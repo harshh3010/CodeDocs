@@ -91,7 +91,7 @@ public class ScreenshotService {
     private static Status saveScreenshotNotes(String title, String notes, CodeEditor codeEditor) {
 
         String fileName = title + "-" + UUID.randomUUID().toString();
-        //TODO: take unique filename
+
         try {
             BufferedWriter notesWriter = new BufferedWriter(new FileWriter(CodeDocsClient.notesDirectory + fileName + ".txt"));
             notesWriter.write(notes);

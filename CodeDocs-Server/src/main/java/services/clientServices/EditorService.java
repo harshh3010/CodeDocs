@@ -21,7 +21,6 @@ public class EditorService {
 
     // TODO: Sync
 
-    // TODO: Optimise queries
     public static EditorConnectionResponse establishConnection(EditorConnectionRequest editorConnectionRequest, String ipAddress) {
         EditorConnectionResponse response = new EditorConnectionResponse();
 

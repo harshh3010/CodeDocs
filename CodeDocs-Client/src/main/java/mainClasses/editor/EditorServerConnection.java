@@ -101,7 +101,7 @@ public class EditorServerConnection extends Thread {
                         int removedEnd = contentChangeRequest.getRemovedEnd();
                         int removedStart = removedEnd - removedText.length();
 
-                        // TODO: Check
+                        // TODO: Resolve issue on remove content
                         editorConnection.getCodeEditor().removeContent(removedStart, removedEnd);
                         editorConnection.getCodeEditor().insertContent(insertedStart, insertedText);
                     });

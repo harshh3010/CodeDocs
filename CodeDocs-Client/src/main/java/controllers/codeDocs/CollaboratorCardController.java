@@ -61,8 +61,6 @@ public class CollaboratorCardController extends ListCell<Collaborator> {
             setContentDisplay(ContentDisplay.TEXT_ONLY);
         } else {
             if(collaborator.getWritePermissions() == 1){
-                //TODO update color agr write permissions h
-                usernameLabel.setTextFill(Color.rgb(214, 6, 77));
                 usernameLabel.setTextFill(Color.rgb(214, 6, 77));
             }
 
@@ -74,7 +72,7 @@ public class CollaboratorCardController extends ListCell<Collaborator> {
                     @Override
                     public void handle(ActionEvent actionEvent) {
                         try {
-                            //TODO : figure out the way to give codeDoc id
+
                             RemoveCollaboratorResponse response = CollaborationService.removeCollaborator(
                                     ManageCodeDocController.getCodeDoc().getCodeDocId(),
                                     collaborator.getUser().getUserID());
