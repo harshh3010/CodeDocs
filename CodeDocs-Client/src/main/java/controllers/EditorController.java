@@ -5,6 +5,8 @@ import controllers.activeUsers.ActiveUserTabController;
 import controllers.chat.ChatTabController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.stage.Stage;
 import javafx.util.converter.DoubleStringConverter;
@@ -38,6 +40,7 @@ public class EditorController {
     public JFXDrawer activeUserDrawer; // Drawer to display active users in same codedoc
     public JFXDrawer chatDrawer; // Drawer for private and group chat
     public Button muteButton; // To mute ourselves
+    public ImageView muteImageView;
 
     private CodeDoc codeDoc; // Current CodeDoc
     private CodeEditor codeEditor; // The main code editing region (Text area)
@@ -340,10 +343,14 @@ public class EditorController {
     public void onMuteClicked() {
         if (editorConnection.isMute()) {
             editorConnection.setMute(false);
-            muteButton.setText("Mute");
+            Image image = new Image(getClass().getResource("/images/unmute.png").toExternalForm());
+            muteImageView.setImage(image);
+            muteButton.setGraphic(muteImageView);
         } else {
             editorConnection.setMute(true);
-            muteButton.setText("Un-mute");
+            Image image = new Image(getClass().getResource("/images/mute.png").toExternalForm());
+            muteImageView.setImage(image);
+            muteButton.setGraphic(muteImageView);
         }
     }
 

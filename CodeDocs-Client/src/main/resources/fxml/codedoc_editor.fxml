@@ -61,7 +61,7 @@
                                             <Button fx:id="muteButton" mnemonicParsing="false" onAction="#onMuteClicked"
                                                     prefHeight="30.0" prefWidth="53.0" styleClass="button1" text="">
                                                 <graphic>
-                                                    <ImageView fitHeight="28.0" fitWidth="42.0" pickOnBounds="true"
+                                                    <ImageView fx:id="muteImageView" fitHeight="28.0" fitWidth="42.0" pickOnBounds="true"
                                                                preserveRatio="true">
                                                         <image>
                                                             <Image url="@../images/mute.png"/>

@@ -78,7 +78,6 @@ public class ChatTabController {
         if (chat.getUserID().equals(UserApi.getInstance().getId())) {
             receiver = receiverComboBox.getValue().getFirstName();
         }
-        usernameLabel.setText(chat.getFirstName() + " to " + (chat.isPrivate() ? receiver : "everyone"));
         vBox.getChildren().add(usernameLabel);
         vBox.getChildren().add(messageLabel);
 
@@ -94,6 +93,7 @@ public class ChatTabController {
                     "    -fx-background-radius:0 20 20 20 ;");
         } else {
             //if it is someone else's msg
+            usernameLabel.setText(chat.getFirstName() + " to " + (chat.isPrivate() ? receiver : "everyone"));
             messageLabel.setTextAlignment(TextAlignment.LEFT);
             messageLabel.setStyle("-fx-background-color: rgba(214, 6, 77,0.7);"
                     + "-fx-text-fill: white;"
