@@ -105,7 +105,6 @@ public class InvitationCardController extends ListCell<CodeDoc> {
                         Alert alert = new Alert(Alert.AlertType.WARNING);
                         alert.setContentText("Cannot reject the invitation at the moment. Try again later!");
                         alert.show();
-                        ;
                     }
                 }
             });

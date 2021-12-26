@@ -82,10 +82,8 @@ public class CodeEditor extends StackPane {
         setupCursorPositionHandler();
 
         myCursor = new CaretNode(UserApi.getInstance().getId(), textArea, 0);
-        if(!isEditable) {
-            myCursor.setVisible(true);
-            textArea.addCaret(myCursor);
-        }
+        textArea.addCaret(myCursor);
+        myCursor.setVisible(!isEditable);
 
         isDirty = false;
     }
@@ -219,8 +217,10 @@ public class CodeEditor extends StackPane {
             // Setting the end position of removed text
             contentChangeRequest.setRemovedEnd(plainTextChange.getRemovalEnd());
 
+            int count = 0;
             // Writing the request to all online users
             for (Peer peer : editorConnection.getConnectedPeers().values()) {
+                System.out.println("Writing to " + peer.getUser().getFirstName() + " " + count++);
                 peer.getOutputStream().writeObject(contentChangeRequest);
                 peer.getOutputStream().flush();
             }
@@ -233,7 +233,6 @@ public class CodeEditor extends StackPane {
      * This method streams current caret position to other online users
      */
     private void streamCursorPosition() {
-
         try {
             // Creating a new cursor position streaming request
             StreamCursorPositionRequest request = new StreamCursorPositionRequest();
@@ -532,13 +531,8 @@ public class CodeEditor extends StackPane {
 
         // Setting up the code editor
         textArea.setEditable(isEditable);
-        if(!isEditable) {
-            myCursor.setVisible(true);
-        }
-        setupInputHandler();
-        setupTextChangeHandler();
-        setupTextSelectionHandler();
-        setupCursorPositionHandler();
+        myCursor.setVisible(!isEditable);
+
     }
 
     /**

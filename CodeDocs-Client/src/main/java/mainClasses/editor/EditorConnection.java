@@ -1,6 +1,7 @@
 package mainClasses.editor;
 
 import controllers.chat.ChatTabController;
+import javafx.application.Platform;
 import javafx.scene.control.Alert;
 import mainClasses.audio.AudioReceiver;
 import mainClasses.audio.AudioTransmitter;
@@ -134,8 +135,6 @@ public class EditorConnection {
             peer.getOutputStream().close();
             peer.getAudioOutputStream().close();
             peer.getAudioInputStream().close();
-
-            peer = null;
         }
 
         connectedPeers.clear();
@@ -189,9 +188,14 @@ public class EditorConnection {
                 e.printStackTrace();
             }
 
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setContentText("You are in control of the CodeEditor! :)");
-            alert.show();
+            Platform.runLater(new Runnable() {
+                @Override
+                public void run() {
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setContentText("You are in control of the CodeEditor! :)");
+                    alert.show();
+                }
+            });
 
             getCodeEditor().setEditable(true);
         } else {

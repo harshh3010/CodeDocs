@@ -194,6 +194,14 @@ public class EditorServerConnection extends Thread {
      */
     private void handleDisconnectedUser() {
 
+       Platform.runLater(new Runnable() {
+           @Override
+           public void run() {
+               // Remove the cursor corresponding to disconnected user
+               editorConnection.getCodeEditor().removeCursor(connectedUser.getUserID());
+           }
+       });
+
         // Remove the user from list of active users
         editorConnection.getConnectedPeers().remove(connectedUser.getUserID());
 

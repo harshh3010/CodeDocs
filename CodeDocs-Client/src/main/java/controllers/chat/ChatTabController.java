@@ -84,6 +84,7 @@ public class ChatTabController {
         //styling
         //if this is peer's own chat
         if (chat.getUserID().equals(UserApi.getInstance().getId())) {
+            usernameLabel.setText(chat.getFirstName() + " to " + (chat.isPrivate() ? receiver : "everyone"));
             messageLabel.setTextAlignment(TextAlignment.RIGHT);
             vBox.setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
             messageLabel.setStyle("-fx-background-color: rgba(214, 6, 77,0.3);" +
