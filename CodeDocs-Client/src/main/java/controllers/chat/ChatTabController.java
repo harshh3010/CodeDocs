@@ -109,10 +109,8 @@ public class ChatTabController {
      * whenever a peer sends a message ... send it to all the connected peers
      * in current editorConnection
      * and after that set current msg in chatDrawer for current peer
-     *
-     * @param mouseEvent
      */
-    public void onSendClicked(MouseEvent mouseEvent) {
+    public void onSendClicked() {
 
         Chat chat = new Chat();
         chat.setMessage(msg.getText());

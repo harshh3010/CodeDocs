@@ -2,27 +2,35 @@
 
 <?import com.jfoenix.controls.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="668.0" prefWidth="941.0" xmlns="http://javafx.com/javafx/11.0.2"
-            xmlns:fx="http://javafx.com/fxml/1" stylesheets="@../css/style.css"
-            fx:controller="controllers.codeDocs.MyLibraryTabController">
+<AnchorPane prefHeight="668.0" prefWidth="941.0" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/11.0.2"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.codeDocs.MyLibraryTabController">
     <children>
         <VBox>
             <children>
                 <JFXListView fx:id="codeDocsListView" prefHeight="620.0" prefWidth="974.0"/>
                 <AnchorPane prefHeight="48.0" prefWidth="974.0">
                     <children>
-                        <Button styleClass="prevButton" fx:id="prevButton" layoutX="14.0" layoutY="10.0"
-                                mnemonicParsing="false"
-                                onAction="#onPreviousClicked" prefHeight="26.0" prefWidth="84.0" text="Previous"
-                                AnchorPane.leftAnchor="14.0"
-                                AnchorPane.rightAnchor="876.0" AnchorPane.topAnchor="10.0"/>
-                        <Button styleClass="prevButton" fx:id="nextButton" layoutX="893.0" layoutY="10.0"
-                                mnemonicParsing="false"
-                                onAction="#onNextClicked" prefHeight="26.0" prefWidth="59.0" text="Next"
-                                AnchorPane.rightAnchor="14.0"
+                        <Button fx:id="prevButton" layoutX="14.0" layoutY="10.0" mnemonicParsing="false"
+                                onAction="#onPreviousClicked" prefHeight="26.0" prefWidth="84.0" styleClass="prevButton"
+                                text="Previous" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="876.0"
                                 AnchorPane.topAnchor="10.0"/>
+                        <Button fx:id="nextButton" layoutX="893.0" layoutY="10.0" mnemonicParsing="false"
+                                onAction="#onNextClicked" prefHeight="26.0" prefWidth="59.0" styleClass="prevButton"
+                                text="Next" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="10.0"/>
+                        <Button layoutX="446.0" layoutY="7.5" mnemonicParsing="false" onAction="#onRefreshClicked"
+                                prefHeight="26.0" prefWidth="54.0" styleClass="button1" text="">
+                            <graphic>
+                                <ImageView fitHeight="24.0" fitWidth="28.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../images/refresh.png"/>
+                                    </image>
+                                </ImageView>
+
+                            </graphic>
+                        </Button>
                     </children>
                 </AnchorPane>
             </children>

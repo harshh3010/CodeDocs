@@ -63,6 +63,10 @@ public class ManageCodeDocController implements Initializable {
             inviteButton.setVisible(false);
         }
 
+        setupTab();
+    }
+
+    public void setupTab() {
         offset = 0;
         rowCount = 10;
 
@@ -193,7 +197,7 @@ public class ManageCodeDocController implements Initializable {
     public void onNextClicked(ActionEvent actionEvent) {
 
         // Fetching the next batch only if current one is non-empty
-        if(collaboratorsListView.getItems().size() == 5){
+        if(collaboratorsListView.getItems().size() == 10){
             offset = offset + rowCount;
             fetchCollaborators();
         }
@@ -206,5 +210,9 @@ public class ManageCodeDocController implements Initializable {
             offset = offset - rowCount;
             fetchCollaborators();
         }
+    }
+
+    public void onRefreshClicked(ActionEvent actionEvent) {
+        setupTab();
     }
 }

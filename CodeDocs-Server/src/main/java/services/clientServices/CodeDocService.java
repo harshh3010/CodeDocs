@@ -196,7 +196,7 @@ public class CodeDocService {
      * @return
      */
     public static DeleteCodeDocResponse deleteCodeDoc(DeleteCodeDocRequest deleteCodeDocRequest){
-
+    //TODO: check this
         DeleteCodeDocResponse deleteCodeDocResponse = new DeleteCodeDocResponse();
         String deleteQuery = "DELETE " +
                 " FROM " + DatabaseConstants.CODEDOC_TABLE_NAME +
@@ -218,8 +218,6 @@ public class CodeDocService {
                 String filePath = properties.getProperty("FILEPATH");
 
                 filePath += deleteCodeDocRequest.getCodeDocID();
-                System.out.println(filePath+"****");
-
                 File file = new File(filePath);
                 for (File subFile : file.listFiles()) {
                         subFile.delete();
