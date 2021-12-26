@@ -11,11 +11,16 @@
       <HBox prefHeight="41.0" prefWidth="400.0">
          <children>
              <TextArea fx:id="msg" prefHeight="45.0" prefWidth="350.0" promptText="Type message" styleClass="msg" />
-             <ImageView fitHeight="45.0" fitWidth="76.0" onMouseClicked="#onSendClicked" pickOnBounds="true" preserveRatio="true" styleClass="sendImg">
-                 <image>
-                     <Image url="@../images/send.png" />
-                 </image>
-             </ImageView>
+             <Button mnemonicParsing="false" onAction="#onSendClicked" prefHeight="30.0" prefWidth="53.0" styleClass="button1" text="">
+                 <graphic>
+                     <ImageView fitHeight="28.0" fitWidth="42.0" pickOnBounds="true" preserveRatio="true">
+                         <image>
+                             <Image url="@../images/send.png" />
+                         </image>
+                     </ImageView>
+
+                 </graphic>
+             </Button>
          </children></HBox>
       <ComboBox fx:id="receiverComboBox" prefHeight="38.0" prefWidth="404.0" />
     </children>

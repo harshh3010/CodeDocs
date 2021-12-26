@@ -64,7 +64,7 @@ public class InvitationsTabController {
     public void onNextClicked(ActionEvent actionEvent) {
 
         // Fetching the next batch only if current one is non-empty
-        if(invitesListView.getItems().size() == 5){
+        if(invitesListView.getItems().size() == 10){
             offset = offset + rowCount;
             fetchInvites();
         }
@@ -89,5 +89,9 @@ public class InvitationsTabController {
 
     public ArrayList<CodeDoc> getCodeDocs() {
         return codeDocs;
+    }
+
+    public void onRefreshClicked(ActionEvent actionEvent) {
+        setupTab();
     }
 }

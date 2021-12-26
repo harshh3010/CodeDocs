@@ -21,6 +21,7 @@ import services.CodeDocsService;
 import services.SceneService;
 import utilities.AppScreen;
 import utilities.Status;
+import utilities.UserApi;
 
 import java.io.*;
 import java.util.Objects;
@@ -71,7 +72,8 @@ public class CodeDocCardController extends ListCell<CodeDoc> {
             titleLabel.setText(codeDoc.getTitle());
             descText.setText(codeDoc.getDescription());
             dateLabel.setText(codeDoc.getCreatedAt().toString());
-
+            if(!codeDoc.getOwnerID().equals(UserApi.getInstance().getId()))
+                deleteButton.setVisible(false);
             Image image = new Image(getClass().getResource("/images/" + codeDoc.getLanguageType().getLanguage() + ".png").toExternalForm());//Creating the image viewImageView
             imageView.setImage(image);//Setting the image view parameters
             imageView.setPreserveRatio(false);

@@ -2,6 +2,7 @@ package controllers.codeDocs;
 
 import com.jfoenix.controls.JFXListView;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import models.CodeDoc;
@@ -58,7 +59,7 @@ public class PersonalCodeDocsTabController{
     public void onNextClicked() {
 
         // Fetching the next batch only if current one is non-empty
-        if(codeDocsListView.getItems().size()==5){
+        if(codeDocsListView.getItems().size()==10){
             offset = offset + rowCount;
             fetchCodeDocs();
         }
@@ -83,5 +84,9 @@ public class PersonalCodeDocsTabController{
 
     public ArrayList<CodeDoc> getCodeDocs() {
         return codeDocs;
+    }
+
+    public void onRefreshClicked(ActionEvent actionEvent) {
+        setupTab();
     }
 }

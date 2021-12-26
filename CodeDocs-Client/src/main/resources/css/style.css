@@ -78,6 +78,13 @@
     -fx-background-color: rgb(214, 6, 77);
 }
 
+.sendButton{
+    -fx-font-size: 16px;
+    -fx-background-radius: 10;
+    -fx-text-fill: white;
+    -fx-background-color: rgb(214, 6, 77);
+}
+
 .button2{
     -fx-font-size: 16px;
     -fx-background-radius: 10;
