@@ -6,8 +6,10 @@ import utilities.RequestType;
 
 import java.io.Serializable;
 
+/**
+ * Request to compile a codedoc
+ */
 public class CompileCodeDocRequest extends AppRequest implements Serializable {
-
 
     private String userID;
     private String codeDocID;

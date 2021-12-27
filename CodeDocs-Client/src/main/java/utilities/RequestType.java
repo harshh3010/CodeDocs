@@ -1,5 +1,8 @@
 package utilities;
 
+/**
+ * Different request types to send to server
+ */
 public enum RequestType {
     SIGNUP_REQUEST,
     LOGIN_REQUEST,

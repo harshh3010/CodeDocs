@@ -1,5 +1,8 @@
 package utilities;
 
+/**
+ * Trie for implementing code highlighting
+ */
 public class CodeHighlightingTrie {
 
     private final int ALPHABET_SIZE = 256;
@@ -23,6 +26,12 @@ public class CodeHighlightingTrie {
         root = new TrieNode();
     }
 
+    /**
+     * Function to insert a new word along with its style class in trie
+     *
+     * @param key        the token typed in code
+     * @param styleClass the style class to be applied to word as specified in css
+     */
     public void insert(String key, String styleClass) {
 
         int level, index, length = key.length();
@@ -40,6 +49,12 @@ public class CodeHighlightingTrie {
         trieNode.styleClass = styleClass;
     }
 
+    /**
+     * Function to fetch the styleClass for a word in trie
+     *
+     * @param key the word to search for
+     * @return styleClass if word found else null
+     */
     public String search(String key) {
 
         int level, index, length = key.length();

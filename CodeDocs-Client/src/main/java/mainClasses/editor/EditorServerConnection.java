@@ -51,13 +51,23 @@ public class EditorServerConnection extends Thread {
     @Override
     public void run() {
 
+
         try {
+
+            // Accept requests from connected user while the server is active
             while (isActive) {
+
+                // Reading request from the input stream
                 AppRequest request = (AppRequest) inputStream.readObject();
+
+                // Performing specified action depending on type of request received
                 if (request.getRequestType() == RequestType.SEND_PEER_CONNECTION_REQUEST) {
+
+                    // On receiving connection request, connect to the sender's audio and editor server
 
                     SendPeerConnectionRequest connectionRequest = (SendPeerConnectionRequest) request;
 
+                    // Create a peer object corresponding to newly connected client
                     Peer peer = new Peer();
                     peer.setUser(connectionRequest.getUser());
                     peer.setPort(connectionRequest.getPort());
@@ -65,11 +75,22 @@ public class EditorServerConnection extends Thread {
                     peer.setIpAddress(connection.getInetAddress().getCanonicalHostName());
                     peer.setHasWritePermissions(connectionRequest.isHasWritePermissions());
 
+                    // Connect to peer's editor server
                     Socket socket = new Socket(peer.getIpAddress(), peer.getPort());
 
+                    // Store the IO streams for later use
                     peer.setOutputStream(new ObjectOutputStream(socket.getOutputStream()));
                     peer.setInputStream(new ObjectInputStream(socket.getInputStream()));
 
+                    // Connect to peer's audio server
+                    Socket audioSocket = new Socket(peer.getIpAddress(), peer.getAudioPort());
+
+                    // Store audio IO streams
+                    peer.setAudioOutputStream(new DataOutputStream(audioSocket.getOutputStream()));
+                    peer.setAudioInputStream(new DataInputStream(audioSocket.getInputStream()));
+                    peer.setMuted(false);
+
+                    // Write current user's info to newly connected peer
                     SendPeerInfoRequest infoRequest = new SendPeerInfoRequest();
                     User user = new User();
                     user.setUserID(UserApi.getInstance().getId());
@@ -80,103 +101,128 @@ public class EditorServerConnection extends Thread {
                     peer.getOutputStream().writeObject(infoRequest);
                     peer.getOutputStream().flush();
 
-                    Socket audioSocket = new Socket(peer.getIpAddress(), peer.getAudioPort());
-
-                    peer.setAudioOutputStream(new DataOutputStream(audioSocket.getOutputStream()));
-                    peer.setAudioInputStream(new DataInputStream(audioSocket.getInputStream()));
-                    peer.setMuted(false);
-
+                    // Store the peer's info in connected clients set
                     editorConnection.getConnectedPeers().put(peer.getUser().getUserID(), peer);
 
                 } else if (request.getRequestType() == RequestType.SEND_PEER_INFO_REQUEST) {
+
+                    // Receive user details of connected peer
                     connectedUser = ((SendPeerInfoRequest) request).getUser();
+
+                    // Update chat tab
                     Platform.runLater(() -> editorConnection.getChatController().updateActiveUsers());
+
                 } else if (request.getRequestType() == RequestType.STREAM_CONTENT_CHANGES_REQUEST) {
+
+                    // Received content changes from the user in control
                     StreamContentChangeRequest contentChangeRequest = (StreamContentChangeRequest) request;
                     Platform.runLater(() -> {
                         String insertedText = contentChangeRequest.getInsertedContent();
-                        String removedText = contentChangeRequest.getRemovedContent();
-
                         int insertedStart = contentChangeRequest.getInsertedStart();
                         int removedEnd = contentChangeRequest.getRemovedEnd();
-                        int removedStart = removedEnd - removedText.length();
+                        int removedLength = contentChangeRequest.getRemovedLength();
 
-                        // TODO: Resolve issue on remove content
-                        editorConnection.getCodeEditor().removeContent(removedStart, removedEnd);
+                        // Update the code editor depending on the changes received
+                        editorConnection.getCodeEditor().removeContent(removedEnd, removedLength);
                         editorConnection.getCodeEditor().insertContent(insertedStart, insertedText);
                     });
+
                 } else if (request.getRequestType() == RequestType.STREAM_CONTENT_SELECTION_REQUEST) {
+
+                    // Received content selection from user in control
                     StreamContentSelectionRequest contentSelectionRequest = (StreamContentSelectionRequest) request;
+
+                    // Update the selection on current user's code editor
                     Platform.runLater(() -> editorConnection.getCodeEditor().selectContent(contentSelectionRequest.getStart(), contentSelectionRequest.getEnd()));
+
                 } else if (request.getRequestType() == RequestType.STREAM_CURSOR_POSITION_REQUEST) {
+
+                    // Received cursor position change request
                     StreamCursorPositionRequest cursorPositionRequest = (StreamCursorPositionRequest) request;
+
+                    // Update the cursor and label of user corresponding to the cursor on home screen
                     Platform.runLater(() -> editorConnection.getCodeEditor().moveCursor(cursorPositionRequest.getUserId(), cursorPositionRequest.getPosition()));
+
                 } else if (request.getRequestType() == RequestType.SEND_MESSAGE_REQUEST) {
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            SendMessageRequest messageRequest = (SendMessageRequest) request;
 
-                            Chat chat = new Chat();
-                            chat.setFirstName(connectedUser.getFirstName());
-                            chat.setDate(new Date());
-                            chat.setMessage(messageRequest.getContent());
-                            chat.setUserID(connectedUser.getUserID());
-                            chat.setPrivate(messageRequest.isPrivate());
+                    // Received a message from some user
+                    SendMessageRequest messageRequest = (SendMessageRequest) request;
 
-                            editorConnection.getChatController().addNewMessage(chat);
-                        }
+                    Platform.runLater(() -> {
+
+                        // Updating the UI accordingly
+                        Chat chat = new Chat();
+                        chat.setFirstName(connectedUser.getFirstName());
+                        chat.setDate(new Date());
+                        chat.setMessage(messageRequest.getContent());
+                        chat.setUserID(connectedUser.getUserID());
+                        chat.setPrivate(messageRequest.isPrivate());
+
+                        editorConnection.getChatController().addNewMessage(chat);
                     });
 
                 } else if (request.getRequestType() == RequestType.TAKE_CONTROL_REQUEST) {
 
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
-                            String name = connectedUser.getFirstName() + " " + connectedUser.getLastName();
-                            confirmationAlert.setContentText(name + " is requesting control!");
-                            Optional<ButtonType> pressedButton = confirmationAlert.showAndWait();
+                    // The connected user is requesting control for editing the codedoc
 
-                            if (pressedButton.get() == ButtonType.OK) {
+                    Platform.runLater(() -> {
 
-                                editorConnection.setUserInControl(connectedUser.getUserID());
+                        // Showing a message and confirmation dialog to current user
+                        Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
+                        String name = connectedUser.getFirstName() + " " + connectedUser.getLastName();
+                        confirmationAlert.setContentText(name + " is requesting control!");
+                        Optional<ButtonType> pressedButton = confirmationAlert.showAndWait();
 
-                                ControlSwitchRequest switchRequest = new ControlSwitchRequest();
-                                switchRequest.setUserId(connectedUser.getUserID());
+                        if (pressedButton.get() == ButtonType.OK) {
 
-                                for (Peer peer : editorConnection.getConnectedPeers().values()) {
-                                    try {
-                                        peer.getOutputStream().writeObject(switchRequest);
-                                        peer.getOutputStream().flush();
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
+                            // If current user agrees to give up the control
+
+                            // Make UI changes for current user
+                            editorConnection.setUserInControl(connectedUser.getUserID());
+
+                            // Inform all the connected users about the control switch
+                            ControlSwitchRequest switchRequest = new ControlSwitchRequest();
+                            switchRequest.setUserId(connectedUser.getUserID());
+
+                            for (Peer peer : editorConnection.getConnectedPeers().values()) {
+                                try {
+                                    peer.getOutputStream().writeObject(switchRequest);
+                                    peer.getOutputStream().flush();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
                                 }
-
                             }
+
                         }
                     });
 
                 } else if (request.getRequestType() == RequestType.CONTROL_SWITCH_REQUEST) {
-                    ControlSwitchRequest switchRequest = (ControlSwitchRequest) request;
-                    editorConnection.setUserInControl(switchRequest.getUserId());
-                } else if (request.getRequestType() == RequestType.SYNC_CONTENT_REQUEST) {
-                    SyncContentRequest syncContentRequest = (SyncContentRequest) request;
 
+                    // Received a control switch request from the user in control
+                    ControlSwitchRequest switchRequest = (ControlSwitchRequest) request;
+
+                    // Make UI changes accordingly
+                    editorConnection.setUserInControl(switchRequest.getUserId());
+
+                } else if (request.getRequestType() == RequestType.SYNC_CONTENT_REQUEST) {
+
+                    // Received a request to sync the contents of code editor
+
+                    // Send the updates contents to the connected user
                     UpdateContentRequest updateContentRequest = new UpdateContentRequest();
                     updateContentRequest.setContent(editorConnection.getCodeEditor().getText());
+
                     Peer peer = editorConnection.getConnectedPeers().get(connectedUser.getUserID());
                     peer.getOutputStream().writeObject(updateContentRequest);
                     peer.getOutputStream().flush();
+
                 } else if (request.getRequestType() == RequestType.UPDATE_CONTENT_REQUEST) {
+
+                    // Received the updated contents of the code editor
                     UpdateContentRequest contentRequest = (UpdateContentRequest) request;
-                    Platform.runLater(new Runnable() {
-                        @Override
-                        public void run() {
-                            editorConnection.getCodeEditor().insertContent(0, contentRequest.getContent());
-                        }
-                    });
+
+                    // Make UI changes
+                    Platform.runLater(() -> editorConnection.getCodeEditor().insertContent(0, contentRequest.getContent()));
                 }
             }
 
@@ -184,7 +230,10 @@ public class EditorServerConnection extends Thread {
             System.out.println("A user got disconnected!");
         }
 
+        // Connected user just disconnected from current user
         handleDisconnectedUser();
+
+        // Update chat tab
         editorConnection.getChatController().updateActiveUsers();
     }
 
@@ -194,16 +243,14 @@ public class EditorServerConnection extends Thread {
      */
     private void handleDisconnectedUser() {
 
-       Platform.runLater(new Runnable() {
-           @Override
-           public void run() {
-               // Remove the cursor corresponding to disconnected user
-               editorConnection.getCodeEditor().removeCursor(connectedUser.getUserID());
-           }
-       });
+        Platform.runLater(() -> {
+            // Remove the cursor corresponding to disconnected user
+            editorConnection.getCodeEditor().removeCursor(connectedUser.getUserID());
 
-        // Remove the user from list of active users
-        editorConnection.getConnectedPeers().remove(connectedUser.getUserID());
+            // Remove the user from list of active users
+            editorConnection.getConnectedPeers().remove(connectedUser.getUserID());
+        });
+
 
         // Check if the user who left was the user in control of CodeEditor
         if (connectedUser.getUserID().equals(editorConnection.getUserInControl())) {

@@ -15,26 +15,24 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class defines all the functions to handle client requests for managing codedoc
+ * accessors
+ */
 public class CollaborationService {
 
     /**
-     * Method to invite a user to be a collaborator in a codeDoc
-     * @param inviteCollaboratorRequest
-     * @return
+     * Function to invite a user to collaborate on a codedoc
      */
-    public static InviteCollaboratorResponse inviteCollaborator(InviteCollaboratorRequest inviteCollaboratorRequest){
+    public static InviteCollaboratorResponse inviteCollaborator(InviteCollaboratorRequest inviteCollaboratorRequest) {
 
         InviteCollaboratorResponse inviteCollaboratorResponse = new InviteCollaboratorResponse();
-        //sender cannot send request to himself
-//        if(inviteCollaboratorRequest.getSenderID().equals(inviteCollaboratorRequest.getReceiverEmail())){
-//            inviteCollaboratorResponse.setStatus(Status.FAILED);
-//            return inviteCollaboratorResponse;
-//        }
-        String getReceiverIDQuery = "SELECT "+ DatabaseConstants.USER_TABLE_COL_USERID +
+
+        String getReceiverIDQuery = "SELECT " + DatabaseConstants.USER_TABLE_COL_USERID +
                 " FROM " + DatabaseConstants.USER_TABLE_NAME +
                 " WHERE " + DatabaseConstants.USER_TABLE_COL_EMAIL + " =?;";
 
-        String checkAccessRightQuery = "SELECT " +DatabaseConstants.CODEDOC_TABLE_COL_CODEDOCID +
+        String checkAccessRightQuery = "SELECT " + DatabaseConstants.CODEDOC_TABLE_COL_CODEDOCID +
                 " FROM " + DatabaseConstants.CODEDOC_TABLE_NAME +
                 " WHERE " + DatabaseConstants.CODEDOC_TABLE_COL_OWNERID + " =? " +
                 " AND " + DatabaseConstants.CODEDOC_TABLE_COL_CODEDOCID + " =?";
@@ -49,10 +47,10 @@ public class CollaborationService {
             CodeDocsServer.databaseConnection.setAutoCommit(false);
             try {
                 PreparedStatement preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(getReceiverIDQuery);
-                preparedStatement.setString(1,inviteCollaboratorRequest.getReceiverEmail());
+                preparedStatement.setString(1, inviteCollaboratorRequest.getReceiverEmail());
                 ResultSet resultSet = preparedStatement.executeQuery();
 
-                if(resultSet.next()){
+                if (resultSet.next()) {
                     String receiverID = resultSet.getString(1);
                     preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(checkAccessRightQuery);
                     preparedStatement.setString(1, inviteCollaboratorRequest.getSenderID());
@@ -76,7 +74,7 @@ public class CollaborationService {
                 e.printStackTrace();
                 CodeDocsServer.databaseConnection.rollback();
             }
-        }catch (SQLException throwables) {
+        } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
         inviteCollaboratorResponse.setStatus(Status.FAILED);
@@ -84,19 +82,17 @@ public class CollaborationService {
     }
 
     /**
-     * Method to accept invite
-     * @param acceptInviteRequest
-     * @return
+     * Function to accept an invitation
      */
-    public static AcceptInviteResponse acceptInvite(AcceptInviteRequest acceptInviteRequest){
+    public static AcceptInviteResponse acceptInvite(AcceptInviteRequest acceptInviteRequest) {
         AcceptInviteResponse acceptInviteResponse = new AcceptInviteResponse();
 
         String acceptInviteQuery = "UPDATE " + DatabaseConstants.CODEDOC_ACCESS_TABLE_NAME +
                 " SET " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_ACCESS_RIGHT + " =?" +
-                " WHERE " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_CODEDOC_ID+ " =?" +
-                " AND " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_ACCESS_RIGHT+ " =\"PENDING\"" +
-                " AND " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_USER_ID+ " =?;";
-         try {
+                " WHERE " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_CODEDOC_ID + " =?" +
+                " AND " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_ACCESS_RIGHT + " =\"PENDING\"" +
+                " AND " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_USER_ID + " =?;";
+        try {
             CodeDocsServer.databaseConnection.setAutoCommit(false);
             try {
                 PreparedStatement preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(acceptInviteQuery);
@@ -106,7 +102,7 @@ public class CollaborationService {
                 int result = preparedStatement.executeUpdate();
 
                 CodeDocsServer.databaseConnection.commit();
-                if(result !=0)
+                if (result != 0)
                     acceptInviteResponse.setStatus(Status.SUCCESS);
                 else
                     acceptInviteResponse.setStatus(Status.FAILED);
@@ -115,25 +111,24 @@ public class CollaborationService {
                 CodeDocsServer.databaseConnection.rollback();
                 e.printStackTrace();
             }
-        }catch (SQLException throwables) {
+        } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
         return acceptInviteResponse;
     }
 
-    /**
-     * method to reject invite
-     * @param rejectInviteRequest
-     * @return
-     */
-    public static RejectInviteResponse rejectInvite(RejectInviteRequest rejectInviteRequest){
 
-        RejectInviteResponse rejectInviteResponse= new RejectInviteResponse();
+    /**
+     * Function to reject an invitation
+     */
+    public static RejectInviteResponse rejectInvite(RejectInviteRequest rejectInviteRequest) {
+
+        RejectInviteResponse rejectInviteResponse = new RejectInviteResponse();
 
         String rejectInviteQuery = "DELETE FROM " + DatabaseConstants.CODEDOC_ACCESS_TABLE_NAME +
                 " WHERE " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_CODEDOC_ID + " =? " +
-                " AND " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_USER_ID+ " =?" +
-                " AND " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_ACCESS_RIGHT+ " =?";
+                " AND " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_USER_ID + " =?" +
+                " AND " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_ACCESS_RIGHT + " =?";
 
         try {
             CodeDocsServer.databaseConnection.setAutoCommit(false);
@@ -150,7 +145,7 @@ public class CollaborationService {
                 CodeDocsServer.databaseConnection.rollback();
                 e.printStackTrace();
             }
-        }catch (SQLException throwables) {
+        } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
         rejectInviteResponse.setStatus(Status.FAILED);
@@ -158,32 +153,30 @@ public class CollaborationService {
     }
 
     /**
-     * Method to display all inc=vite requests user has received
-     * @param fetchInviteRequest
-     * @return
+     * Function to fetch all invitations for a user
      */
-    public static FetchInviteResponse fetchInvites(FetchInviteRequest fetchInviteRequest){
+    public static FetchInviteResponse fetchInvites(FetchInviteRequest fetchInviteRequest) {
         FetchInviteResponse fetchInviteResponse = new FetchInviteResponse();
 
         String fetchInvitesQuery = " SELECT " +
-                DatabaseConstants.CODEDOC_TABLE_NAME + "." +DatabaseConstants.CODEDOC_TABLE_COL_TITLE+ ", " +
-                DatabaseConstants.CODEDOC_TABLE_NAME+ "." +DatabaseConstants.CODEDOC_TABLE_COL_DESCRIPTION+ ", " +
-                DatabaseConstants.USER_TABLE_NAME+ "." +DatabaseConstants.USER_TABLE_COL_FIRSTNAME + ", " +
-                DatabaseConstants.CODEDOC_TABLE_NAME+ "." +DatabaseConstants.CODEDOC_TABLE_COL_CODEDOCID +
+                DatabaseConstants.CODEDOC_TABLE_NAME + "." + DatabaseConstants.CODEDOC_TABLE_COL_TITLE + ", " +
+                DatabaseConstants.CODEDOC_TABLE_NAME + "." + DatabaseConstants.CODEDOC_TABLE_COL_DESCRIPTION + ", " +
+                DatabaseConstants.USER_TABLE_NAME + "." + DatabaseConstants.USER_TABLE_COL_FIRSTNAME + ", " +
+                DatabaseConstants.CODEDOC_TABLE_NAME + "." + DatabaseConstants.CODEDOC_TABLE_COL_CODEDOCID +
                 " FROM " +
-                "(( " +DatabaseConstants.CODEDOC_TABLE_NAME +
-                " INNER JOIN " +DatabaseConstants.CODEDOC_ACCESS_TABLE_NAME+ " ON " +
-                DatabaseConstants.CODEDOC_TABLE_NAME + "." +DatabaseConstants.CODEDOC_TABLE_COL_CODEDOCID+ "= " +
-                DatabaseConstants.CODEDOC_ACCESS_TABLE_NAME+ "." +DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_CODEDOC_ID +
+                "(( " + DatabaseConstants.CODEDOC_TABLE_NAME +
+                " INNER JOIN " + DatabaseConstants.CODEDOC_ACCESS_TABLE_NAME + " ON " +
+                DatabaseConstants.CODEDOC_TABLE_NAME + "." + DatabaseConstants.CODEDOC_TABLE_COL_CODEDOCID + "= " +
+                DatabaseConstants.CODEDOC_ACCESS_TABLE_NAME + "." + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_CODEDOC_ID +
                 " ) " +
-                " INNER JOIN " +DatabaseConstants.USER_TABLE_NAME+ " ON " +
-                DatabaseConstants.CODEDOC_TABLE_NAME + "." +DatabaseConstants.CODEDOC_TABLE_COL_OWNERID+ "= " +
-                DatabaseConstants.USER_TABLE_NAME+ "." +DatabaseConstants.USER_TABLE_COL_USERID +
+                " INNER JOIN " + DatabaseConstants.USER_TABLE_NAME + " ON " +
+                DatabaseConstants.CODEDOC_TABLE_NAME + "." + DatabaseConstants.CODEDOC_TABLE_COL_OWNERID + "= " +
+                DatabaseConstants.USER_TABLE_NAME + "." + DatabaseConstants.USER_TABLE_COL_USERID +
                 " ) " +
                 " WHERE " +
-                DatabaseConstants.CODEDOC_ACCESS_TABLE_NAME+"." + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_USER_ID +"=?"+
+                DatabaseConstants.CODEDOC_ACCESS_TABLE_NAME + "." + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_USER_ID + "=?" +
                 " AND " +
-                DatabaseConstants.CODEDOC_ACCESS_TABLE_NAME+"." + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_ACCESS_RIGHT +"=?" +
+                DatabaseConstants.CODEDOC_ACCESS_TABLE_NAME + "." + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_ACCESS_RIGHT + "=?" +
                 " ORDER BY " + DatabaseConstants.CODEDOC_TABLE_COL_UPDATED_AT + " DESC "
                 + " LIMIT " + fetchInviteRequest.getOffset() +
                 " , " + fetchInviteRequest.getRowcount()
@@ -218,22 +211,21 @@ public class CollaborationService {
     }
 
     /**
-     * Method to allow owner to remove a collaborator from his codeDoc
-     * @param request
-     * @return
+     * Function to remove a user from codedoc
      */
-    public static RemoveCollaboratorResponse removeCollaborator(RemoveCollaboratorRequest request){
+    public static RemoveCollaboratorResponse removeCollaborator(RemoveCollaboratorRequest request) {
 
         RemoveCollaboratorResponse response = new RemoveCollaboratorResponse();
-        //first check that owner is requesting to remove collaborator or not
-        String checkOwnerQuery = "SELECT " +DatabaseConstants.CODEDOC_TABLE_COL_CODEDOCID +
+
+        // First check that owner is requesting to remove collaborator or not
+        String checkOwnerQuery = "SELECT " + DatabaseConstants.CODEDOC_TABLE_COL_CODEDOCID +
                 " FROM " + DatabaseConstants.CODEDOC_TABLE_NAME +
                 " WHERE " + DatabaseConstants.CODEDOC_TABLE_COL_OWNERID + " =? " +
                 " AND " + DatabaseConstants.CODEDOC_TABLE_COL_CODEDOCID + " =?";
 
         String deleteQuery = "DELETE FROM " + DatabaseConstants.CODEDOC_ACCESS_TABLE_NAME +
                 " WHERE " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_CODEDOC_ID + " =? " +
-                " AND " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_USER_ID+ " =?;" ;
+                " AND " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_USER_ID + " =?;";
 
         try {
             CodeDocsServer.databaseConnection.setAutoCommit(false);
@@ -258,7 +250,7 @@ public class CollaborationService {
                 CodeDocsServer.databaseConnection.rollback();
             }
 
-        }catch (SQLException throwables) {
+        } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
         response.setStatus(Status.FAILED);
@@ -266,24 +258,24 @@ public class CollaborationService {
 
     }
 
+
     /**
-     * Method to change permissions of a collaborator
-     * @param request
-     * @return
+     * Function to change the rights with a specific user
      */
-    public static ChangeCollaboratorRightsResponse changeCollaboratorRights(ChangeCollaboratorRightsRequest request){
+    public static ChangeCollaboratorRightsResponse changeCollaboratorRights(ChangeCollaboratorRightsRequest request) {
 
         ChangeCollaboratorRightsResponse response = new ChangeCollaboratorRightsResponse();
-        //first check that owner is requesting to remove collaborator or not
-        String checkOwnerQuery = "SELECT " +DatabaseConstants.CODEDOC_TABLE_COL_CODEDOCID +
+
+        // First check that owner is requesting to remove collaborator or not
+        String checkOwnerQuery = "SELECT " + DatabaseConstants.CODEDOC_TABLE_COL_CODEDOCID +
                 " FROM " + DatabaseConstants.CODEDOC_TABLE_NAME +
                 " WHERE " + DatabaseConstants.CODEDOC_TABLE_COL_OWNERID + " =? " +
                 " AND " + DatabaseConstants.CODEDOC_TABLE_COL_CODEDOCID + " =?";
 
         String updateQuery = "UPDATE " + DatabaseConstants.CODEDOC_ACCESS_TABLE_NAME +
                 " SET " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_HAS_WRITE_PERMISSIONS + " =?" +
-                " WHERE " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_CODEDOC_ID+ " =?" +
-                " AND " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_USER_ID+ " =?;";
+                " WHERE " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_CODEDOC_ID + " =?" +
+                " AND " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_USER_ID + " =?;";
 
         try {
             CodeDocsServer.databaseConnection.setAutoCommit(false);
@@ -294,12 +286,12 @@ public class CollaborationService {
                 ResultSet resultSet = preparedStatement.executeQuery();
                 if (resultSet.next()) {
                     preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(updateQuery);
-                    preparedStatement.setInt(1,request.getWritePermissions());
+                    preparedStatement.setInt(1, request.getWritePermissions());
                     preparedStatement.setString(2, request.getCodeDocID());
                     preparedStatement.setString(3, request.getCollaboratorID());
                     int result = preparedStatement.executeUpdate();
                     response.setStatus(Status.SUCCESS);
-                    if(result !=0)
+                    if (result != 0)
                         response.setStatus(Status.SUCCESS);
                     else
                         response.setStatus(Status.FAILED);
@@ -311,38 +303,36 @@ public class CollaborationService {
                 response.setStatus(Status.FAILED);
             }
 
-        }catch (SQLException throwables) {
+        } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
         return response;
     }
 
     /**
-     * Method to fetch users who are collaborator in a particular codeDoc
-     * @param request
-     * @return
+     * Function to fetch all the collaborators for a codedoc
      */
-    public static FetchCollaboratorResponse fetchCollaborators(FetchCollaboratorRequest request){
+    public static FetchCollaboratorResponse fetchCollaborators(FetchCollaboratorRequest request) {
 
         FetchCollaboratorResponse response = new FetchCollaboratorResponse();
 
         String fetchQuery = " SELECT " +
-                DatabaseConstants.USER_TABLE_NAME+ "." +DatabaseConstants.USER_TABLE_COL_FIRSTNAME + ", " +
-                DatabaseConstants.USER_TABLE_NAME+ "." +DatabaseConstants.USER_TABLE_COL_LASTNAME + ", " +
-                DatabaseConstants.USER_TABLE_NAME+ "." +DatabaseConstants.USER_TABLE_COL_EMAIL+ ", " +
-                DatabaseConstants.USER_TABLE_NAME+ "." +DatabaseConstants.USER_TABLE_COL_USERID+ ", " +
-                DatabaseConstants.CODEDOC_ACCESS_TABLE_NAME+ "." +DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_HAS_WRITE_PERMISSIONS +
+                DatabaseConstants.USER_TABLE_NAME + "." + DatabaseConstants.USER_TABLE_COL_FIRSTNAME + ", " +
+                DatabaseConstants.USER_TABLE_NAME + "." + DatabaseConstants.USER_TABLE_COL_LASTNAME + ", " +
+                DatabaseConstants.USER_TABLE_NAME + "." + DatabaseConstants.USER_TABLE_COL_EMAIL + ", " +
+                DatabaseConstants.USER_TABLE_NAME + "." + DatabaseConstants.USER_TABLE_COL_USERID + ", " +
+                DatabaseConstants.CODEDOC_ACCESS_TABLE_NAME + "." + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_HAS_WRITE_PERMISSIONS +
                 " FROM " +
-                "( " +DatabaseConstants.CODEDOC_ACCESS_TABLE_NAME +
-                " INNER JOIN " +DatabaseConstants.USER_TABLE_NAME+ " ON " +
-                DatabaseConstants.CODEDOC_ACCESS_TABLE_NAME + "." +DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_USER_ID+ "= " +
-                DatabaseConstants.USER_TABLE_NAME+ "." +DatabaseConstants.USER_TABLE_COL_USERID +
+                "( " + DatabaseConstants.CODEDOC_ACCESS_TABLE_NAME +
+                " INNER JOIN " + DatabaseConstants.USER_TABLE_NAME + " ON " +
+                DatabaseConstants.CODEDOC_ACCESS_TABLE_NAME + "." + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_USER_ID + "= " +
+                DatabaseConstants.USER_TABLE_NAME + "." + DatabaseConstants.USER_TABLE_COL_USERID +
                 " ) " +
                 " WHERE " +
-                DatabaseConstants.CODEDOC_ACCESS_TABLE_NAME+"." + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_CODEDOC_ID +"=?"+
+                DatabaseConstants.CODEDOC_ACCESS_TABLE_NAME + "." + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_CODEDOC_ID + "=?" +
                 " AND " +
-                DatabaseConstants.CODEDOC_ACCESS_TABLE_NAME+"." + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_ACCESS_RIGHT +"=?" +
-                " ORDER BY " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_CODEDOC_ID + " DESC "+
+                DatabaseConstants.CODEDOC_ACCESS_TABLE_NAME + "." + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_ACCESS_RIGHT + "!=?" +
+                " ORDER BY " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_CODEDOC_ID + " DESC " +
                 " LIMIT " + request.getOffset() +
                 " , " + request.getRowcount()
                 + ";";
@@ -351,8 +341,8 @@ public class CollaborationService {
 
         try {
             PreparedStatement preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(fetchQuery);
-            preparedStatement.setString(1,request.getCodeDocID());
-            preparedStatement.setString(2,"COLLABORATOR");
+            preparedStatement.setString(1, request.getCodeDocID());
+            preparedStatement.setString(2, "PENDING");
 
             ResultSet resultSet = preparedStatement.executeQuery();
             User user = null;

@@ -4,8 +4,10 @@ import utilities.RequestType;
 
 import java.io.Serializable;
 
+/**
+ * Request to server to accept an invitation for collaborating in a codedoc
+ */
 public class AcceptInviteRequest extends AppRequest implements Serializable {
-
 
     private String codeDocID;
     private String receiverID;

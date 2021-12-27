@@ -9,7 +9,6 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Paint;
 import mainClasses.editor.EditorConnection;
 import models.Peer;
-import org.fxmisc.richtext.Caret;
 import org.fxmisc.richtext.CaretNode;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.StyleClassedTextArea;
@@ -21,6 +20,8 @@ import requests.peerRequests.StreamCursorPositionRequest;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * This class will be used for creating the main code editing region. It extends StackPane, the bottom
@@ -211,16 +212,14 @@ public class CodeEditor extends StackPane {
             // Setting the start position of newly inserted text
             contentChangeRequest.setInsertedStart(plainTextChange.getPosition());
 
-            // Setting the old removed text
-            contentChangeRequest.setRemovedContent(plainTextChange.getRemoved());
+            // Setting the removed length
+            contentChangeRequest.setRemovedLength(plainTextChange.getRemoved().length());
 
             // Setting the end position of removed text
             contentChangeRequest.setRemovedEnd(plainTextChange.getRemovalEnd());
 
-            int count = 0;
             // Writing the request to all online users
             for (Peer peer : editorConnection.getConnectedPeers().values()) {
-                System.out.println("Writing to " + peer.getUser().getFirstName() + " " + count++);
                 peer.getOutputStream().writeObject(contentChangeRequest);
                 peer.getOutputStream().flush();
             }
@@ -437,7 +436,6 @@ public class CodeEditor extends StackPane {
         userCursors.remove(userId);
     }
 
-
     /**
      * This function moves the cursor for specific user on specific position
      *
@@ -480,7 +478,6 @@ public class CodeEditor extends StackPane {
         textArea.selectRange(start, end);
     }
 
-
     /**
      * Inserts content at start position
      */
@@ -491,8 +488,8 @@ public class CodeEditor extends StackPane {
     /**
      * Replaces content between start and end
      */
-    public void removeContent(int start, int end) {
-        textArea.deleteText(start, end);
+    public void removeContent(int end, int length) {
+        textArea.replaceText(end - length, end, "");
     }
 
     /**
@@ -532,7 +529,6 @@ public class CodeEditor extends StackPane {
         // Setting up the code editor
         textArea.setEditable(isEditable);
         myCursor.setVisible(!isEditable);
-
     }
 
     /**

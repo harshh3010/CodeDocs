@@ -2,17 +2,17 @@ package services;
 
 import mainClasses.CodeDocsServer;
 import utilities.DatabaseConstants;
-import utilities.Status;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
+/**
+ * This function cleans up the inconsistent data from the database
+ */
 public class DestroyResources {
 
     /**
-     * This method deletes all active connections of user in any codeDoc if any remains
-     * It is called only when connection of server is destroyed with main server
-     * @param userID
+     * Functions to remove all active editor allocations to a user
      */
     public static void destroyAllocations(String userID) {
 
@@ -37,9 +37,9 @@ public class DestroyResources {
         }
     }
 
+
     /**
-     * once server restarts due to some reasons .. some checks need to be performed to have databse in
-     * consistent state
+     * Function to clear all active editor allocations foe every user in database
      */
     public static void cleanDB() {
         String updateQuery = "UPDATE " + DatabaseConstants.CODEDOC_ACCESS_TABLE_NAME +

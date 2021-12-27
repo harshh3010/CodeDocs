@@ -6,17 +6,17 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Properties;
 
+/**
+ * This class defines functions for sending e-mails
+ */
 public class MailService {
 
     /**
-     * this method is used for sending email to specified email
-     * @param recipientEmail
-     * @param subject
-     * @param messageText
-     * @throws IOException
+     * Function to send an e-mail to specified userEmail
      */
     public static void sendEmail(String recipientEmail, String subject, String messageText) throws IOException {
 
+        // Read the email server details from files
         Properties properties = new Properties();
         FileReader fileReader = new FileReader("CodeDocs-Server/src/main/resources/configurations/mail.properties");
         properties.load(fileReader);

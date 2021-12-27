@@ -1,11 +1,13 @@
 package requests.appRequests;
 
-
 import models.CodeDoc;
 import utilities.RequestType;
 
 import java.io.Serializable;
 
+/**
+ * Request to create a new codedoc
+ */
 public class CreateCodeDocRequest extends AppRequest implements Serializable {
 
     private CodeDoc codeDoc;

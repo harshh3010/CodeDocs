@@ -11,22 +11,26 @@ import utilities.ExecuteResponse;
 import utilities.Status;
 
 import java.io.FileReader;
-import java.io.IOException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Properties;
 
+/**
+ * This class defines all the functions to handle client requests for compiling and running
+ * code in a codedoc
+ */
 public class CompileService {
 
-    public static String compileCommand[] = {
+    // Compilation commands for different languages
+    public static String[] compileCommand = {
             "javac ./Solution.java",
             "python -m compileall ./Solution.py",
             "gcc Solution.c -o Solution.exe",
             "g++ Solution.cpp -o Solution.exe"
     };
 
-    public static String runCommand[] = {
+    // Run commands for different languages
+    public static String[] runCommand = {
             "java Solution",
             "python Solution.pyc",
             "Solution.exe",
@@ -34,6 +38,9 @@ public class CompileService {
     };
 
 
+    /**
+     * Function to run code in a codedoc
+     */
     public static RunCodeDocResponse runCodeDoc(RunCodeDocRequest runCodeDocRequest) {
 
         RunCodeDocResponse runCodeDocResponse = new RunCodeDocResponse();
@@ -84,6 +91,9 @@ public class CompileService {
         return runCodeDocResponse;
     }
 
+    /**
+     * Function to compile the code in a codedoc
+     */
     public static CompileCodeDocResponse compileCodeDoc(CompileCodeDocRequest request) {
 
         CompileCodeDocResponse response = new CompileCodeDocResponse();

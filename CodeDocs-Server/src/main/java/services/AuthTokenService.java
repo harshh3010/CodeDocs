@@ -11,8 +11,14 @@ import java.security.Key;
 import java.util.Base64;
 import java.util.Properties;
 
+/**
+ * This class defines functions for managing auth tokens
+ */
 public class AuthTokenService {
 
+    /**
+     * Function to get secret auth key from files
+     */
     private static Key getSecretKey() throws IOException {
 
         Properties properties = new Properties();
@@ -25,6 +31,9 @@ public class AuthTokenService {
         return Keys.hmacShaKeyFor(secret);
     }
 
+    /**
+     * Function to generate a new auth token for given user id
+     */
     public static String generateAuthToken(String userId) throws IOException {
         return Jwts.builder()
                 .claim("id", userId)
@@ -32,6 +41,9 @@ public class AuthTokenService {
                 .compact();
     }
 
+    /**
+     * Function to decode the auth token and return the user id corresponding to it
+     */
     public static String decodeAuthToken(String token) throws IOException {
         Jws<Claims> result = Jwts.parser()
                 .setSigningKey(getSecretKey())

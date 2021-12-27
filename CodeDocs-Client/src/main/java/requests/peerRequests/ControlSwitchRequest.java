@@ -5,6 +5,9 @@ import utilities.RequestType;
 
 import java.io.Serializable;
 
+/**
+ * Request to inform peers about control switch in editor
+ */
 public class ControlSwitchRequest extends AppRequest implements Serializable {
 
     private String userId;

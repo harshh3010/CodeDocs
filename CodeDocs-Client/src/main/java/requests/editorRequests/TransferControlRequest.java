@@ -5,6 +5,9 @@ import utilities.RequestType;
 
 import java.io.Serializable;
 
+/**
+ * Request to transfer the control of code editor
+ */
 public class TransferControlRequest extends AppRequest implements Serializable {
 
     private String codeDocId;

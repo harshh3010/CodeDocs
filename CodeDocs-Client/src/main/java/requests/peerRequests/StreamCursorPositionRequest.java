@@ -5,6 +5,9 @@ import utilities.RequestType;
 
 import java.io.Serializable;
 
+/**
+ * Request to send cursor position to other peers
+ */
 public class StreamCursorPositionRequest extends AppRequest implements Serializable {
 
     private String userId;

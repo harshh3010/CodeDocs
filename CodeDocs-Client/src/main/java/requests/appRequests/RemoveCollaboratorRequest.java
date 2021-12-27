@@ -4,6 +4,9 @@ import utilities.RequestType;
 
 import java.io.Serializable;
 
+/**
+ * Request to remove a collaborator from a codedoc
+ */
 public class RemoveCollaboratorRequest extends AppRequest implements Serializable {
 
     private String ownerID;

@@ -4,6 +4,9 @@ import utilities.RequestType;
 
 import java.io.Serializable;
 
+/**
+ * Request to reject an invitation
+ */
 public class RejectInviteRequest extends AppRequest implements Serializable {
 
 

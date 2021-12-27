@@ -5,12 +5,15 @@ import utilities.RequestType;
 
 import java.io.Serializable;
 
+/**
+ * Request to stream content changes to other peers
+ */
 public class StreamContentChangeRequest extends AppRequest implements Serializable {
 
     private int insertedStart;
     private String insertedContent;
     private int removedEnd;
-    private String removedContent;
+    private int removedLength;
 
 
     public int getRemovedEnd() {
@@ -21,12 +24,12 @@ public class StreamContentChangeRequest extends AppRequest implements Serializab
         this.removedEnd = removedEnd;
     }
 
-    public String getRemovedContent() {
-        return removedContent;
+    public int getRemovedLength() {
+        return removedLength;
     }
 
-    public void setRemovedContent(String removedContent) {
-        this.removedContent = removedContent;
+    public void setRemovedLength(int removedLength) {
+        this.removedLength = removedLength;
     }
 
     public int getInsertedStart() {

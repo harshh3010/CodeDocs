@@ -4,13 +4,15 @@ import utilities.RequestType;
 
 import java.io.Serializable;
 
+/**
+ * Request to modify the rights of a collaborator in our codedoc
+ */
 public class ChangeCollaboratorRightsRequest extends AppRequest implements Serializable {
 
     private String ownerID;
     private String collaboratorID;
     private String codeDocID;
     private int writePermissions;
-
 
     public String getOwnerID() {
         return ownerID;

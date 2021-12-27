@@ -4,6 +4,9 @@ import utilities.RequestType;
 
 import java.io.Serializable;
 
+/**
+ * Request to fetch current user's info using login token
+ */
 public class GetMeRequest extends AppRequest implements Serializable {
 
     private String token;

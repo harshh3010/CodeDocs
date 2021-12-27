@@ -1,5 +1,8 @@
 package utilities;
 
+/**
+ * Response for login request
+ */
 public enum LoginStatus {
     SUCCESS,
     WRONG_CREDENTIALS,

@@ -7,23 +7,28 @@ import response.appResponse.LoginResponse;
 import services.DestroyResources;
 import services.clientServices.*;
 import utilities.RequestType;
+import utilities.Status;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
+/**
+ * This class is used for starting a new thread when a new client connects with the server
+ */
 public class ClientConnection extends Thread {
 
-    private final String ipAddress;
     private final Socket client;
-    private final ObjectInputStream inputStream;
-    private final ObjectOutputStream outputStream;
-    public String clientUserID = "";
+    private final ObjectInputStream inputStream; // For reading client requests
+    private final ObjectOutputStream outputStream; // For writing responses to client
+
+    public String clientUserID = ""; // User id of connected client
 
     public ClientConnection(Socket client) throws IOException {
 
-        ipAddress = client.getInetAddress().getCanonicalHostName();
+        // Ip address of connected client
+        String ipAddress = client.getInetAddress().getCanonicalHostName();
         System.out.println("Client connected " + ipAddress);
 
         this.client = client;
@@ -33,12 +38,15 @@ public class ClientConnection extends Thread {
 
     @Override
     public void run() {
-        //all requests from a client are handled here
+
+        // Handle the requests from the client
         while (true) {
             try {
-                //reading request made by client and performing action accordingly
+
+                // Reading the request made by client
                 AppRequest request = (AppRequest) inputStream.readObject();
 
+                // Performing different actions depending on the type of request received
                 if (request.getRequestType() == RequestType.SIGNUP_REQUEST) {
                     System.out.println("Client wants to signup!");
                     outputStream.writeObject(AuthenticationService.registerUser((SignupRequest) request));
@@ -56,7 +64,9 @@ public class ClientConnection extends Thread {
                 } else if (request.getRequestType() == RequestType.GET_ME_REQUEST) {
                     System.out.println("Client wants to fetch his info!");
                     GetMeResponse response = UserService.getUserData((GetMeRequest) request);
-                    clientUserID = response.getUser().getUserID();
+                    if (response.getStatus() == Status.SUCCESS) {
+                        clientUserID = response.getUser().getUserID();
+                    }
                     outputStream.writeObject(response);
                     outputStream.flush();
                 } else if (request.getRequestType() == RequestType.CREATE_CODEDOC_REQUEST) {
@@ -133,7 +143,6 @@ public class ClientConnection extends Thread {
 
             } catch (IOException | ClassNotFoundException e) {
                 if (!clientUserID.isEmpty()) {
-
                     // Mark the client as offline
                     DestroyResources.destroyAllocations(clientUserID);
                 }

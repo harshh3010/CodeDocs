@@ -6,6 +6,9 @@ import utilities.RequestType;
 
 import java.io.Serializable;
 
+/**
+ * Request to send connection info to other peers
+ */
 public class SendPeerConnectionRequest extends AppRequest implements Serializable {
 
     private int port;

@@ -4,6 +4,9 @@ import utilities.RequestType;
 
 import java.io.Serializable;
 
+/**
+ * Request to log-in the application
+ */
 public class LoginRequest extends AppRequest implements Serializable {
     private String email;
     private String password;

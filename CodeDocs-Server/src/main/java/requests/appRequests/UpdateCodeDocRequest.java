@@ -4,6 +4,9 @@ import utilities.RequestType;
 
 import java.io.Serializable;
 
+/**
+ * Request to update a codedoc
+ */
 public class UpdateCodeDocRequest extends AppRequest implements Serializable {
 
     private String codeDocID;
@@ -48,6 +51,7 @@ public class UpdateCodeDocRequest extends AppRequest implements Serializable {
 
     @Override
     public RequestType getRequestType() {
+
         return RequestType.UPDATE_CODEDOC_REQUEST;
     }
 }

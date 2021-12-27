@@ -5,16 +5,19 @@ import mainClasses.editor.EditorConnection;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
 
+/**
+ * AudioReceiver starts an audio receiving server for the current user on a separate thread,
+ * other users can connect to this server to transmit audio
+ */
 public class AudioReceiver extends Thread{
 
-    private volatile boolean isActive = true;
+    private volatile boolean isActive = true; // Is server still active
 
-    private final EditorConnection editorConnection;
+    private final EditorConnection editorConnection; // Reference to the current editor connection
 
-    private final ServerSocket serverSocket;
-    private final int port;
+    private final ServerSocket serverSocket; // Audio server socket
+    private final int port; // Audio server port
 
     public AudioReceiver(EditorConnection editorConnection) throws IOException {
         this.editorConnection = editorConnection;
@@ -30,6 +33,7 @@ public class AudioReceiver extends Thread{
 
         System.out.println("Audio receiver started!");
 
+        // Receive connections from other users
         while(serverSocket.isBound() && !serverSocket.isClosed()) {
             try {
                 Socket socket = serverSocket.accept();

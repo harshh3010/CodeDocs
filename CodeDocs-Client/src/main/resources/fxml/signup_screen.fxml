@@ -26,7 +26,7 @@
                 <String fx:value="roundedBorder" />
             </styleClass>
         </Pane>
-        <Text fx:id="paraText" fill="WHITE" layoutX="143.0" layoutY="269.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="paragraph" text="Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.&#10;" wrappingWidth="391.080078125">
+        <Text fx:id="paraText" fill="WHITE" layoutX="143.0" layoutY="269.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="paragraph" text="Getting stuck on coding problems is quite common among coding geeks. No doubt struggling for hours solves the problem, but discussing the same with peers can help grow and save time. CodeDocs is your solution. It enables you to collaborate with your peers in real-time and work on a particular problem. So what are you waiting for? Make an account today and Code, Collaborate, Comprehend on CodeDocs.&#10;" wrappingWidth="391.080078125">
             <font>
                 <Font size="16.0" />
             </font>

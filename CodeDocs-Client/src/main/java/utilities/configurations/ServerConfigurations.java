@@ -4,6 +4,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Properties;
 
+/**
+ * This class is responsible for reading the server info from config file
+ */
 public class ServerConfigurations {
 
     private final int port;

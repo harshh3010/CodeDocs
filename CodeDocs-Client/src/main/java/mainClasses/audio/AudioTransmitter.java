@@ -6,10 +6,15 @@ import models.Peer;
 import javax.sound.sampled.*;
 import java.io.IOException;
 
+/**
+ * AudioTransmitter runs on a separate thread, it reads the audio as bytes from microphone
+ * and writes it to audio receiving servers of all the connected users
+ */
 public class AudioTransmitter extends Thread {
 
-    private volatile boolean isActive = true;
-    private final EditorConnection editorConnection;
+    private volatile boolean isActive = true; // Is transmitter still active
+
+    private final EditorConnection editorConnection; // Reference to current editor connection
 
     public AudioTransmitter(EditorConnection editorConnection) {
         this.editorConnection = editorConnection;
@@ -32,6 +37,7 @@ public class AudioTransmitter extends Thread {
             byte[] data = new byte[microphone.getBufferSize() / 5];
             microphone.start();
 
+            // While transmitter is active, write bytes from microphone to all the peers
             while (isActive) {
                 numBytesRead = microphone.read(data, 0, CHUNK_SIZE);
                 if (!editorConnection.isMute()) {

@@ -6,6 +6,9 @@ import utilities.RequestType;
 
 import java.io.Serializable;
 
+/**
+ * Request to run the code in a codedoc
+ */
 public class RunCodeDocRequest extends AppRequest implements Serializable {
 
 

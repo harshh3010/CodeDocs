@@ -3,6 +3,9 @@ package models;
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * Used for representing notes taken by the user
+ */
 public class Screenshot implements Serializable {
 
     private String title;

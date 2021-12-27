@@ -1,6 +1,5 @@
 package services.clientServices;
 
-import mainClasses.ClientConnection;
 import mainClasses.CodeDocsServer;
 import models.User;
 import requests.appRequests.GetMeRequest;
@@ -14,12 +13,13 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+/**
+ * This class defines all functions for handling client requests for managing users
+ */
 public class UserService {
 
     /**
-     * Method to fetch details of a user from database
-     * @param request
-     * @return
+     * Function to fetch a user's data
      */
     public static GetMeResponse getUserData(GetMeRequest request) {
 

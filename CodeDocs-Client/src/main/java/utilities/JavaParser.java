@@ -3,6 +3,9 @@ package utilities;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+/**
+ * Contains syntax info for java code
+ */
 public class JavaParser {
 
     private ArrayList<String> reservedWords = new ArrayList<>(Arrays.asList("abstract", "assert", "boolean", "break", "byte", "case",
@@ -14,10 +17,10 @@ public class JavaParser {
             "public", "return", "short", "static", "strictfp", "super",
             "switch", "synchronized", "this", "throw", "throws", "transient",
             "true", "try", "void", "volatile", "while"));
-    private ArrayList<String> symbol = new ArrayList<>(Arrays.asList(";",":",","));
-    private ArrayList<String> parenthesis = new ArrayList<>(Arrays.asList("(",")"));
-    private ArrayList<String> brace = new ArrayList<>(Arrays.asList("{","}"));
-    private ArrayList<String> bracket = new ArrayList<>(Arrays.asList("[","]"));
+    private ArrayList<String> symbol = new ArrayList<>(Arrays.asList(";", ":", ","));
+    private ArrayList<String> parenthesis = new ArrayList<>(Arrays.asList("(", ")"));
+    private ArrayList<String> brace = new ArrayList<>(Arrays.asList("{", "}"));
+    private ArrayList<String> bracket = new ArrayList<>(Arrays.asList("[", "]"));
 
     private static JavaParser instance = null;
 
@@ -31,6 +34,7 @@ public class JavaParser {
             instance = new JavaParser();
         return instance;
     }
+
     public ArrayList<String> getReservedWords() {
         return reservedWords;
     }

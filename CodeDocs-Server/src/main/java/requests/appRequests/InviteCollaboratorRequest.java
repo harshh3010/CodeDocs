@@ -4,12 +4,14 @@ import utilities.RequestType;
 
 import java.io.Serializable;
 
+/**
+ * Request to invite a user to collaborate to our codedoc
+ */
 public class InviteCollaboratorRequest extends AppRequest implements Serializable {
 
     private String senderID;
     private String receiverEmail;
     private String codeDocID;
-    // 0 - no write permissions ;  1 - has write permissions
     private int writePermissions;
 
 

@@ -4,6 +4,9 @@ import utilities.RequestType;
 
 import java.io.Serializable;
 
+/**
+ * Request to add a specified user to access the codedoc
+ */
 public class AddAccessorToCodeDocRequest extends AppRequest implements Serializable {
 
     private String ownerID;

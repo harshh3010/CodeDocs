@@ -6,6 +6,9 @@ import utilities.RequestType;
 
 import java.io.Serializable;
 
+/**
+ * Request to send our user info to other peers
+ */
 public class SendPeerInfoRequest extends AppRequest implements Serializable {
 
     private User user;

@@ -5,6 +5,9 @@ import utilities.RequestType;
 
 import java.io.Serializable;
 
+/**
+ * Request to send message to other peers
+ */
 public class SendMessageRequest extends AppRequest implements Serializable {
 
     private boolean isPrivate;

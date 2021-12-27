@@ -15,7 +15,9 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="720" prefWidth="1280" styleClass="background" stylesheets="@../css/style.css" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.EditorController">
+<AnchorPane prefHeight="720" prefWidth="1280" styleClass="background" stylesheets="@../css/style.css"
+            xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="controllers.EditorController">
 
     <children>
         <AnchorPane styleClass="darkOverlay">
@@ -30,28 +32,34 @@
                                         <menus>
                                             <Menu mnemonicParsing="false" text="File">
                                                 <items>
-                                                    <MenuItem mnemonicParsing="false" onAction="#saveContent" text="Save" />
-                                                    <MenuItem mnemonicParsing="false" text="Download" />
-                                                    <MenuItem mnemonicParsing="false" text="Appearance" />
-                                                    <MenuItem mnemonicParsing="false" text="Search" />
-                                                    <MenuItem mnemonicParsing="false" onAction="#exitEditor" text="Exit" />
+                                                    <MenuItem mnemonicParsing="false" onAction="#saveContent"
+                                                              text="Save"/>
+                                                    <MenuItem mnemonicParsing="false" text="Download"/>
+                                                    <MenuItem mnemonicParsing="false" text="Appearance"/>
+                                                    <MenuItem mnemonicParsing="false" text="Search"/>
+                                                    <MenuItem mnemonicParsing="false" onAction="#exitEditor"
+                                                              text="Exit"/>
                                                 </items>
                                             </Menu>
                                             <Menu mnemonicParsing="false" text="Preferences">
                                                 <items>
-                                                    <MenuItem mnemonicParsing="false" onAction="#onFontSizeClicked" text="Font Size" />
+                                                    <MenuItem mnemonicParsing="false" onAction="#onFontSizeClicked"
+                                                              text="Font Size"/>
                                                 </items>
                                             </Menu>
                                         </menus>
                                     </MenuBar>
-                                    <HBox layoutY="5.0" prefHeight="40.0" spacing="30.0" AnchorPane.rightAnchor="10" AnchorPane.topAnchor="7">
+                                    <HBox layoutY="5.0" prefHeight="40.0" spacing="30.0" AnchorPane.rightAnchor="10"
+                                          AnchorPane.topAnchor="7">
                                         <children>
 
-                                            <Button mnemonicParsing="false" onAction="#onChatClicked" prefHeight="30.0" prefWidth="53.0" styleClass="button1" text="">
+                                            <Button mnemonicParsing="false" onAction="#onChatClicked" prefHeight="30.0"
+                                                    prefWidth="53.0" styleClass="button1" text="">
                                                 <graphic>
-                                                    <ImageView fitHeight="28.0" fitWidth="42.0" pickOnBounds="true" preserveRatio="true">
+                                                    <ImageView fitHeight="28.0" fitWidth="42.0" pickOnBounds="true"
+                                                               preserveRatio="true">
                                                         <image>
-                                                            <Image url="@../images/chat.png" />
+                                                            <Image url="@../images/chat.png"/>
                                                         </image>
                                                     </ImageView>
 
@@ -59,53 +67,63 @@
                                             </Button>
 
 
-                                            <Button fx:id="muteButton" mnemonicParsing="false" onAction="#onMuteClicked" prefHeight="30.0" prefWidth="53.0" styleClass="button1" text="">
+                                            <Button fx:id="muteButton" mnemonicParsing="false" onAction="#onMuteClicked"
+                                                    prefHeight="30.0" prefWidth="53.0" styleClass="button1" text="">
                                                 <graphic>
-                                                    <ImageView fx:id="muteImageView" fitHeight="28.0" fitWidth="42.0" pickOnBounds="true" preserveRatio="true">
+                                                    <ImageView fx:id="muteImageView" fitHeight="28.0" fitWidth="42.0"
+                                                               pickOnBounds="true" preserveRatio="true">
                                                         <image>
-                                                            <Image url="@../images/mute.png" />
+                                                            <Image url="@../images/unmute.png"/>
                                                         </image>
                                                     </ImageView>
 
                                                 </graphic>
                                             </Button>
 
-                                            <Button mnemonicParsing="false" onAction="#onScreenshotClicked" prefHeight="30.0" prefWidth="53.0" styleClass="button1" text="">
+                                            <Button mnemonicParsing="false" onAction="#onScreenshotClicked"
+                                                    prefHeight="30.0" prefWidth="53.0" styleClass="button1" text="">
                                                 <graphic>
-                                                    <ImageView fitHeight="28.0" fitWidth="42.0" pickOnBounds="true" preserveRatio="true">
+                                                    <ImageView fitHeight="28.0" fitWidth="42.0" pickOnBounds="true"
+                                                               preserveRatio="true">
                                                         <image>
-                                                            <Image url="@../images/notes.png" />
+                                                            <Image url="@../images/notes.png"/>
                                                         </image>
                                                     </ImageView>
 
                                                 </graphic>
                                             </Button>
 
-                                            <Button mnemonicParsing="false" onAction="#onActiveUserClicked" prefHeight="30.0" prefWidth="53.0" styleClass="button1" text="">
+                                            <Button mnemonicParsing="false" onAction="#onActiveUserClicked"
+                                                    prefHeight="30.0" prefWidth="53.0" styleClass="button1" text="">
                                                 <graphic>
-                                                    <ImageView fitHeight="28.0" fitWidth="42.0" pickOnBounds="true" preserveRatio="true">
+                                                    <ImageView fitHeight="28.0" fitWidth="42.0" pickOnBounds="true"
+                                                               preserveRatio="true">
                                                         <image>
-                                                            <Image url="@../images/users.png" />
+                                                            <Image url="@../images/users.png"/>
                                                         </image>
                                                     </ImageView>
 
                                                 </graphic>
                                             </Button>
-                                            <Button mnemonicParsing="false" onAction="#onCompileClicked" prefHeight="30.0" prefWidth="53.0" styleClass="button1" text="">
+                                            <Button mnemonicParsing="false" onAction="#onCompileClicked"
+                                                    prefHeight="30.0" prefWidth="53.0" styleClass="button1" text="">
                                                 <graphic>
-                                                    <ImageView fitHeight="28.0" fitWidth="42.0" pickOnBounds="true" preserveRatio="true">
+                                                    <ImageView fitHeight="28.0" fitWidth="42.0" pickOnBounds="true"
+                                                               preserveRatio="true">
                                                         <image>
-                                                            <Image url="@../images/compile.png" />
+                                                            <Image url="@../images/compile.png"/>
                                                         </image>
                                                     </ImageView>
 
                                                 </graphic>
                                             </Button>
-                                            <Button mnemonicParsing="false" onAction="#onRunClicked" prefHeight="32.0" prefWidth="53.0" styleClass="button1" text="">
+                                            <Button mnemonicParsing="false" onAction="#onRunClicked" prefHeight="32.0"
+                                                    prefWidth="53.0" styleClass="button1" text="">
                                                 <graphic>
-                                                    <ImageView fitHeight="28.0" fitWidth="42.0" pickOnBounds="true" preserveRatio="true">
+                                                    <ImageView fitHeight="28.0" fitWidth="42.0" pickOnBounds="true"
+                                                               preserveRatio="true">
                                                         <image>
-                                                            <Image url="@../images/run.png" />
+                                                            <Image url="@../images/run.png"/>
                                                         </image>
                                                     </ImageView>
 
@@ -120,9 +138,12 @@
                                     <top>
                                         <AnchorPane prefHeight="20.0" prefWidth="1280.0" BorderPane.alignment="CENTER">
                                             <children>
-                                                <HBox alignment="CENTER_RIGHT" layoutX="1015.0" layoutY="-4.0" prefHeight="100.0" prefWidth="232.0" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                <HBox alignment="CENTER_RIGHT" layoutX="1015.0" layoutY="-4.0"
+                                                      prefHeight="100.0" prefWidth="232.0" spacing="20.0"
+                                                      AnchorPane.bottomAnchor="0.0" AnchorPane.rightAnchor="0.0"
+                                                      AnchorPane.topAnchor="0.0">
                                                     <padding>
-                                                        <Insets right="20.0" />
+                                                        <Insets right="20.0"/>
                                                     </padding>
                                                 </HBox>
 
@@ -130,16 +151,20 @@
                                         </AnchorPane>
                                     </top>
                                     <bottom>
-                                        <HBox alignment="BOTTOM_CENTER" nodeOrientation="LEFT_TO_RIGHT" prefHeight="140.0" prefWidth="200.0" spacing="50.0" BorderPane.alignment="CENTER">
+                                        <HBox alignment="BOTTOM_CENTER" nodeOrientation="LEFT_TO_RIGHT"
+                                              prefHeight="140.0" prefWidth="200.0" spacing="50.0"
+                                              BorderPane.alignment="CENTER">
                                             <children>
                                                 <TitledPane prefHeight="200.0" prefWidth="500.0" text="Input">
                                                     <content>
-                                                        <TextArea fx:id="inputTextArea" prefHeight="200.0" prefWidth="200.0" wrapText="true" />
+                                                        <TextArea fx:id="inputTextArea" prefHeight="200.0"
+                                                                  prefWidth="200.0" wrapText="true"/>
                                                     </content>
                                                 </TitledPane>
                                                 <TitledPane prefHeight="200.0" prefWidth="500.0" text="Output">
                                                     <content>
-                                                        <TextArea fx:id="outputTextArea" editable="false" prefHeight="200.0" prefWidth="200.0" wrapText="true" />
+                                                        <TextArea fx:id="outputTextArea" editable="false"
+                                                                  prefHeight="200.0" prefWidth="200.0" wrapText="true"/>
                                                     </content>
                                                 </TitledPane>
 
@@ -149,8 +174,10 @@
                                 </BorderPane>
                             </children>
                         </VBox>
-                        <JFXDrawer fx:id="activeUserDrawer" defaultDrawerSize="400.0" layoutY="-6.0" prefHeight="727.3" prefWidth="400.0" />
-                        <JFXDrawer fx:id="chatDrawer" defaultDrawerSize="400.0" layoutY="-6.0" prefHeight="727.3" prefWidth="400.0" />
+                        <JFXDrawer fx:id="activeUserDrawer" defaultDrawerSize="400.0" layoutY="-6.0" prefHeight="727.3"
+                                   prefWidth="400.0"/>
+                        <JFXDrawer fx:id="chatDrawer" defaultDrawerSize="400.0" layoutY="-6.0" prefHeight="727.3"
+                                   prefWidth="400.0"/>
                     </children>
                 </AnchorPane>
             </children>

@@ -5,6 +5,9 @@ import utilities.RequestType;
 
 import java.io.Serializable;
 
+/**
+ * Request to stream content selection to other peers
+ */
 public class StreamContentSelectionRequest extends AppRequest implements Serializable {
 
     private int start;

@@ -74,18 +74,20 @@ public class EditorConnection {
         hasWritePermissions = response.isHasWritePermissions();
         userInControl = response.getUserInControl();
 
-        // Connect to the broadcasting server of each active user
+        // Connect to the editor and audio server of each active user
         for (Peer peer : activePeers) {
             try {
-                // Connecting to the user's broadcast server
+                // Connecting to the user's editor server
                 Socket socket = new Socket(peer.getIpAddress(), peer.getPort());
 
                 // Storing the IO streams for later use
                 peer.setOutputStream(new ObjectOutputStream(socket.getOutputStream()));
                 peer.setInputStream(new ObjectInputStream(socket.getInputStream()));
 
+                // Connecting to the user's audio server
                 Socket audioSocket = new Socket(peer.getIpAddress(), peer.getAudioPort());
 
+                // Storing the IO streams for later use
                 peer.setAudioOutputStream(new DataOutputStream(audioSocket.getOutputStream()));
                 peer.setAudioInputStream(new DataInputStream(audioSocket.getInputStream()));
                 peer.setMuted(false);
@@ -105,9 +107,11 @@ public class EditorConnection {
                 request.setAudioPort(audioReceiver.getPort());
                 request.setHasWritePermissions(hasWritePermissions);
 
+                // Writing current user's server info to other user
                 peer.getOutputStream().writeObject(request);
                 peer.getOutputStream().flush();
 
+                // Writing current user's info to other use
                 SendPeerInfoRequest infoRequest = new SendPeerInfoRequest();
                 infoRequest.setUser(user);
                 peer.getOutputStream().writeObject(infoRequest);
@@ -128,8 +132,10 @@ public class EditorConnection {
      */
     public void closeConnection() throws IOException {
 
+        // Sending destroy connection request to main server
         EditorService.destroyConnection(codeDoc.getCodeDocId());
 
+        // Disconnecting from every connected user
         for(Peer peer : connectedPeers.values()) {
             peer.getInputStream().close();
             peer.getOutputStream().close();
@@ -139,8 +145,11 @@ public class EditorConnection {
 
         connectedPeers.clear();
 
+        // Stopping the audio receiver and transmitter
         audioTransmitter.stopTransmission();
         audioReceiver.stopServer();
+
+        // Stopping the editor server
         server.stopServer();
     }
 
@@ -188,13 +197,11 @@ public class EditorConnection {
                 e.printStackTrace();
             }
 
-            Platform.runLater(new Runnable() {
-                @Override
-                public void run() {
-                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
-                    alert.setContentText("You are in control of the CodeEditor! :)");
-                    alert.show();
-                }
+            // Displaying an alert if current user has the control
+            Platform.runLater(() -> {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setContentText("You are in control of the CodeEditor! :)");
+                alert.show();
             });
 
             getCodeEditor().setEditable(true);

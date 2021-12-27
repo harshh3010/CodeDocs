@@ -2,8 +2,14 @@ package utilities;
 
 import java.util.ArrayList;
 
+/**
+ * This class tokenizes the code to allow syntax highlighting
+ */
 public class CodeTokenizer {
 
+    /**
+     * Token to apply styles as specified in css
+     */
     public static class Token {
         private final int startIndex;
         private final int endIndex;
@@ -29,13 +35,17 @@ public class CodeTokenizer {
     }
 
     private final String line;
-    private final CodeHighlightingTrie trie;
+    private final CodeHighlightingTrie trie; // Trie for getting styles of tokens
 
     public CodeTokenizer(String line, CodeHighlightingTrie trie) {
         this.line = line;
         this.trie = trie;
     }
 
+    /**
+     * Function to perform code tokenization and return styles corresponding to
+     * each token
+     */
     public ArrayList<Token> getStyles() {
 
         ArrayList<Token> tokenList = new ArrayList<>();

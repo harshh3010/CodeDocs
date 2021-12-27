@@ -6,6 +6,9 @@ import utilities.RequestType;
 
 import java.io.Serializable;
 
+/**
+ * Request to save the contents of a codedoc
+ */
 public class SaveCodeDocRequest extends AppRequest implements Serializable {
 
     private String userId;

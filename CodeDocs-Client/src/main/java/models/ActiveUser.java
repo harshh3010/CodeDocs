@@ -1,5 +1,8 @@
 package models;
 
+/**
+ * ActiveUser represents online users editing the same CodeDoc instance
+ */
 public class ActiveUser {
 
     private String userId;

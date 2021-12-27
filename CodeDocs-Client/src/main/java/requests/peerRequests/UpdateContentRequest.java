@@ -5,6 +5,9 @@ import utilities.RequestType;
 
 import java.io.Serializable;
 
+/**
+ * Request to send updated contents to user asking for sync
+ */
 public class UpdateContentRequest extends AppRequest implements Serializable {
 
     private String content;

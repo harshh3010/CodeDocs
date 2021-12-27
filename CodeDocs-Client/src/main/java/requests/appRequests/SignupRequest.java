@@ -5,6 +5,9 @@ import utilities.RequestType;
 
 import java.io.Serializable;
 
+/**
+ * Request to create a new codedoc account
+ */
 public class SignupRequest extends AppRequest implements Serializable {
 
     private User user;

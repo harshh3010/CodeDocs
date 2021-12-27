@@ -5,8 +5,10 @@ import utilities.RequestType;
 
 import java.io.Serializable;
 
+/**
+ * Request to destroy editor connection
+ */
 public class EditorCloseRequest extends AppRequest implements Serializable {
-
 
     private String userId;
     private String codeDocId;

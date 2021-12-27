@@ -1,5 +1,8 @@
 package utilities;
 
+/**
+ * Different app screens to display on app stage
+ */
 public class AppScreen {
     public static String loginScreen = "login_screen.fxml";
     public static String signupScreen = "signup_screen.fxml";

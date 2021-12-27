@@ -6,13 +6,19 @@ import javax.sound.sampled.*;
 import java.io.*;
 import java.net.Socket;
 
+/**
+ * AudioReceiverConnection handles the audio received from a user on a separate thread,
+ * audio is received as bytes from a DataInputStream and these bytes are written to speakers
+ * to generate output
+ */
 public class AudioReceiverConnection extends Thread {
 
-    private volatile boolean isActive = true;
+    private volatile boolean isActive = true; // Is the connection still active
+
     private final Socket connection;
     private final DataInputStream inputStream;
     private final DataOutputStream outputStream;
-    private final EditorConnection editorConnection;
+    private final EditorConnection editorConnection; // Reference to current editor connection
 
     public AudioReceiverConnection(Socket connection, EditorConnection editorConnection) throws IOException {
         this.editorConnection = editorConnection;
@@ -39,6 +45,7 @@ public class AudioReceiverConnection extends Thread {
             byte[] data = new byte[CHUNK_SIZE];
             int numBytesRead;
 
+            // Read data from input stream and write to the speakers
             try {
                 while (isActive) {
                     numBytesRead = inputStream.read(data, 0, CHUNK_SIZE);

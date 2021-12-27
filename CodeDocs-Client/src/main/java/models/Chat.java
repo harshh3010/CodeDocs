@@ -3,6 +3,9 @@ package models;
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * Chat represents each message in chat tab
+ */
 public class Chat implements Serializable {
 
     private String userID;

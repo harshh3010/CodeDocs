@@ -22,6 +22,9 @@ import java.util.TimeZone;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+/**
+ * This class contains the functionalities for taking notes in code editor
+ */
 public class ScreenshotService {
 
     private static String getDateTime() {
@@ -30,6 +33,11 @@ public class ScreenshotService {
         return df.format(new Date());
     }
 
+    /**
+     * Function to capture a screenshot of code editor
+     *
+     * @param codeEditor
+     */
     public static Status takeScreenshot(CodeEditor codeEditor) {
 
         Dialog<Pair<String, String>> dialog = new Dialog<>();
@@ -88,6 +96,13 @@ public class ScreenshotService {
         return saveScreenshotNotes(title[0], notes[0], codeEditor);
     }
 
+    /**
+     * Function to save the notes in file system
+     *
+     * @param title
+     * @param notes
+     * @param codeEditor
+     */
     private static Status saveScreenshotNotes(String title, String notes, CodeEditor codeEditor) {
 
         String fileName = title + "-" + UUID.randomUUID().toString();

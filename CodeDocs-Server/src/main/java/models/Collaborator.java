@@ -2,6 +2,9 @@ package models;
 
 import java.io.Serializable;
 
+/**
+ * Collaborator represents users having access to specific codedoc
+ */
 public class Collaborator implements Serializable {
 
     private User user;

@@ -1,13 +1,9 @@
 package services;
 
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.util.Pair;
 import mainClasses.CodeDocsClient;
 import models.CodeDoc;
@@ -27,15 +23,28 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.Optional;
-import java.util.function.Consumer;
 
+/**
+ * This class contains all the functions that will be used for managing codedocs
+ * in the application
+ */
 public class CodeDocsService {
 
+    // IO streams for sending requests to server and reading responses from the server
     private static final ObjectInputStream inputStream = CodeDocsClient.inputStream;
     private static final ObjectOutputStream outputStream = CodeDocsClient.outputStream;
 
+    /**
+     * Function to fetch codedocs from the server
+     *
+     * @param requestType the type of codedoc list to be fetched
+     * @param codeDocId   id in case a specific codedoc is to be fetched
+     * @param rowCount    for pagination
+     * @param offset      for pagination
+     */
     public static FetchCodeDocResponse fetchCodeDocs(CodeDocRequestType requestType, String codeDocId, int rowCount, int offset) throws IOException, ClassNotFoundException {
 
+        // Generating a request to send to server
         FetchCodeDocRequest fetchCodeDocRequest = new FetchCodeDocRequest();
         fetchCodeDocRequest.setCodeDocRequestType(requestType);
         fetchCodeDocRequest.setUserID(UserApi.getInstance().getId());
@@ -43,33 +52,53 @@ public class CodeDocsService {
         fetchCodeDocRequest.setOffset(offset);
         fetchCodeDocRequest.setCodeDocID(codeDocId);
 
+        // Sending a request to the server
         outputStream.writeObject(fetchCodeDocRequest);
         outputStream.flush();
 
+        // Returning the response from the server
         return (FetchCodeDocResponse) inputStream.readObject();
     }
 
+    /**
+     * Function to delete a specified codedoc
+     *
+     * @param codeDocId id of the codedoc
+     */
     public static DeleteCodeDocResponse deleteCodeDoc(String codeDocId) throws IOException, ClassNotFoundException {
 
+        // Showing confirmation dialog to the user
         Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION);
         confirmationAlert.setContentText("Are you sure?");
         Optional<ButtonType> pressedButton = confirmationAlert.showAndWait();
 
         if (pressedButton.get() == ButtonType.OK) {
+
+            // If user is sure to delete a codedoc, then send a request to the server
+
+            // Generating the request
             DeleteCodeDocRequest request = new DeleteCodeDocRequest();
             request.setCodeDocID(codeDocId);
             request.setUserID(UserApi.getInstance().getId());
+
+            // Writing the request
             outputStream.writeObject(request);
             outputStream.flush();
 
+            // Returning the response
             return (DeleteCodeDocResponse) inputStream.readObject();
         }
 
+        // Return null on delete cancelled
         return null;
     }
 
+    /**
+     * Function to create a codedoc
+     */
     public static CreateCodeDocResponse createCodeDoc() throws IOException, ClassNotFoundException {
 
+        // Displaying creation dialog to the user
         Dialog<CreateCodeDocResult> dialog = new Dialog<>();
 
         dialog.setTitle("Create CodeDoc Dialog");
@@ -102,7 +131,6 @@ public class CodeDocsService {
 
         dialogPane.setContent(gridPane);
 
-        //Platform.runLater(titleTF::requestFocus);
         dialog.setResultConverter((ButtonType button) -> {
             if (button == ButtonType.OK) {
                 return new CreateCodeDocResult(titleTF.getText(), descTA.getText(), comboBox.getValue());
@@ -147,6 +175,7 @@ public class CodeDocsService {
         codeDoc.setOwnerID(UserApi.getInstance().getId());
         codeDoc.setFileContent("");
         CreateCodeDocRequest request = new CreateCodeDocRequest(codeDoc);
+
         outputStream.writeObject(request);
         outputStream.flush();
 
@@ -188,13 +217,10 @@ public class CodeDocsService {
         final String[] title = {""};
         final String[] desc = {""};
         final boolean[] isCancelled = {true};
-        result.ifPresent(new Consumer<Pair<String, String>>() {
-            @Override
-            public void accept(Pair<String, String> stringStringPair) {
-                title[0] = titleTF.getText().trim();
-                desc[0] = descTA.getText().trim();
-                isCancelled[0] = false;
-            }
+        result.ifPresent(stringStringPair -> {
+            title[0] = titleTF.getText().trim();
+            desc[0] = descTA.getText().trim();
+            isCancelled[0] = false;
         });
 
         if (isCancelled[0]) {
@@ -220,6 +246,9 @@ public class CodeDocsService {
         return (UpdateCodeDocResponse) inputStream.readObject();
     }
 
+    /**
+     * Utility for create codedoc function
+     */
     private static class CreateCodeDocResult {
 
         String title;

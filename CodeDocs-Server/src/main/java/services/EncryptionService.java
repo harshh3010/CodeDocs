@@ -3,12 +3,14 @@ package services;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+/**
+ * This class defines the functions for encryption of data
+ */
 public class EncryptionService {
 
+
     /**
-     * method for encrypting the password
-     * @param str
-     * @return
+     * Function to generate an SHA-256 hash for specified string
      */
     public static String encrypt(String str) {
 

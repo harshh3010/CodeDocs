@@ -1,11 +1,10 @@
-/*
-UserApi class to allow global access to basic user details
-*/
-
 package utilities;
 
 import models.User;
 
+/**
+ * UserApi class to allow global access to basic user details
+ */
 public class UserApi {
 
     private String id;

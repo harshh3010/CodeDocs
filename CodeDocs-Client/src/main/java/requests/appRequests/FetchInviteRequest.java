@@ -5,6 +5,9 @@ import utilities.RequestType;
 
 import java.io.Serializable;
 
+/**
+ * Request to fetch all invitations for current user
+ */
 public class FetchInviteRequest extends AppRequest implements Serializable {
 
     private String userID;

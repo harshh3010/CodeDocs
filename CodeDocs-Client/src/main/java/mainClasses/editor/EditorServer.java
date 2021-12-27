@@ -3,7 +3,6 @@ package mainClasses.editor;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
 
 /**
  * EditorServer is for starting a server for current user on a separate thread,

@@ -23,6 +23,7 @@ import services.ScreenshotService;
 import utilities.CodeEditor;
 import utilities.Status;
 import utilities.UserApi;
+
 import java.io.IOException;
 import java.util.Objects;
 import java.util.Optional;
@@ -343,12 +344,12 @@ public class EditorController {
     public void onMuteClicked() {
         if (editorConnection.isMute()) {
             editorConnection.setMute(false);
-            Image image = new Image(getClass().getResource("/images/unmute.png").toExternalForm());
+            Image image = new Image(Objects.requireNonNull(getClass().getResource("/images/unmute.png")).toExternalForm());
             muteImageView.setImage(image);
             muteButton.setGraphic(muteImageView);
         } else {
             editorConnection.setMute(true);
-            Image image = new Image(getClass().getResource("/images/mute.png").toExternalForm());
+            Image image = new Image(Objects.requireNonNull(getClass().getResource("/images/mute.png")).toExternalForm());
             muteImageView.setImage(image);
             muteButton.setGraphic(muteImageView);
         }
@@ -360,7 +361,7 @@ public class EditorController {
     public void onScreenshotClicked() {
         Status status = ScreenshotService.takeScreenshot(codeEditor);
         Alert alert;
-        if(status == null){
+        if (status == null) {
             return;
         }
         if (status == Status.SUCCESS) {
@@ -393,12 +394,10 @@ public class EditorController {
         Optional<String> result = inputDialog.showAndWait();
 
         result.ifPresent(size -> {
-            if(size!=""){
+            if (!size.isEmpty()) {
                 fontSize[0] = Double.parseDouble(size);
                 codeEditor.setStyle("-fx-font-size: " + fontSize[0] + "px;");
             }
         });
-
-
     }
 }

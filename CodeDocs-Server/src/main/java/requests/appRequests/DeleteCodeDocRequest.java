@@ -4,6 +4,9 @@ import utilities.RequestType;
 
 import java.io.Serializable;
 
+/**
+ * Request to delete an existing codedoc
+ */
 public class DeleteCodeDocRequest extends AppRequest implements Serializable {
 
     private String codeDocID;
@@ -30,7 +33,6 @@ public class DeleteCodeDocRequest extends AppRequest implements Serializable {
 
     @Override
     public RequestType getRequestType() {
-
         return RequestType.DELETE_CODEDOC_REQUEST;
     }
 }

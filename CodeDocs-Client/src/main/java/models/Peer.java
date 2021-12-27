@@ -2,14 +2,19 @@ package models;
 
 import java.io.*;
 
+/**
+ * Peer represents every client in the complete network of editor connection
+ */
 public class Peer implements Serializable {
 
-    private User user;
-    private boolean hasWritePermissions;
-    private String ipAddress;
-    private boolean isMuted;
-    private int port;
-    private int audioPort;
+    private User user; // User info of peer
+    private boolean hasWritePermissions; // Write permissions of peer
+    private String ipAddress; // Ip address of the peer
+    private boolean isMuted; // Audio status of peer
+    private int port; // Port of peer's editor server
+    private int audioPort; // Port of peer's audio receiver server
+
+    // IO streams for editor and audio servers
     private ObjectOutputStream outputStream;
     private ObjectInputStream inputStream;
     private DataInputStream audioInputStream;

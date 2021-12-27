@@ -3,16 +3,19 @@ package utilities;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+/**
+ * Contains syntax info for C programming language
+ */
 public class CParser {
 
     private ArrayList<String> reservedWords = new ArrayList<>(Arrays.asList("auto", "break", "case", "char", "const",
             "continue", "default", "do", "double", "else", "enum", "extern",
-            "float", "for", "goto",	"if", "int", "long", "register", "return", "short", "signed", "sizeof", "static",
-            "struct", "switch",	"typedef", "union", "unsigned",	"void",	"volatile",	"while"));
-    private ArrayList<String> symbol = new ArrayList<>(Arrays.asList(";",":",","));
-    private ArrayList<String> parenthesis = new ArrayList<>(Arrays.asList("(",")"));
-    private ArrayList<String> brace = new ArrayList<>(Arrays.asList("{","}"));
-    private ArrayList<String> bracket = new ArrayList<>(Arrays.asList("[","]"));
+            "float", "for", "goto", "if", "int", "long", "register", "return", "short", "signed", "sizeof", "static",
+            "struct", "switch", "typedef", "union", "unsigned", "void", "volatile", "while"));
+    private ArrayList<String> symbol = new ArrayList<>(Arrays.asList(";", ":", ","));
+    private ArrayList<String> parenthesis = new ArrayList<>(Arrays.asList("(", ")"));
+    private ArrayList<String> brace = new ArrayList<>(Arrays.asList("{", "}"));
+    private ArrayList<String> bracket = new ArrayList<>(Arrays.asList("[", "]"));
     private static CParser instance = null;
 
     // private constructor restricted to this class itself

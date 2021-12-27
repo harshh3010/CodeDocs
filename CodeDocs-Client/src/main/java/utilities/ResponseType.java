@@ -1,5 +1,8 @@
 package utilities;
 
+/**
+ * Different responses received from server
+ */
 public enum ResponseType {
     SIGNUP_RESPONSE,
     LOGIN_RESPONSE,

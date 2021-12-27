@@ -21,20 +21,23 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
+/**
+ * This class defines all the functions for handling client requests for
+ * managing codedocs
+ */
 public class CodeDocService {
 
     /**
-     * method to create a codeDoc for user
-     * @param createCodedocRequest
-     * @return
+     * Function to create a new codedoc
      */
     public static CreateCodeDocResponse createCodeDoc(CreateCodeDocRequest createCodedocRequest) {
 
         CreateCodeDocResponse codedocResponse = new CreateCodeDocResponse();
 
-        // create a code-doc file
+        // Generate a unique codedoc id
         String codeDocID = UUID.randomUUID().toString();
 
+        // Query to insert codedoc details in database
         String codeDocQuery = "INSERT INTO " + DatabaseConstants.CODEDOC_TABLE_NAME
                 + "(" + DatabaseConstants.CODEDOC_TABLE_COL_CODEDOCID
                 + "," + DatabaseConstants.CODEDOC_TABLE_COL_TITLE
@@ -43,6 +46,7 @@ public class CodeDocService {
                 + "," + DatabaseConstants.CODEDOC_TABLE_COL_OWNERID
                 + ") values(?,?,?,?,?);";
 
+        // Query to insert owner details in database
         String accessQuery = "INSERT INTO " + DatabaseConstants.CODEDOC_ACCESS_TABLE_NAME
                 + "(" + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_CODEDOC_ID
                 + "," + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_USER_ID
@@ -52,10 +56,12 @@ public class CodeDocService {
 
         try {
 
+            // Set autocommit to false to rollback in case of failure
             CodeDocsServer.databaseConnection.setAutoCommit(false);
 
             try {
 
+                // Executing the queries
                 PreparedStatement preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(codeDocQuery);
                 preparedStatement.setString(1, codeDocID);
                 preparedStatement.setString(2, createCodedocRequest.getCodeDoc().getTitle());
@@ -71,6 +77,7 @@ public class CodeDocService {
                 preparedStatement.setInt(4, 1);
                 preparedStatement.executeUpdate();
 
+                // Fetching codedoc directory path
                 Properties properties = new Properties();
                 FileReader fileReader = new FileReader("CodeDocs-Server/src/main/resources/configurations/db.properties");
                 properties.load(fileReader);
@@ -79,6 +86,7 @@ public class CodeDocService {
                 filePath += codeDocID;
                 File codeDocDirectory = new File(filePath);
 
+                // Creating the codedoc file and writing initial content
                 if (codeDocDirectory.mkdir()) {
 
                     filePath += "/";
@@ -113,19 +121,14 @@ public class CodeDocService {
     }
 
     /**
-     * method to fetch codeDoc for user
-     * Result depends on whether user wants to fetch
-     *      Personal codeDocs
-     *      Any particular codeDOc
-     *      All codeDocs including his personal and accessible
-     * @param fetchCodeDocRequest
-     * @return
+     * Function to fetch list of codedocs from the database
      */
     public static FetchCodeDocResponse fetchCodeDoc(FetchCodeDocRequest fetchCodeDocRequest) {
 
         FetchCodeDocResponse fetchCodeDocResponse = new FetchCodeDocResponse();
-        //set this in order to know that it is response corr to which type of codeDoc fetch req
         fetchCodeDocResponse.setCodeDocRequestType(fetchCodeDocRequest.getCodeDocRequestType());
+
+        // Selecting the codedocs depending on the type of codedoc fetch request
         String condition, qualifier;
         if (fetchCodeDocRequest.getCodeDocRequestType() == CodeDocRequestType.FETCH_A_CODEDOC) {
             condition = DatabaseConstants.CODEDOC_TABLE_COL_CODEDOCID + " = ? ";
@@ -138,11 +141,12 @@ public class CodeDocService {
                     " IN ( SELECT " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_CODEDOC_ID +
                     " FROM " + DatabaseConstants.CODEDOC_ACCESS_TABLE_NAME +
                     " WHERE " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_USER_ID + " =? " +
-                    " AND " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_ACCESS_RIGHT+ " != \"PENDING\" " +
+                    " AND " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_ACCESS_RIGHT + " != \"PENDING\" " +
                     ") ";
             qualifier = fetchCodeDocRequest.getUserID();
         }
 
+        // Final select query to fetch codedoc details
         String query = "SELECT " +
                 " " + DatabaseConstants.CODEDOC_TABLE_COL_CODEDOCID +
                 ", " + DatabaseConstants.CODEDOC_TABLE_COL_TITLE +
@@ -159,6 +163,7 @@ public class CodeDocService {
                 + ";";
 
 
+        // Executing the query and writing codedocs in the list
         List<CodeDoc> codeDocList = new ArrayList<>();
         try {
             PreparedStatement preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(query);
@@ -190,20 +195,21 @@ public class CodeDocService {
     }
 
     /**
-     * Method to delete a codeDoc
-     * Only owner is allowed to delete codeDoc
-     * @param deleteCodeDocRequest
-     * @return
+     * Function to delete a codedoc
      */
-    public static DeleteCodeDocResponse deleteCodeDoc(DeleteCodeDocRequest deleteCodeDocRequest){
-    //TODO: check this
+    public static DeleteCodeDocResponse deleteCodeDoc(DeleteCodeDocRequest deleteCodeDocRequest) {
+
         DeleteCodeDocResponse deleteCodeDocResponse = new DeleteCodeDocResponse();
+
+        // Query to delete data from database
         String deleteQuery = "DELETE " +
                 " FROM " + DatabaseConstants.CODEDOC_TABLE_NAME +
-                " where " +
-                DatabaseConstants.CODEDOC_TABLE_COL_CODEDOCID+ " =? AND " +
+                " WHERE " +
+                DatabaseConstants.CODEDOC_TABLE_COL_CODEDOCID + " =? AND " +
                 DatabaseConstants.CODEDOC_TABLE_COL_OWNERID + " =?;";
-        try{
+
+        try {
+
             CodeDocsServer.databaseConnection.setAutoCommit(false);
             try {
                 PreparedStatement preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(deleteQuery);
@@ -212,6 +218,7 @@ public class CodeDocService {
                 preparedStatement.executeUpdate();
                 deleteCodeDocResponse.setStatus(Status.SUCCESS);
 
+                // Deleting the codedoc files from file system
                 Properties properties = new Properties();
                 FileReader fileReader = new FileReader("CodeDocs-Server/src/main/resources/configurations/db.properties");
                 properties.load(fileReader);
@@ -219,17 +226,18 @@ public class CodeDocService {
 
                 filePath += deleteCodeDocRequest.getCodeDocID();
                 File file = new File(filePath);
-                for (File subFile : file.listFiles()) {
-                        subFile.delete();
+                for (File subFile : Objects.requireNonNull(file.listFiles())) {
+                    subFile.delete();
                 }
                 file.delete();
+
                 CodeDocsServer.databaseConnection.commit();
             } catch (SQLException | IOException e) {
                 deleteCodeDocResponse.setStatus(Status.FAILED);
                 CodeDocsServer.databaseConnection.rollback();
                 e.printStackTrace();
             }
-        }catch (SQLException throwables) {
+        } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
 
@@ -237,27 +245,25 @@ public class CodeDocService {
     }
 
     /**
-     * mwthod to update title, description of codeDoc
-     * only owner can update meta data of codeDoc
-     * Cannot update LanguageType
-     * @param updateCodeDocRequest
-     * @return
+     * Function to update the details of a codedoc
      */
     public static UpdateCodeDocResponse updateCodeDoc(UpdateCodeDocRequest updateCodeDocRequest) {
 
         UpdateCodeDocResponse updateCodeDocResponse = new UpdateCodeDocResponse();
-        String updateQuery = "UPDATE " + DatabaseConstants.CODEDOC_TABLE_NAME+
-                " SET " +DatabaseConstants.CODEDOC_TABLE_COL_TITLE+ " =? ," +
-                DatabaseConstants.CODEDOC_TABLE_COL_DESCRIPTION+ " =? " +
-                " WHERE " +DatabaseConstants.CODEDOC_TABLE_COL_CODEDOCID +
+
+        // Query to update data in database
+        String updateQuery = "UPDATE " + DatabaseConstants.CODEDOC_TABLE_NAME +
+                " SET " + DatabaseConstants.CODEDOC_TABLE_COL_TITLE + " =? ," +
+                DatabaseConstants.CODEDOC_TABLE_COL_DESCRIPTION + " =? " +
+                " WHERE " + DatabaseConstants.CODEDOC_TABLE_COL_CODEDOCID +
                 " IN ( SELECT " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_CODEDOC_ID +
                 " FROM " + DatabaseConstants.CODEDOC_ACCESS_TABLE_NAME +
                 " WHERE " +
                 DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_CODEDOC_ID + " =? AND " +
                 DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_USER_ID + " =? AND " +
-                " " +DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_HAS_WRITE_PERMISSIONS+ " = 1) ;";
+                " " + DatabaseConstants.CODEDOC_ACCESS_TABLE_COL_HAS_WRITE_PERMISSIONS + " = 1) ;";
 
-        try{
+        try {
             CodeDocsServer.databaseConnection.setAutoCommit(false);
             try {
                 PreparedStatement preparedStatement = CodeDocsServer.databaseConnection.prepareStatement(updateQuery);
@@ -273,11 +279,10 @@ public class CodeDocService {
                 CodeDocsServer.databaseConnection.rollback();
                 e.printStackTrace();
             }
-        }catch (SQLException throwables) {
+        } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
 
         return updateCodeDocResponse;
     }
-
 }

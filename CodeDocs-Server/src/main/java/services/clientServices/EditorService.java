@@ -17,10 +17,17 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Properties;
 
+/**
+ * This class defines all the functions for handling client requests for
+ * working on editor
+ */
 public class EditorService {
 
     // TODO: Sync
 
+    /**
+     * Function to establish a new editor connection
+     */
     public static EditorConnectionResponse establishConnection(EditorConnectionRequest editorConnectionRequest, String ipAddress) {
         EditorConnectionResponse response = new EditorConnectionResponse();
 
@@ -144,6 +151,9 @@ public class EditorService {
         return response;
     }
 
+    /**
+     * Function to destroy an editor connection
+     */
     public static void destroyConnection(EditorCloseRequest request) {
 
         String updateQuery = "UPDATE " + DatabaseConstants.CODEDOC_ACCESS_TABLE_NAME
@@ -170,6 +180,9 @@ public class EditorService {
 
     }
 
+    /**
+     * Function to load editor content
+     */
     public static LoadEditorResponse loadEditor(LoadEditorRequest loadEditorRequest) {
         LoadEditorResponse response = new LoadEditorResponse();
 
@@ -225,6 +238,9 @@ public class EditorService {
         return response;
     }
 
+    /**
+     * Function to save a codedoc
+     */
     public static SaveCodeDocResponse saveCodeDoc(SaveCodeDocRequest saveCodeDocRequest) {
 
         SaveCodeDocResponse saveCodeDocResponse = new SaveCodeDocResponse();
@@ -265,6 +281,9 @@ public class EditorService {
         return saveCodeDocResponse;
     }
 
+    /**
+     * Function to transfer editor control
+     */
     public static void transferControl(TransferControlRequest request) {
 
         String userId = request.getUserId();
@@ -292,7 +311,7 @@ public class EditorService {
 
                 preparedStatement.executeUpdate();
                 CodeDocsServer.databaseConnection.commit();
-            }catch (SQLException e) {
+            } catch (SQLException e) {
                 CodeDocsServer.databaseConnection.rollback();
                 e.printStackTrace();
             }

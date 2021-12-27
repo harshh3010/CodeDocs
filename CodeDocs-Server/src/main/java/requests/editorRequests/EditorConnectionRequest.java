@@ -5,6 +5,9 @@ import utilities.RequestType;
 
 import java.io.Serializable;
 
+/**
+ * Request to establish editor connection
+ */
 public class EditorConnectionRequest extends AppRequest implements Serializable {
 
     private int port;

@@ -4,6 +4,9 @@ import utilities.RequestType;
 
 import java.io.Serializable;
 
+/**
+ * Request to verify our account
+ */
 public class VerifyUserRequest extends AppRequest implements Serializable {
 
     private String userEmail;

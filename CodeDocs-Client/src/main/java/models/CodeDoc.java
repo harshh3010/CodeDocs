@@ -5,18 +5,26 @@ import utilities.LanguageType;
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * CodeDoc represents the coding documents created by users
+ */
 public class CodeDoc implements Serializable {
 
-    private String codeDocId;
-    private String title;
-    private String description;
-    private String fileName;
-    private String fileContent;
+    private String codeDocId; // Unique id
+
+    private String title; // Title of document
+    private String description; // Description of document
+
+    private String fileName; // Filename (used by server)
+    private String fileContent; // Content of codedoc
+
+    // Details of creation
     private String ownerID;
     private String ownerName;
     private Date createdAt;
     private Date updatedAt;
-    private LanguageType languageType;
+
+    private LanguageType languageType; // Programming language
 
     public CodeDoc() {
     }

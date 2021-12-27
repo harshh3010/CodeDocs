@@ -5,6 +5,9 @@ import utilities.RequestType;
 
 import java.io.Serializable;
 
+/**
+ * Request to fetch codedocs from the server
+ */
 public class FetchCodeDocRequest extends AppRequest implements Serializable {
 
     private String codeDocID;

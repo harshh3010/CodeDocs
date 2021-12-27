@@ -3,7 +3,11 @@ package models;
 
 import java.io.Serializable;
 
+/**
+ * Used for representing real world users of the application
+ */
 public class User implements Serializable {
+
     private String email;
     private String password;
     private String firstName;

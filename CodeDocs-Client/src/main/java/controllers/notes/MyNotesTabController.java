@@ -16,28 +16,31 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
+/**
+ * Controller for notes screen tab
+ */
 public class MyNotesTabController implements Initializable {
 
     public GridPane notesGrid;
-    private List<Screenshot> screenshotsList = new ArrayList<>();
+    private final List<Screenshot> screenshotsList = new ArrayList<>();
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
-        notesGrid.setPadding(new Insets(10,10,10,20));
+        notesGrid.setPadding(new Insets(10, 10, 10, 20));
         notesGrid.setVgap(20);
         notesGrid.setHgap(28);
         fetchScreenshots();
         int column = 0;
         int row = 1;
         try {
-            for (int i = 0; i < screenshotsList.size(); i++) {
+            for (Screenshot screenshot : screenshotsList) {
                 FXMLLoader fxmlLoader = new FXMLLoader();
                 fxmlLoader.setLocation(getClass().getResource("/fxml/my_notes_item.fxml"));
                 AnchorPane anchorPane = fxmlLoader.load();
 
                 MyNotesItemController itemController = fxmlLoader.getController();
-                itemController.setNotesItem(screenshotsList.get(i));
+                itemController.setNotesItem(screenshot);
 
                 if (column == 3) {
                     column = 0;
@@ -65,7 +68,7 @@ public class MyNotesTabController implements Initializable {
     private void fetchScreenshots() {
 
         File screenshotDirectory = new File(CodeDocsClient.screenshotDirectory);
-        String contents[] = screenshotDirectory.list();
+        String[] contents = screenshotDirectory.list();
 
         if (contents != null) {
             for (String fileName : contents) {

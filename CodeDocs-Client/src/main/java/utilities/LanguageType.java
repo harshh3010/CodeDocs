@@ -1,5 +1,8 @@
 package utilities;
 
+/**
+ * Info of supported languages
+ */
 public enum LanguageType {
 
     JAVA(0, ".java"),

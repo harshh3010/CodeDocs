@@ -4,6 +4,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Properties;
 
+/**
+ * This class is used for reading the file paths for notes as specified in config file
+ */
 public class FileConfigurations {
 
     private final String notesDirectory;

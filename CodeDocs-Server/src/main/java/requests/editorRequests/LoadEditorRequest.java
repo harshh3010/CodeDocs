@@ -6,6 +6,9 @@ import utilities.RequestType;
 
 import java.io.Serializable;
 
+/**
+ * Request to load editor contents from the server
+ */
 public class LoadEditorRequest extends AppRequest implements Serializable {
 
     private String userId;

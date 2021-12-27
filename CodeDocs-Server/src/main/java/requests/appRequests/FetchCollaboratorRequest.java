@@ -4,6 +4,9 @@ import utilities.RequestType;
 
 import java.io.Serializable;
 
+/**
+ * Request to fetch collaborators of a specific codedoc from the server
+ */
 public class FetchCollaboratorRequest extends AppRequest implements Serializable {
 
     private String ownerID;
